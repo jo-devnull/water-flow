@@ -1,9 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "github.jodevnull.{{mod_group}}.mixin",
+  "package": "github.jodevnull.waterflow.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "{{mod_id}}.refmap.json",
+  "refmap": "waterflow.refmap.json",
   "mixins": [],
   "client": [],
   "injectors": {
