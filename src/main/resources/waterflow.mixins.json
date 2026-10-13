@@ -4,7 +4,13 @@
   "package": "github.jodevnull.waterflow.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "waterflow.refmap.json",
-  "mixins": [],
+  "mixins": [
+    "item.BucketItemMixin",
+    "ServerLevelMixin",
+    "fluid.LiquidBlockMixin",
+    "fluid.FlowingFluidMixin",
+    "fluid.WaterFluidMixin"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1
