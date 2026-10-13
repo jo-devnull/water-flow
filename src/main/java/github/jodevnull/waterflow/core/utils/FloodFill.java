@@ -1,5 +1,9 @@
 package github.jodevnull.waterflow.core.utils;
 
+/**
+ * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
+ * Credits to Sir Washington on github
+ */
 public class FloodFill
 {
     public static void flood(int[][] data, int x, int y) {

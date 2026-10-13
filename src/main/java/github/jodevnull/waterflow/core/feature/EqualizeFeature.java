@@ -6,6 +6,10 @@ import net.minecraft.core.BlockPos;
 
 import java.util.Arrays;
 
+/**
+ * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
+ * Credits to Sir Washington on github
+ */
 public final class EqualizeFeature
 {
     private static final int radius = 2;

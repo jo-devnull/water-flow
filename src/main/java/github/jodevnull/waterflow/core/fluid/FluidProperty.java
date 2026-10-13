@@ -20,7 +20,7 @@ public final class FluidProperty
     }
 
     public static boolean isPersistent(FluidState state) {
-        return timeof(state) > 0 || state.getAmount() == 8;
+        return timeof(state) == 0 || state.getAmount() == 8;
     }
 
     public static boolean isFinite(FluidState state) {

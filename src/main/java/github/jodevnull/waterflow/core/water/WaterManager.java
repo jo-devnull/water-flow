@@ -1,7 +1,6 @@
 package github.jodevnull.waterflow.core.water;
 
 import github.jodevnull.waterflow.core.utils.SectionCache;
-import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -37,6 +36,7 @@ public interface WaterManager extends WaterAccessor
         for (final var entry : data().queuedWater.long2ByteEntrySet()) {
             var pos = BlockPos.of(entry.getLongKey());
             setWaterLevel(pos, entry.getByteValue());
+
             update(pos.west());
             update(pos.east());
             update(pos.below());

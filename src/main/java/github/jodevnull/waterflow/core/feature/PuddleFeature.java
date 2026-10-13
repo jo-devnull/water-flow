@@ -8,6 +8,10 @@ import net.minecraft.core.Direction;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
+ * Credits to Sir Washington on github
+ */
 public final class PuddleFeature
 {
     public static final int PUDDLE_RADIUS = 4;

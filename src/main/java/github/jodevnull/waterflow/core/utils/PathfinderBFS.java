@@ -4,6 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
+ * Credits to Sir Washington on github
+ */
 public final class PathfinderBFS
 {
     public static int[][] distanceMapperBFS(int[][] matrix, List<Node> holes) {

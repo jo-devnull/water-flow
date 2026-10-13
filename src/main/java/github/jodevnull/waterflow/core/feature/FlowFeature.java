@@ -6,15 +6,17 @@ import net.minecraft.core.Direction;
 
 import java.util.Arrays;
 
+/**
+ * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
+ * Credits to Sir Washington on github
+ */
 public final class FlowFeature
 {
     static int count = 0;
     static final int[] levels = new int[4];
     static final BlockPos[] blocks = new BlockPos[4];
 
-    public static void execute(WaterSystem system, BlockPos center, int centerLevel) {
-        int level = system.getWaterLevel(center);
-
+    public static void execute(WaterSystem system, BlockPos center, int level) {
         Arrays.fill(levels, 0);
 
         for (Direction dir : Direction.Plane.HORIZONTAL) {
