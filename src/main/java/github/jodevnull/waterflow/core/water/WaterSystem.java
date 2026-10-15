@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.core.water;
 
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.utils.SectionCache;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -9,11 +10,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -22,7 +22,7 @@ public final class WaterSystem implements WaterManager, WaterAccessor, SectionCa
     private static final Map<ResourceKey<Level>, WaterSystem> SYSTEMS = new HashMap<>();
     private final WaterData data;
 
-    @Override
+    @Override @ApiStatus.Internal
     public WaterData data() { return data; }
 
     public WaterSystem(Level world) {
@@ -41,8 +41,23 @@ public final class WaterSystem implements WaterManager, WaterAccessor, SectionCa
         return SYSTEMS.containsKey(world.dimension());
     }
 
-    private static WaterSystem get(ServerLevel world) {
+    public static WaterSystem get(ServerLevel world) {
         return SYSTEMS.computeIfAbsent(world.dimension(), k -> new WaterSystem(world));
+    }
+
+    public static void onUnload(ServerLevel level) {
+        if (isLoaded(level)) {
+            SYSTEMS.get(level.dimension()).unload();
+            SYSTEMS.remove(level.dimension());
+        }
+    }
+
+    public static void onUnload() {
+        for (final var entry : SYSTEMS.entrySet()) {
+            entry.getValue().unload();
+        }
+
+        SYSTEMS.clear();
     }
 
     public void run(BlockPos pos) {
@@ -51,6 +66,12 @@ public final class WaterSystem implements WaterManager, WaterAccessor, SectionCa
         }
 
         final int level = getWaterLevel(pos);
+
+        // If there is no water or the water can't go anywhere, whe don't do anything.
+        // Hopefully this will improve performance even more
+        if (level <= 0 || FluidUtils.cannotFlow(this, pos)) {
+            return;
+        }
 
         if (getBlockState(pos.below()).is(Blocks.LAVA)) {
             data.world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), 11, 11);

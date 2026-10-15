@@ -1,6 +1,8 @@
 package github.jodevnull.waterflow.core.fluid;
 
+import github.jodevnull.waterflow.core.water.WaterAccessor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,5 +53,19 @@ public final class FluidUtils
 
     public static boolean isFiniteWater(FluidState fluid) {
         return isWater(fluid) && FluidProperty.isFinite(fluid);
+    }
+
+    public static boolean isFiniteWater(BlockGetter blockGetter, BlockPos pos) {
+        return isFiniteWater(getFluidState(blockGetter, pos));
+    }
+
+    public static boolean cannotFlow(WaterAccessor accessor, BlockPos pos) {
+        for (final var dir : Direction.values()) {
+            if (accessor.isNotFull(pos.relative(dir))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

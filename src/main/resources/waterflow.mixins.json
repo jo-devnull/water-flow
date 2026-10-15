@@ -5,11 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "waterflow.refmap.json",
   "mixins": [
-    "item.BucketItemMixin",
     "ServerLevelMixin",
-    "fluid.LiquidBlockMixin",
+    "create.FluidTankMixin",
+    "create.OpenEndedPipeMixin",
     "fluid.FlowingFluidMixin",
-    "fluid.WaterFluidMixin"
+    "fluid.LiquidBlockMixin",
+    "fluid.WaterFluidMixin",
+    "item.BucketItemMixin"
   ],
   "client": [],
   "injectors": {

@@ -1,5 +1,8 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.water.WaterSystem;
@@ -57,5 +60,15 @@ public abstract class FlowingFluidMixin extends Fluid
         if (FluidUtils.isFiniteWater(fluidState)) {
             cir.setReturnValue(Vec3.ZERO);
         }
+    }
+
+    @WrapMethod(method = "canConvertToSource(Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z", remap = false)
+    private boolean canConvertToSource(FluidState state, Level level, BlockPos pos, Operation<Boolean> original) {
+        if (Config.isEnabled(level) && FluidUtils.isWater(state)) {
+            final var fluid = FluidUtils.getFluidState(level, pos);
+            return FluidProperty.timeof(fluid) == 0;
+        }
+
+        return original.call(state, level, pos);
     }
 }

@@ -85,7 +85,7 @@ public interface SectionCache extends BlockGetter
     }
 
     default void release() {
-        data().sections.keySet().forEach(pos -> getSection(pos).release());
+        data().sections.forEach((pos, section) -> section.release());
         data().sections.clear();
     }
 }
