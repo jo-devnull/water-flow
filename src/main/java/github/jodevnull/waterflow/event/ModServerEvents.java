@@ -1,5 +1,6 @@
 package github.jodevnull.waterflow.event;
 
+import github.jodevnull.waterflow.core.water.WaterManager;
 import github.jodevnull.waterflow.core.water.WaterSystem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.level.LevelEvent;

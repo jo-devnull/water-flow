@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feature;
 
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.water.WaterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -16,7 +16,7 @@ public final class FlowFeature
     static final int[] levels = new int[4];
     static final BlockPos[] blocks = new BlockPos[4];
 
-    public static void execute(WaterSystem system, BlockPos center, int level) {
+    public static void execute(WaterManager system, BlockPos center, int level) {
         Arrays.fill(levels, 0);
 
         for (Direction dir : Direction.Plane.HORIZONTAL) {

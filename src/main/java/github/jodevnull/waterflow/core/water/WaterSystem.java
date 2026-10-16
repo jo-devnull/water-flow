@@ -1,35 +1,23 @@
 package github.jodevnull.waterflow.core.water;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.utils.SectionCache;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public final class WaterSystem implements WaterManager, WaterAccessor, SectionCache
+public final class WaterSystem
 {
-    private static final Map<ResourceKey<Level>, WaterSystem> SYSTEMS = new HashMap<>();
-    private final WaterData data;
+    private static final Map<ResourceKey<Level>, WaterManager> SYSTEM = new HashMap<>();
 
-    @Override @ApiStatus.Internal
-    public WaterData data() { return data; }
-
-    public WaterSystem(Level world) {
-        this.data = new WaterData(world);
-    }
-
-    public static Optional<WaterSystem> of(Level world) {
+    public static Optional<WaterManager> of(Level world) {
         if (!world.isClientSide() && Config.isEnabled(world)) {
             return Optional.of(get((ServerLevel) world));
         }
@@ -38,62 +26,62 @@ public final class WaterSystem implements WaterManager, WaterAccessor, SectionCa
     }
 
     public static boolean isLoaded(ServerLevel world) {
-        return SYSTEMS.containsKey(world.dimension());
+        return SYSTEM.containsKey(world.dimension());
     }
 
-    public static WaterSystem get(ServerLevel world) {
-        return SYSTEMS.computeIfAbsent(world.dimension(), k -> new WaterSystem(world));
+    public static WaterManager get(ServerLevel world) {
+        return SYSTEM.computeIfAbsent(world.dimension(), k -> new WaterManager(world));
     }
 
     public static void onUnload(ServerLevel level) {
         if (isLoaded(level)) {
-            SYSTEMS.get(level.dimension()).unload();
-            SYSTEMS.remove(level.dimension());
+            SYSTEM.get(level.dimension()).unload();
+            SYSTEM.remove(level.dimension());
         }
     }
 
     public static void onUnload() {
-        for (final var entry : SYSTEMS.entrySet()) {
+        for (final var entry : SYSTEM.entrySet()) {
             entry.getValue().unload();
         }
 
-        SYSTEMS.clear();
-    }
-
-    public void run(BlockPos pos) {
-        if (pos.getY() == getMinBuildHeight() + 1) {
-            setWater(pos, 0); return;
-        }
-
-        final int level = getWaterLevel(pos);
-
-        // If there is no water or the water can't go anywhere, whe don't do anything.
-        // Hopefully this will improve performance even more
-        if (level <= 0 || FluidUtils.cannotFlow(this, pos)) {
-            return;
-        }
-
-        if (getBlockState(pos.below()).is(Blocks.LAVA)) {
-            data.world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), 11, 11);
-            setWater(pos, 0);
-        }
-
-        else if (isNotFull(pos.below())) {
-            setWater(pos, level - 1);
-            addWater(pos.below(), 1);
-        }
-
-        else {
-            EqualizeFeature.execute(this, pos, level);
-        }
+        SYSTEM.clear();
     }
 
     public static boolean run(Level level, BlockPos pos) {
         if (Config.isEnabled(level) && !level.isClientSide()) {
-            get((ServerLevel) level).run(pos);
+            run(get((ServerLevel) level), pos);
             return true;
         }
 
         return false;
+    }
+
+    public static void run(WaterManager water, BlockPos pos) {
+        if (pos.getY() == water.getMinBuildHeight() + 1) {
+            water.setWater(pos, 0); return;
+        }
+
+        final int level = water.getWaterLevel(pos);
+
+        // If there is no water or the water can't go anywhere, whe don't do anything.
+        // Hopefully this will improve performance even more
+        if (level <= 0 || FluidUtils.cannotFlow(water, pos)) {
+            return;
+        }
+
+        if (water.getBlockState(pos.below()).is(Blocks.LAVA)) {
+            water.world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), 11, 11);
+            water.setWater(pos, 0);
+        }
+
+        else if (water.isNotFull(pos.below())) {
+            water.setWater(pos, level - 1);
+            water.addWater(pos.below(), 1);
+        }
+
+        else {
+            EqualizeFeature.execute(water, pos, level);
+        }
     }
 }

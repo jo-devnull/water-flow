@@ -1,20 +1,13 @@
 package github.jodevnull.waterflow.mixin.item;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.water.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
