@@ -4,10 +4,16 @@ import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.LavaFluid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,14 +70,22 @@ public final class WaterSystem
 
         final int level = water.getWaterLevel(pos);
 
-        // If there is no water or the water can't go anywhere, whe don't do anything.
-        // Hopefully this will improve performance even more
         if (level <= 0 || FluidUtils.cannotFlow(water, pos)) {
             return;
         }
 
         if (water.getBlockState(pos.below()).is(Blocks.LAVA)) {
-            water.world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), 11, 11);
+            water.setWater(pos, 0);
+
+            if (level == 8) {
+                water.world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), 11, 11);
+            }
+
+            waterEvaporationEffect((ServerLevel) water.world, pos);
+        }
+
+        // if below is naturally generated water, we merge
+        else if (FluidUtils.isNaturalWater(water, pos.below())) {
             water.setWater(pos, 0);
         }
 
@@ -83,5 +97,18 @@ public final class WaterSystem
         else {
             EqualizeFeature.execute(water, pos, level);
         }
+    }
+
+    public static void waterEvaporationEffect(ServerLevel world, BlockPos pos) {
+        final int amount = 3 + world.random.nextInt(2);
+
+        world.sendParticles(ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+            amount, 0D, 0.5D, 0D, 0.05D
+        );
+
+        world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+            0.8f + world.random.nextFloat() * 0.2f,
+            0.9f + world.random.nextFloat() * 0.2f
+        );
     }
 }

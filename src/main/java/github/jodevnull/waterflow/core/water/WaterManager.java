@@ -6,8 +6,10 @@ import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.utils.SectionCache;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -87,8 +89,8 @@ public final class WaterManager extends SectionCache
 
         final var fluidState = FluidUtils.getFluidState(this, pos);
 
-        if (FluidUtils.isFiniteWater(fluidState)) {
-            return fluidState.getAmount();
+        if (FluidUtils.isWater(fluidState)) {
+            return FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
         } else {
             return -1;
         }

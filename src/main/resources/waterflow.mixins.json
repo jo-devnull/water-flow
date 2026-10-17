@@ -9,6 +9,7 @@
     "create.FluidTankMixin",
     "create.OpenEndedPipeMixin",
     "fluid.FlowingFluidMixin",
+    "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
     "item.BucketItemMixin"
