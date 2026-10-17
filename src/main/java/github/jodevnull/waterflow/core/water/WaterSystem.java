@@ -76,8 +76,8 @@ public final class WaterSystem
         }
 
         else if (water.isNotFull(pos.below())) {
-            water.setWater(pos, level - 1);
-            water.addWater(pos.below(), 1);
+            water.setWater(pos, 0);
+            water.addWater(pos.below(), level);
         }
 
         else {
