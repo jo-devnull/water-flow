@@ -3,6 +3,7 @@ package github.jodevnull.waterflow.core.feature;
 import github.jodevnull.waterflow.core.water.WaterManager;
 import github.jodevnull.waterflow.core.utils.FloodFill;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 import java.util.Arrays;
 
@@ -47,5 +48,9 @@ public final class EqualizeFeature
         } else if (range > 1) {
             FlowFeature.execute(system, center, level);
         }
+    }
+
+    public static int clamp(int val, int min, int max) {
+        return Math.max(min, Math.min(max, val));
     }
 }

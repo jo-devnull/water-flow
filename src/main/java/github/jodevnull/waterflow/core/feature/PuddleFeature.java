@@ -31,7 +31,7 @@ public final class PuddleFeature
         system = sys;
         pos = center;
 
-        if (level == 1 && isFull(pos.below())) {
+        if (level == 1 && sys.isFull(pos.below())) {
             int x = pos.getX();
             int y = pos.getY();
             int z = pos.getZ();
@@ -98,15 +98,19 @@ public final class PuddleFeature
         }
 
         if (minDistance <= 4) {
-            move(direction);
-            return true;
+            return move(direction);
         }
         return false;
     }
 
-    private static void move(Direction direction) {
-        system.setWater(pos, 0);
-        system.addWater(pos.relative(direction), 1);
+    private static boolean move(Direction direction) {
+        if (system.canFlow(pos, direction)) {
+            system.setWater(pos, 0);
+            system.addWater(pos.relative(direction), 1);
+            return true;
+        }
+
+        return false;
     }
 
     // its actual test rect but ssssh...
@@ -120,19 +124,10 @@ public final class PuddleFeature
                 testPos = new BlockPos(iX, pos.getY() - 1, iZ);
                 int uLevel = system.getWaterLevel(new BlockPos(iX, pos.getY(), iZ));
 
-                if (notFull(testPos) && (uLevel == 0 || uLevel == 1)) {
+                if (system.isNotFull(testPos) && (uLevel == 0 || uLevel == 1)) {
                     holes.add(new PathfinderBFS.Node(relX, relZ, 0));
                 }
             }
         }
-    }
-
-    private static boolean notFull(BlockPos testPos) {
-        final int level = system.getWaterLevel(testPos);
-        return level >= 0 && level < 8;
-    }
-
-    private static boolean isFull(BlockPos testPos) {
-        return !notFull(testPos);
     }
 }

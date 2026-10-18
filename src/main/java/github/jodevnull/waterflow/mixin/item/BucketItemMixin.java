@@ -33,6 +33,6 @@ public class BucketItemMixin
             }
         }
 
-        return level.setBlock(pPos, pNewState.trySetValue(TIME, MAX_TIME), pFlags);
+        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 1 : MAX_TIME), pFlags);
     }
 }

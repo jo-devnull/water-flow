@@ -2,9 +2,9 @@ package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.core.water.WaterManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -25,6 +25,10 @@ public final class FluidUtils
 
     public static boolean isLava(Fluid fluid) {
         return fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA;
+    }
+
+    public static boolean isLava(FluidState state) {
+        return isLava(state.getType());
     }
 
     public static FluidState getWater(int level) {
@@ -55,17 +59,25 @@ public final class FluidUtils
         return isWater(fluid) && FluidProperty.isFinite(fluid);
     }
 
+    public static boolean isNaturalWater(FluidState fluid) {
+        return isWater(fluid) && !FluidProperty.isFinite(fluid);
+    }
+
     public static boolean isFiniteWater(BlockGetter blockGetter, BlockPos pos) {
         return isFiniteWater(getFluidState(blockGetter, pos));
     }
 
-    public static boolean cannotFlow(WaterManager accessor, BlockPos pos) {
-        for (final var dir : Direction.values()) {
-            if (accessor.isNotFull(pos.relative(dir))) {
-                return false;
+    public static boolean isNaturalWater(BlockGetter blockGetter, BlockPos pos) {
+        return isNaturalWater(getFluidState(blockGetter, pos));
+    }
+
+    public static boolean canFlow(WaterManager accessor, BlockPos pos) {
+        for (final var dir : LiquidBlock.POSSIBLE_FLOW_DIRECTIONS) {
+            if (accessor.canFlow(pos, dir) && accessor.isNotFull(pos.relative(dir))) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }

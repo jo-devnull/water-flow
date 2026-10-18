@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.create;
+package github.jodevnull.waterflow.mixin.compat.create;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

@@ -5,9 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.water.WaterManager;
 import github.jodevnull.waterflow.core.water.WaterSystem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -71,5 +71,12 @@ public abstract class FlowingFluidMixin extends Fluid
         }
 
         return original.call(state, level, pos);
+    }
+
+    @Inject(method = "canSpreadTo", at=@At("HEAD"), cancellable = true)
+    private void canSpreadTo(BlockGetter pLevel, BlockPos pFromPos, BlockState pFromBlockState, Direction pDirection, BlockPos pToPos, BlockState pToBlockState, FluidState pToFluidState, Fluid pFluid, CallbackInfoReturnable<Boolean> cir) {
+        if (FluidUtils.isFiniteWater(pLevel, pToPos)) {
+            cir.setReturnValue(true);
+        }
     }
 }

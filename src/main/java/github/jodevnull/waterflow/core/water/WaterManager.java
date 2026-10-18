@@ -1,13 +1,19 @@
 package github.jodevnull.waterflow.core.water;
 
+import de.leximon.fluidlogged.Fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.utils.SectionCache;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -24,6 +30,33 @@ public final class WaterManager extends SectionCache
 
     public int getWaterLevel(BlockPos pos) {
         return data.cachedWater.computeIfAbsent(pos.asLong(), this::cacheWaterLevel);
+    }
+
+    public static boolean canFlowTo(BlockState state, Direction dir) {
+        if (state.is(BlockTags.TRAPDOORS)) {
+            final boolean open = state.getValue(TrapDoorBlock.OPEN);
+            final Direction facing = state.getValue(TrapDoorBlock.FACING);
+            return !(open && facing == dir.getOpposite());
+        }
+
+        return true;
+    }
+
+
+    public boolean canFlowTo(BlockPos center, Direction dir) {
+        return canFlowTo(getBlockState(center.relative(dir)), dir.getOpposite());
+    }
+
+    public boolean canFlowFrom(BlockPos center, Direction dir) {
+        return canFlowTo(getBlockState(center), dir);
+    }
+
+    public boolean canFlow(BlockPos center, Direction dir) {
+        if (!canFlowTo(center, dir)) {
+            return false;
+        }
+
+        return canFlowFrom(center, dir);
     }
 
     public boolean isNotFull(BlockPos pos) {
@@ -69,7 +102,15 @@ public final class WaterManager extends SectionCache
         final var prev = getBlockState(pos);
         final var fluid = FluidUtils.getWater(level);
 
-        if (prev.isAir() || prev.is(Blocks.WATER)) {
+        if (Fluidlogged.isFluidloggable(prev)) {
+            setFluidState(pos, fluid);
+
+            if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, level == 8));
+            }
+        }
+
+        else if (prev.isAir() || prev.is(Blocks.WATER)) {
             setBlockState(pos, FluidProperty.getBlockState(fluid));
         }
 
@@ -85,10 +126,17 @@ public final class WaterManager extends SectionCache
             return 0;
         }
 
+        else if (Fluidlogged.isFluidloggable(blockState)) {
+            final var fluidState = getFluidState(pos);
+
+            return fluidState.isEmpty() ? 0
+                : FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
+        }
+
         final var fluidState = FluidUtils.getFluidState(this, pos);
 
-        if (FluidUtils.isFiniteWater(fluidState)) {
-            return fluidState.getAmount();
+        if (FluidUtils.isWater(fluidState)) {
+            return FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
         } else {
             return -1;
         }

@@ -6,9 +6,15 @@
   "refmap": "waterflow.refmap.json",
   "mixins": [
     "ServerLevelMixin",
-    "create.FluidTankMixin",
-    "create.OpenEndedPipeMixin",
+    "compat.create.FluidTankMixin",
+    "compat.create.OpenEndedPipeMixin",
+    "compat.fluidlogged.BucketItemMixin",
+    "compat.fluidlogged.FlowingFluidMixin",
+    "compat.fluidlogged.FluidloggedMixin",
+    "compat.fluidlogged.InternalMixin",
+    "compat.fluidlogged.LevelChunkSectionMixin",
     "fluid.FlowingFluidMixin",
+    "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
     "item.BucketItemMixin"
