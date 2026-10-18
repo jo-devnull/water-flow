@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -105,9 +104,10 @@ public final class WaterManager extends SectionCache
         if (Fluidlogged.isFluidloggable(prev)) {
             setFluidState(pos, fluid);
 
-            if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
-                setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, level == 8));
-            }
+            // FIXME: some blocks may need to be waterlogged to work, but this breaks create
+            // if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
+            //     setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, level == 8));
+            // }
         }
 
         else if (prev.isAir() || prev.is(Blocks.WATER)) {

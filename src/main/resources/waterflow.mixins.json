@@ -13,6 +13,7 @@
     "compat.fluidlogged.FluidloggedMixin",
     "compat.fluidlogged.InternalMixin",
     "compat.fluidlogged.LevelChunkSectionMixin",
+    "entity.BoatMixin",
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
