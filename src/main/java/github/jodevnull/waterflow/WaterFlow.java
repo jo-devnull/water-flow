@@ -1,12 +1,12 @@
 package github.jodevnull.waterflow;
 
 import com.mojang.logging.LogUtils;
-import github.jodevnull.waterflow.event.ModServerEvents;
+import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.event.ModEventHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-
-import java.util.*;
 
 @Mod(WaterFlow.MODID)
 public class WaterFlow
@@ -16,6 +16,8 @@ public class WaterFlow
 
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();
-        ModServerEvents.register();
+
+        context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
+        ModEventHandler.register();
     }
 }

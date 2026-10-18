@@ -5,15 +5,12 @@ import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.material.LavaFluid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +67,7 @@ public final class WaterSystem
 
         final int level = water.getWaterLevel(pos);
 
-        if (level <= 0 || FluidUtils.cannotFlow(water, pos)) {
+        if (level <= 0) {
             return;
         }
 
@@ -94,7 +91,7 @@ public final class WaterSystem
             water.addWater(pos.below(), level);
         }
 
-        else {
+        else if (FluidUtils.canFlow(water, pos)) {
             EqualizeFeature.execute(water, pos, level);
         }
     }

@@ -1,12 +1,13 @@
 package github.jodevnull.waterflow.event;
 
+import de.leximon.fluidlogged.Fluidlogged;
+import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.water.WaterManager;
 import github.jodevnull.waterflow.core.water.WaterSystem;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
@@ -14,11 +15,10 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
-public class ModServerEvents
+public class ModEventHandler
 {
     public static void register() {}
 
@@ -49,8 +49,8 @@ public class ModServerEvents
 
             if (level instanceof ServerLevel world) {
                 if (fluid.is(FluidTags.LAVA)) {
-                    world.setBlockAndUpdate(rPos, Blocks.AIR.defaultBlockState());
                     WaterSystem.waterEvaporationEffect(world, rPos);
+                    WaterSystem.of((Level) level).ifPresent(manager -> manager.setWater(rPos, 0));
                 }
 
                 if (rFluid.getAmount() <= 4) {

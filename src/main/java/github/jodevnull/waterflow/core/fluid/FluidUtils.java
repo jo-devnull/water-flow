@@ -2,7 +2,6 @@ package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.core.water.WaterManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -72,13 +71,13 @@ public final class FluidUtils
         return isNaturalWater(getFluidState(blockGetter, pos));
     }
 
-    public static boolean cannotFlow(WaterManager accessor, BlockPos pos) {
+    public static boolean canFlow(WaterManager accessor, BlockPos pos) {
         for (final var dir : LiquidBlock.POSSIBLE_FLOW_DIRECTIONS) {
-            if (accessor.isNotFull(pos.relative(dir))) {
-                return false;
+            if (accessor.canFlow(pos, dir) && accessor.isNotFull(pos.relative(dir))) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }
