@@ -81,7 +81,7 @@ public class ConfigUtils
             return;
         }
 
-        if (amount < 0 || amount > 8) {
+        if (amount < 0 || amount >= 8) {
             WaterFlow.logger.error("Block volume range is (0, 8], got {}. At: {} (see config)", amount, str);
             return;
         }
