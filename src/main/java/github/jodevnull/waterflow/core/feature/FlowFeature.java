@@ -13,17 +13,21 @@ import java.util.Arrays;
 public final class FlowFeature
 {
     static final int[] levels = new int[4];
+    static final int[] heights = new int[4];
     static final boolean[] flow = new boolean[4];
     static final BlockPos[] blocks = new BlockPos[4];
 
     public static void execute(WaterManager system, BlockPos center, int level) {
         Arrays.fill(levels, 0);
+        Arrays.fill(heights, 0);
 
+        int height = system.getBlockHeight(center);
         int index = 0, originalLevel = level;
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             flow[index] = system.canFlow(center, dir);
             blocks[index] = center.relative(dir);
-            levels[index] = system.getWaterLevel(blocks[index]);
+            heights[index] = system.getBlockHeight(blocks[index]);
+            levels[index] = system.getWaterLevel(blocks[index]) + heights[index];
             index++;
         }
 
@@ -34,7 +38,7 @@ public final class FlowFeature
             for (int i = 0; i < 4; i++) {
                 internalLevel = flow[i] ? levels[i] : -1;
                 if (internalLevel != -1) {
-                    if ((level >= (internalLevel + 1))) {
+                    if (((level + height) >= (internalLevel + 1))) {
                         internalLevel += 1;
                         levels[i] = internalLevel;
                         level -= 1;
@@ -49,7 +53,7 @@ public final class FlowFeature
 
         for (int i = 0; i < 4; i++) {
             if (flow[i]) {
-                system.setWater(blocks[i], levels[i]);
+                system.setWater(blocks[i], levels[i] - heights[i]);
             }
         }
 

@@ -4,6 +4,7 @@ import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -86,14 +87,48 @@ public final class WaterSystem
             water.setWater(pos, 0);
         }
 
-        else if (water.isNotFull(pos.below())) {
+        else if (water.isNotFull(pos.below()) && water.canFlow(pos, Direction.DOWN)) {
             water.setWater(pos, 0);
             water.addWater(pos.below(), level);
         }
 
         else if (FluidUtils.canFlow(water, pos)) {
-            EqualizeFeature.execute(water, pos, level);
+            final int height = water.getBlockHeight(pos);
+
+            if (level <= height) {
+                displaceFromHeight(water, pos, level, height);
+            } else {
+                EqualizeFeature.execute(water, pos, level);
+            }
         }
+    }
+
+    public static void displaceFromHeight(WaterManager water, BlockPos cPos, int cLevel, int cHeight) {
+        for (final var dir : Direction.Plane.HORIZONTAL) {
+            var rPos = cPos.relative(dir);
+            int rLevel = water.getWaterLevel(rPos);
+            int rHeight = water.getBlockHeight(rPos);
+
+            if (rLevel <= -1)
+                continue;
+
+            if (cLevel <= 0)
+                break;
+
+            if ((cHeight + cLevel) > (rLevel + rHeight + 1)) {
+                cLevel -= 1;
+
+                water.setWater(cPos, cLevel);
+                water.setWater(rPos, rLevel+1);
+            }
+        }
+    }
+
+    public static void spread(Level level, BlockPos pos, int amount) {
+        of(level).ifPresent(manager -> {
+            manager.setWater(pos, 0);
+            manager.addWater(pos.above(), amount);
+        });
     }
 
     public static void waterEvaporationEffect(ServerLevel world, BlockPos pos) {

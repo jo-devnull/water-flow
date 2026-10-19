@@ -8,19 +8,27 @@
     "ServerLevelMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
+    "compat.fluidlogged.BlockItemMixin",
     "compat.fluidlogged.BucketItemMixin",
     "compat.fluidlogged.FlowingFluidMixin",
     "compat.fluidlogged.FluidloggedMixin",
     "compat.fluidlogged.InternalMixin",
     "compat.fluidlogged.LevelChunkSectionMixin",
     "entity.BoatMixin",
+    "flow.BlockMixin",
+    "flow.SlabBlockMixin",
+    "flow.StairBlockMixin",
+    "flow.TrapDoorBlockMixin",
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
     "item.BucketItemMixin"
   ],
-  "client": [],
+  "client": [
+    "client.LiquidBlockRendererMixin",
+    "client.embeddium.FluidRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

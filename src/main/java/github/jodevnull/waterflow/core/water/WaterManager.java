@@ -4,14 +4,13 @@ import de.leximon.fluidlogged.Fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
+import github.jodevnull.waterflow.core.utils.IFlowHandler;
 import github.jodevnull.waterflow.core.utils.SectionCache;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,35 +30,38 @@ public final class WaterManager extends SectionCache
         return data.cachedWater.computeIfAbsent(pos.asLong(), this::cacheWaterLevel);
     }
 
-    public static boolean canFlowTo(BlockState state, Direction dir) {
-        if (state.is(BlockTags.TRAPDOORS)) {
-            final boolean open = state.getValue(TrapDoorBlock.OPEN);
-            final Direction facing = state.getValue(TrapDoorBlock.FACING);
-            return !(open && facing == dir.getOpposite());
+    public int getBlockHeight(BlockPos pos) {
+        return data.cachedHeight.computeIfAbsent(pos.asLong(), lpos -> {
+            final BlockState state = getBlockState(BlockPos.of(lpos));
+
+            if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
+                return (byte) ((IFlowHandler) state.getBlock()).wf$height(state);
+            }
+
+            return (byte) 0;
+        });
+    }
+
+    public boolean canFlow(BlockPos center, Direction dir) {
+        BlockState state = getBlockState(center);
+
+        if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
+            if (((IFlowHandler) state.getBlock()).wf$blockFlowIn(state, dir)) {
+                return false;
+            }
+        }
+
+        state = getBlockState(center.relative(dir));
+
+        if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
+            return !((IFlowHandler) state.getBlock()).wf$blockFlowOut(state, dir);
         }
 
         return true;
     }
 
-
-    public boolean canFlowTo(BlockPos center, Direction dir) {
-        return canFlowTo(getBlockState(center.relative(dir)), dir.getOpposite());
-    }
-
-    public boolean canFlowFrom(BlockPos center, Direction dir) {
-        return canFlowTo(getBlockState(center), dir);
-    }
-
-    public boolean canFlow(BlockPos center, Direction dir) {
-        if (!canFlowTo(center, dir)) {
-            return false;
-        }
-
-        return canFlowFrom(center, dir);
-    }
-
     public boolean isNotFull(BlockPos pos) {
-        int level = getWaterLevel(pos);
+        int level = getWaterLevel(pos) + getBlockHeight(pos);
         return level >= 0 && level < 8;
     }
 
@@ -68,7 +70,8 @@ public final class WaterManager extends SectionCache
     }
 
     public void addWater(BlockPos pos, int level) {
-        final var existingWater = getWaterLevel(pos);
+        final int existingWater = getWaterLevel(pos);
+        final int volume = getBlockHeight(pos);
 
         if (existingWater == -1) {
             WaterFlow.logger.error("Tried to add water to a full block");
@@ -80,9 +83,9 @@ public final class WaterManager extends SectionCache
         // We can't add more water than this
         assert total <= 16;
 
-        if (total > 8) {
+        if ((total + volume) > 8) {
             // Implement water displacement
-            setWater(pos, 8);
+            setWater(pos, 8 - volume);
             addWater(pos.above(), total - 8);
         } else {
             setWater(pos, total);
@@ -191,6 +194,7 @@ public final class WaterManager extends SectionCache
 
     private void clearCache() {
         releaseSections();
+        data.cachedHeight.clear();
         data.queuedWater.clear();
         data.updateQueue.clear();
     }

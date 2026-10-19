@@ -15,7 +15,8 @@ public class WaterData
     public final Long2ByteMap
         cachedWater = new Long2ByteOpenHashMap(),
         queuedWater = new Long2ByteOpenHashMap(),
-        movingWater = new Long2ByteOpenHashMap();
+        movingWater = new Long2ByteOpenHashMap(),
+        cachedHeight = new Long2ByteOpenHashMap();
 
     public final Long2ObjectMap<FluidState> updateQueue = new Long2ObjectOpenHashMap<>();
 
