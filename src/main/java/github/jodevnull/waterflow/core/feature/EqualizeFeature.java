@@ -49,8 +49,4 @@ public final class EqualizeFeature
             FlowFeature.execute(system, center, level);
         }
     }
-
-    public static int clamp(int val, int min, int max) {
-        return Math.max(min, Math.min(max, val));
-    }
 }

@@ -7,10 +7,12 @@ import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.water.WaterSystem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -31,6 +33,24 @@ public class ModEventHandler
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel world) {
             WaterSystem.onUnload(world);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
+        final var level = event.getLevel();
+        final var player = event.getEntity();
+        final var targetPos = event.getHitVec().getBlockPos()
+            .relative(event.getHitVec().getDirection());
+
+        if (level.isClientSide()) {
+            return;
+        }
+
+        if (player.getItemInHand(event.getHand()).is(Items.STICK)) {
+            WaterSystem.of(level).ifPresent(manager -> {
+                manager.setWater(targetPos, manager.getWaterLevel(targetPos) + 1);
+            });
         }
     }
 
