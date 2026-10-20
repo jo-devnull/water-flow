@@ -3,6 +3,7 @@
     "#minecraft:doors",
     "#minecraft:slabs",
     "#minecraft:stairs",
-    "#minecraft:trapdoors"
+    "#minecraft:trapdoors",
+    "minecraft:piston_head"
   ]
 }

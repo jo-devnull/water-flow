@@ -5,7 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "waterflow.refmap.json",
   "mixins": [
+    "BoatMixin",
+    "BucketItemMixin",
+    "FallingBlockEntityMixin",
     "ServerLevelMixin",
+    "block.DoublePlantBlockMixin",
+    "block.GrowingPlantBlockMixin",
+    "block.PistonBaseBlockMixin",
+    "block.SpongeBlockMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
     "compat.fluidlogged.BlockItemMixin",
@@ -14,21 +21,17 @@
     "compat.fluidlogged.FluidloggedMixin",
     "compat.fluidlogged.InternalMixin",
     "compat.fluidlogged.LevelChunkSectionMixin",
-    "entity.BoatMixin",
-    "flow.BlockMixin",
-    "flow.SlabBlockMixin",
-    "flow.StairBlockMixin",
-    "flow.TrapDoorBlockMixin",
+    "ext.flow.BlockMixin",
+    "ext.flow.PistonHeadBlockMixin",
+    "ext.flow.SlabBlockMixin",
+    "ext.flow.StairBlockMixin",
+    "ext.flow.TrapDoorBlockMixin",
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
-    "fluid.WaterFluidMixin",
-    "item.BucketItemMixin"
+    "fluid.WaterFluidMixin"
   ],
-  "client": [
-    "client.LiquidBlockRendererMixin",
-    "client.embeddium.FluidRendererMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },

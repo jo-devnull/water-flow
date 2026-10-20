@@ -27,7 +27,7 @@ public final class FlowFeature
             flow[j] = system.canFlow(center, dir);
             blocks[j] = center.relative(dir);
             heights[j] = system.getBlockHeight(blocks[j]);
-            levels[j] = system.getWaterLevel(blocks[j]) + heights[j];
+            levels[j] = system.getWaterLevel(blocks[j]);
             j++;
         }
 
@@ -38,7 +38,7 @@ public final class FlowFeature
             for (int i = 0; i < 4; i++) {
                 internalLevel = flow[i] ? levels[i] : -1;
                 if (internalLevel != -1) {
-                    if (((level + height) >= (internalLevel + 1))) {
+                    if (((level + height) >= (internalLevel + heights[i] + 1))) {
                         internalLevel += 1;
                         levels[i] = internalLevel;
                         level -= 1;
@@ -53,7 +53,7 @@ public final class FlowFeature
 
         for (int i = 0; i < 4; i++) {
             if (flow[i]) {
-                system.setWater(blocks[i], levels[i] - heights[i]);
+                system.setWater(blocks[i], levels[i]);
             }
         }
 

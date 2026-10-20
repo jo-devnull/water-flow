@@ -1,10 +1,9 @@
-package github.jodevnull.waterflow.mixin.flow;
+package github.jodevnull.waterflow.mixin.ext.flow;
 
-import github.jodevnull.waterflow.core.utils.IFlowHandler;
+import github.jodevnull.waterflow.core.ext.IFlowHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Half;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(StairBlock.class)

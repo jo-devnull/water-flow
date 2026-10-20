@@ -19,15 +19,19 @@ public class WaterFlow
     public static final String MODID = "waterflow";
     public static final Logger logger = LogUtils.getLogger();
 
-    public static final TagKey<Block> CAN_BLOCK_FLOW = TagKey.create(
-        Registries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath(MODID, "can_block_flow")
-    );
+    public static final TagKey<Block> CAN_BLOCK_FLOW = tagBlock("can_block_flow");
+    public static final TagKey<Block> NEEDS_WATER_SOURCE = tagBlock("needs_water_source");
 
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
         ModEventHandler.register();
+    }
+
+    public static TagKey<Block> tagBlock(String name) {
+        return TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(MODID, name)
+        );
     }
 }

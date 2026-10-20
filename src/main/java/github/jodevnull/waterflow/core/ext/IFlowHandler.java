@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.utils;
+package github.jodevnull.waterflow.core.ext;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;

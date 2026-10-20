@@ -1,6 +1,6 @@
-package github.jodevnull.waterflow.mixin.flow;
+package github.jodevnull.waterflow.mixin.ext.flow;
 
-import github.jodevnull.waterflow.core.utils.IFlowHandler;
+import github.jodevnull.waterflow.core.ext.IFlowHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,15 +23,18 @@ public class TrapDoorBlockMixin implements IFlowHandler
             return true;
         }
 
-        return open && facing == dir;
+        return open && facing == dir.getOpposite();
     }
 
     @Override
     public boolean wf$blockFlowOut(BlockState state, Direction dir) {
-        if (dir == Direction.DOWN) {
-            return false;
+        final var open = state.getValue(TrapDoorBlock.OPEN);
+        final var facing = state.getValue(TrapDoorBlock.FACING);
+
+        if (dir == Direction.DOWN && !open) {
+            return true;
         }
 
-        return wf$blockFlowIn(state, dir.getOpposite());
+        return open && facing == dir;
     }
 }

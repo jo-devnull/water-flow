@@ -4,14 +4,15 @@ import de.leximon.fluidlogged.Fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.utils.IFlowHandler;
+import github.jodevnull.waterflow.core.ext.IFlowHandler;
 import github.jodevnull.waterflow.core.utils.SectionCache;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -96,7 +97,7 @@ public final class WaterManager extends SectionCache
             if (rLevel < 0)
                 continue;
 
-            if (canFlow(center, dir) && amount > (rLevel + 1)) {
+            if (canFlow(center, dir) && amount >= (rLevel + 1)) {
                 amount -= 1;
                 addWater(rPos, 1);
             }
@@ -117,13 +118,24 @@ public final class WaterManager extends SectionCache
         final var prev = getBlockState(pos);
         final var fluid = FluidUtils.getWater(level);
 
-        if (Fluidlogged.isFluidloggable(prev)) {
+        if (level < 8 && prev.is(WaterFlow.NEEDS_WATER_SOURCE)) {
+            if (level + getWaterLevel(pos.above()) < 8) {
+                world.destroyBlock(pos, true);
+                setBlockState(pos, FluidProperty.getBlockState(fluid));
+            }
+        }
+
+        else if (Fluidlogged.isFluidloggable(prev)) {
             setFluidState(pos, fluid);
 
-            // FIXME: some blocks may need to be waterlogged to work, but this breaks create
-            // if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
-            //     setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, level == 8));
-            // }
+            /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
+            if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                if (level == 8 && !prev.getValue(BlockStateProperties.WATERLOGGED)) {
+                    setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, true));
+                } else if (level < 8 && prev.getValue(BlockStateProperties.WATERLOGGED)) {
+                    setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, false));
+                }
+            }
         }
 
         else if (prev.isAir() || prev.is(Blocks.WATER)) {
@@ -143,7 +155,7 @@ public final class WaterManager extends SectionCache
         }
 
         else if (Fluidlogged.isFluidloggable(blockState)) {
-            final var fluidState = getFluidState(pos);
+            final var fluidState = FluidUtils.getFluidState(this, pos);
 
             return fluidState.isEmpty() ? 0
                 : FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
@@ -173,7 +185,7 @@ public final class WaterManager extends SectionCache
         clearCache();
     }
 
-    private void update(BlockPos neighbor) {
+    public void update(BlockPos neighbor) {
         final var state = FluidUtils.getFluidState(this, neighbor);
 
         if (FluidUtils.isFiniteWater(state)) {

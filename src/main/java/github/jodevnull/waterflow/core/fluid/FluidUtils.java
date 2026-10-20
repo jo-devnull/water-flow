@@ -1,5 +1,6 @@
 package github.jodevnull.waterflow.core.fluid;
 
+import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.core.water.WaterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -50,6 +51,10 @@ public final class FluidUtils
 
         if (state.is(Blocks.WATER)) {
             return FluidProperty.getFluidState(state);
+        }
+
+        if (state.is(WaterFlow.NEEDS_WATER_SOURCE)) {
+            return getWater(8);
         }
 
         return blockGetter.getFluidState(pos);

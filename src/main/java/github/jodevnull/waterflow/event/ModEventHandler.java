@@ -2,6 +2,8 @@ package github.jodevnull.waterflow.event;
 
 import de.leximon.fluidlogged.Fluidlogged;
 import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
+import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.water.WaterSystem;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -33,6 +36,28 @@ public class ModEventHandler
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel world) {
             WaterSystem.onUnload(world);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onNeighborChange(BlockEvent.NeighborNotifyEvent event) {
+        final var level = event.getLevel();
+
+        if (level.isClientSide()) {
+            return;
+        }
+
+        if (event.getState().is(WaterFlow.NEEDS_WATER_SOURCE)) {
+            WaterSystem.run((Level) level, event.getPos());
+        }
+
+        for (final var dir : event.getNotifiedSides()) {
+            final var pos = event.getPos().relative(dir);
+            final var state = level.getBlockState(pos);
+
+            if (state.is(WaterFlow.NEEDS_WATER_SOURCE)) {
+                WaterSystem.run((Level) level, pos);
+            }
         }
     }
 

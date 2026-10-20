@@ -1,9 +1,10 @@
 package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.utils.IFlowHandler;
+import github.jodevnull.waterflow.core.ext.IFlowHandler;
 import github.jodevnull.waterflow.core.water.WaterSystem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
 import com.bawnorton.mixinsquared.TargetHandler;
 import de.leximon.fluidlogged.Fluidlogged;
@@ -40,7 +41,9 @@ public abstract class BlockItemMixin
                 if (Fluidlogged.isFluidloggable(blockState) && blockHeight == 0) {
                     ((LevelExtension) level).setFluid(pos, fluidState, 131);
                 } else if (!level.isClientSide()) {
-                    WaterSystem.spread(level, pos, fluidState.getAmount());
+                    if (!blockState.is(Blocks.SPONGE)) {
+                        WaterSystem.spread(level, pos, fluidState.getAmount());
+                    }
                 }
             }
 

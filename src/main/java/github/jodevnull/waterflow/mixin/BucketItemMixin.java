@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.item;
+package github.jodevnull.waterflow.mixin;
 
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.water.WaterSystem;

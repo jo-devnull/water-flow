@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.KelpPlantBlock;
+import net.minecraft.world.level.block.TallSeagrassBlock;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.WaterFluid;
@@ -34,7 +36,7 @@ public abstract class FluidMixin
 
     @Inject(method = "randomTick", at=@At("HEAD"))
     private void onWaterEvaporate(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
-        if (!Config.isEnabled(pLevel) || pLevel.isClientSide()) {
+        if (!Config.waterEvaporation() && !Config.isEnabled(pLevel) || pLevel.isClientSide()) {
             return;
         }
 
@@ -50,6 +52,10 @@ public abstract class FluidMixin
         }
 
         if (FluidUtils.isFiniteWater(water, pPos)) {
+            if (water.isFull(pPos)) {
+                return;
+            }
+
             final int time = FluidProperty.timeof(state);
 
             if (time == 1) {

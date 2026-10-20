@@ -1,5 +1,6 @@
 package github.jodevnull.waterflow.core.water;
 
+import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -12,6 +13,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.KelpBlock;
+import net.minecraft.world.level.block.MagmaBlock;
+import net.minecraft.world.level.block.SeagrassBlock;
 
 import java.util.HashMap;
 import java.util.Map;
