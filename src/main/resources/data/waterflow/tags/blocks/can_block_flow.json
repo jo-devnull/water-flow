@@ -4,6 +4,11 @@
     "#minecraft:slabs",
     "#minecraft:stairs",
     "#minecraft:trapdoors",
-    "minecraft:piston_head"
+    "minecraft:piston_head",
+
+    {
+      "id": "create:copycat_panel",
+      "required": false
+    }
   ]
 }
