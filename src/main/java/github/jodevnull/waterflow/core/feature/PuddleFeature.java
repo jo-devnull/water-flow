@@ -123,8 +123,9 @@ public final class PuddleFeature
                 int relZ = iZ-zZ;
                 testPos = new BlockPos(iX, pos.getY() - 1, iZ);
                 int uLevel = system.getWaterLevel(new BlockPos(iX, pos.getY(), iZ));
+                boolean canFlow = system.canFlow(testPos.above(), Direction.DOWN);
 
-                if (system.isNotFull(testPos) && (uLevel == 0 || uLevel == 1)) {
+                if (system.isNotFull(testPos) && canFlow && (uLevel == 0 || uLevel == 1)) {
                     holes.add(new PathfinderBFS.Node(relX, relZ, 0));
                 }
             }
