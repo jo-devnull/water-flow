@@ -62,6 +62,7 @@ public final class WaterManager extends SectionCache
 
     public boolean isNotFull(BlockPos pos) {
         int level = getWaterLevel(pos) + getBlockHeight(pos);
+
         return level >= 0 && level < 8;
     }
 
@@ -71,25 +72,37 @@ public final class WaterManager extends SectionCache
 
     public void addWater(BlockPos pos, int level) {
         final int existingWater = getWaterLevel(pos);
-        final int volume = getBlockHeight(pos);
 
         if (existingWater == -1) {
-            WaterFlow.logger.error("Tried to add water to a full block");
             return;
         }
 
         int total = existingWater + level;
 
-        // We can't add more water than this
-        assert total <= 16;
-
-        if ((total + volume) > 8) {
-            // Implement water displacement
-            setWater(pos, 8 - volume);
-            addWater(pos.above(), total - 8);
+        if (total > 8) {
+            setWater(pos, 8);
+            moveWater(pos.above(), total - 8);
         } else {
             setWater(pos, total);
         }
+    }
+
+
+    public void moveWater(BlockPos center, int amount) {
+        for (final var dir : Direction.Plane.HORIZONTAL) {
+            var rPos = center.relative(dir);
+            int rLevel = getWaterLevel(rPos);
+
+            if (rLevel < 0)
+                continue;
+
+            if (canFlow(center, dir) && amount > (rLevel + 1)) {
+                amount -= 1;
+                addWater(rPos, 1);
+            }
+        }
+
+        addWater(center, amount);
     }
 
     public void setWater(BlockPos pos, int level) {

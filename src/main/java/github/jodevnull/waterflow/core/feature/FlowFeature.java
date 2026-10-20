@@ -22,13 +22,13 @@ public final class FlowFeature
         Arrays.fill(heights, 0);
 
         int height = system.getBlockHeight(center);
-        int index = 0, originalLevel = level;
+        int j = 0, originalLevel = level;
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            flow[index] = system.canFlow(center, dir);
-            blocks[index] = center.relative(dir);
-            heights[index] = system.getBlockHeight(blocks[index]);
-            levels[index] = system.getWaterLevel(blocks[index]) + heights[index];
-            index++;
+            flow[j] = system.canFlow(center, dir);
+            blocks[j] = center.relative(dir);
+            heights[j] = system.getBlockHeight(blocks[j]);
+            levels[j] = system.getWaterLevel(blocks[j]) + heights[j];
+            j++;
         }
 
         int count = 0;
