@@ -33,7 +33,7 @@ public final class FluidProperty
 
     public static FluidState getFluidState(BlockState liquidBlock) {
         assert liquidBlock.getBlock() instanceof LiquidBlock : "Expected a liquid block!";
-        return liquidBlock.getFluidState().trySetValue(TIME, liquidBlock.getValue(TIME));
+        return liquidBlock.getFluidState().trySetValue(TIME, liquidBlock.getOptionalValue(TIME).orElse(0));
     }
 
     public static BlockState getBlockState(FluidState fluidState) {

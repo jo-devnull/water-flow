@@ -118,14 +118,7 @@ public final class WaterManager extends SectionCache
         final var prev = getBlockState(pos);
         final var fluid = FluidUtils.getWater(level);
 
-        if (level < 8 && prev.is(WaterFlow.NEEDS_WATER_SOURCE)) {
-            if (level + getWaterLevel(pos.above()) < 8) {
-                world.destroyBlock(pos, true);
-                setBlockState(pos, FluidProperty.getBlockState(fluid));
-            }
-        }
-
-        else if (Fluidlogged.isFluidloggable(prev)) {
+        if (Fluidlogged.isFluidloggable(prev)) {
             setFluidState(pos, fluid);
 
             /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
@@ -156,15 +149,13 @@ public final class WaterManager extends SectionCache
 
         else if (Fluidlogged.isFluidloggable(blockState)) {
             final var fluidState = FluidUtils.getFluidState(this, pos);
-
-            return fluidState.isEmpty() ? 0
-                : FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
+            return fluidState.isEmpty() ? 0 : FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
         }
 
         final var fluidState = FluidUtils.getFluidState(this, pos);
 
         if (FluidUtils.isWater(fluidState)) {
-            return FluidProperty.timeof(fluidState) == 0 ? -2 : fluidState.getAmount();
+            return FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
         } else {
             return -1;
         }

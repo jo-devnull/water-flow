@@ -13,9 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.KelpBlock;
-import net.minecraft.world.level.block.MagmaBlock;
-import net.minecraft.world.level.block.SeagrassBlock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +54,10 @@ public final class WaterSystem
     }
 
     public static boolean run(Level level, BlockPos pos) {
+        if (FluidUtils.needsWaterSource(level, pos)) {
+            return true;
+        }
+
         if (Config.isEnabled(level) && !level.isClientSide()) {
             run(get((ServerLevel) level), pos);
             return true;
@@ -76,7 +77,7 @@ public final class WaterSystem
             return;
         }
 
-        if (water.getBlockState(pos.below()).is(Blocks.LAVA)) {
+        else if (water.getBlockState(pos.below()).is(Blocks.LAVA)) {
             water.setWater(pos, 0);
 
             if (level == 8) {
@@ -86,9 +87,12 @@ public final class WaterSystem
             waterEvaporationEffect((ServerLevel) water.world, pos);
         }
 
-        // if below is naturally generated water, we merge
+        // if below is naturally generated water, we merge it
+        // Only if not a #needs_water_source block (like kelp)
         else if (FluidUtils.isNaturalWater(water, pos.below())) {
-            water.setWater(pos, 0);
+            if (!water.getBlockState(pos.below()).is(WaterFlow.NEEDS_WATER_SOURCE)) {
+                water.setWater(pos, 0);
+            }
         }
 
         else if (water.isNotFull(pos.below()) && water.canFlow(pos, Direction.DOWN)) {

@@ -5,7 +5,9 @@ import github.jodevnull.waterflow.core.water.WaterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.SeagrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -54,7 +56,7 @@ public final class FluidUtils
         }
 
         if (state.is(WaterFlow.NEEDS_WATER_SOURCE)) {
-            return getWater(8);
+            return state.getFluidState();
         }
 
         return blockGetter.getFluidState(pos);
@@ -84,5 +86,9 @@ public final class FluidUtils
         }
 
         return false;
+    }
+
+    public static boolean needsWaterSource(BlockGetter getter, BlockPos pos) {
+        return getter.getBlockState(pos).is(WaterFlow.NEEDS_WATER_SOURCE);
     }
 }

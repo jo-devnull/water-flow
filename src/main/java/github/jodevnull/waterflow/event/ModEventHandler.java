@@ -7,6 +7,7 @@ import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.water.WaterSystem;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.Items;
@@ -40,28 +41,6 @@ public class ModEventHandler
     }
 
     @SubscribeEvent
-    public static void onNeighborChange(BlockEvent.NeighborNotifyEvent event) {
-        final var level = event.getLevel();
-
-        if (level.isClientSide()) {
-            return;
-        }
-
-        if (event.getState().is(WaterFlow.NEEDS_WATER_SOURCE)) {
-            WaterSystem.run((Level) level, event.getPos());
-        }
-
-        for (final var dir : event.getNotifiedSides()) {
-            final var pos = event.getPos().relative(dir);
-            final var state = level.getBlockState(pos);
-
-            if (state.is(WaterFlow.NEEDS_WATER_SOURCE)) {
-                WaterSystem.run((Level) level, pos);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
         final var level = event.getLevel();
         final var player = event.getEntity();
@@ -76,6 +55,16 @@ public class ModEventHandler
             WaterSystem.of(level).ifPresent(manager -> {
                 manager.setWater(targetPos, manager.getWaterLevel(targetPos) + 1);
             });
+        }
+
+        else if (player.getItemInHand(event.getHand()).is(Items.BLAZE_ROD)) {
+            player.sendSystemMessage(Component.literal(
+                level.getBlockState(targetPos).toString()
+            ));
+
+            player.sendSystemMessage(Component.literal(
+                FluidUtils.getFluidState(level, targetPos).toString()
+            ));
         }
     }
 

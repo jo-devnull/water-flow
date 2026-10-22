@@ -38,7 +38,7 @@ public abstract class FlowingFluidMixin extends Fluid
     private void tryFlowingWater(Level pLevel, BlockPos pos, FluidState pState, CallbackInfo ci) {
         final var fluidState = FluidUtils.getFluidState(pLevel, pos);
 
-        if (FluidUtils.isFiniteWater(fluidState)) {
+        if (FluidUtils.isFiniteWater(fluidState) || FluidUtils.needsWaterSource(pLevel, pos)) {
             if (WaterSystem.run(pLevel, pos)) {
                 ci.cancel();
             }
@@ -49,7 +49,7 @@ public abstract class FlowingFluidMixin extends Fluid
     private void getUpdatedState(Level pLevel, BlockPos pPos, BlockState pBlockState, CallbackInfoReturnable<FluidState> cir) {
         final var fluidState = FluidUtils.getFluidState(pLevel, pPos);
 
-        if (FluidUtils.isFiniteWater(fluidState)) {
+        if (FluidUtils.isFiniteWater(fluidState) || FluidUtils.needsWaterSource(pLevel, pPos)) {
             cir.setReturnValue(Fluids.WATER.getFlowing(fluidState.getAmount(), false));
         }
     }
@@ -58,7 +58,7 @@ public abstract class FlowingFluidMixin extends Fluid
     private void getFlow(BlockGetter pBlockReader, BlockPos pPos, FluidState pFluidState, CallbackInfoReturnable<Vec3> cir) {
         final var fluidState = FluidUtils.getFluidState(pBlockReader, pPos);
 
-        if (FluidUtils.isFiniteWater(fluidState)) {
+        if (FluidUtils.isFiniteWater(fluidState) || FluidUtils.needsWaterSource(pBlockReader, pPos)) {
             cir.setReturnValue(Vec3.ZERO);
         }
     }
@@ -67,7 +67,7 @@ public abstract class FlowingFluidMixin extends Fluid
     private boolean canConvertToSource(FluidState state, Level level, BlockPos pos, Operation<Boolean> original) {
         if (Config.isEnabled(level) && FluidUtils.isWater(state)) {
             final var fluid = FluidUtils.getFluidState(level, pos);
-            return FluidProperty.timeof(fluid) == 0;
+            return FluidProperty.timeof(fluid) == 0 && !FluidUtils.needsWaterSource(level, pos);
         }
 
         return original.call(state, level, pos);

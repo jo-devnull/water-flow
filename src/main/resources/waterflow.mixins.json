@@ -10,7 +10,6 @@
     "FallingBlockEntityMixin",
     "ServerLevelMixin",
     "block.DoublePlantBlockMixin",
-    "block.GrowingPlantBlockMixin",
     "block.PistonBaseBlockMixin",
     "block.SpongeBlockMixin",
     "compat.create.CopyCatPanelBlockMixin",
