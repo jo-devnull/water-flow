@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.utils;
+package github.jodevnull.waterflow.core;
 
 import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
 import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
@@ -26,8 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public abstract class SectionCache implements BlockGetter
 {
-    private final Long2ObjectMap<LevelChunkSection>
-        sections = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<LevelChunkSection> sections = new Long2ObjectOpenHashMap<>();
 
     public final Level world;
 

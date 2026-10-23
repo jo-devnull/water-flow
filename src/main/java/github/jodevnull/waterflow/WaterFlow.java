@@ -2,7 +2,8 @@ package github.jodevnull.waterflow;
 
 import com.mojang.logging.LogUtils;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.event.ModEventHandler;
+import github.jodevnull.waterflow.event.ModPlayerEvents;
+import github.jodevnull.waterflow.event.ModServerEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 @Mod(WaterFlow.MODID)
@@ -26,7 +26,9 @@ public class WaterFlow
         final var modEventBus = context.getModEventBus();
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
-        ModEventHandler.register();
+
+        ModPlayerEvents.register();
+        ModServerEvents.register();
     }
 
     public static TagKey<Block> tagBlock(String name) {

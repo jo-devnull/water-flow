@@ -2,7 +2,7 @@ package github.jodevnull.waterflow.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,7 @@ public class PistonBaseBlockMixin
         if (!fluid.isEmpty()) {
             WaterSystem.of(instance).ifPresent(manager -> {
                 manager.setWater(pPos, 0);
-                manager.addWater(pPos.relative(pFacing), fluid.getAmount());
+                manager.addWater(pPos.relative(pFacing), fluid.getAmount(), pFacing);
             });
         }
 

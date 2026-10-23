@@ -1,18 +1,17 @@
-package github.jodevnull.waterflow.core.water;
+package github.jodevnull.waterflow.core;
 
 import de.leximon.fluidlogged.Fluidlogged;
-import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.ext.IFlowHandler;
-import github.jodevnull.waterflow.core.utils.SectionCache;
+import it.unimi.dsi.fastutil.longs.*;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -20,50 +19,48 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class WaterManager extends SectionCache
 {
-    private final WaterData data;
+    public final Level world;
+
+    private final Long2ByteMap
+        cachedWater = new Long2ByteOpenHashMap(),
+        queuedWater = new Long2ByteOpenHashMap();
+
+    private final Long2ShortMap cachedFlowState = new Long2ShortOpenHashMap();
+    private final Long2ObjectMap<FluidState> updateQueue = new Long2ObjectOpenHashMap<>();
 
     public WaterManager(Level world) {
-        super(world);
-        this.data = new WaterData(world);
+        super(world); this.world = world;
+        queuedWater.defaultReturnValue((byte) -1);
     }
 
     public int getWaterLevel(BlockPos pos) {
-        return data.cachedWater.computeIfAbsent(pos.asLong(), this::cacheWaterLevel);
+        return cachedWater.computeIfAbsent(pos.asLong(), this::cacheWaterLevel);
     }
 
-    public int getBlockHeight(BlockPos pos) {
-        return data.cachedHeight.computeIfAbsent(pos.asLong(), lpos -> {
-            final BlockState state = getBlockState(BlockPos.of(lpos));
-
-            if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
-                return (byte) ((IFlowHandler) state.getBlock()).wf$height(state);
-            }
-
-            return (byte) 0;
+    // FIXME performance
+    public short getFlowState(BlockPos pos) {
+        return cachedFlowState.computeIfAbsentNullable(pos.asLong(), lpos -> {
+            final var blockState = getBlockState(BlockPos.of(lpos));
+            final var state = FlowHandler.getFlowState(blockState);
+            return state == 0 ? null : state;
         });
     }
 
+    // FIXME performance
     public boolean canFlow(BlockPos center, Direction dir) {
-        BlockState state = getBlockState(center);
-
-        if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
-            if (((IFlowHandler) state.getBlock()).wf$blockFlowIn(state, dir)) {
-                return false;
-            }
-        }
-
-        state = getBlockState(center.relative(dir));
-
-        if (state.is(WaterFlow.CAN_BLOCK_FLOW)) {
-            return !((IFlowHandler) state.getBlock()).wf$blockFlowOut(state, dir);
-        }
+        // if (FlowHandler.checkFlowOut(getFlowState(center), dir)) {
+        //     return false;
+        // }
+        //
+        // if (FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir)) {
+        //     return false;
+        // }
 
         return true;
     }
 
     public boolean isNotFull(BlockPos pos) {
-        int level = getWaterLevel(pos) + getBlockHeight(pos);
-
+        final int level = getWaterLevel(pos);
         return level >= 0 && level < 8;
     }
 
@@ -71,7 +68,7 @@ public final class WaterManager extends SectionCache
         return !isNotFull(pos);
     }
 
-    public void addWater(BlockPos pos, int level) {
+    public void addWater(BlockPos pos, int level, Direction flow) {
         final int existingWater = getWaterLevel(pos);
 
         if (existingWater == -1) {
@@ -82,14 +79,23 @@ public final class WaterManager extends SectionCache
 
         if (total > 8) {
             setWater(pos, 8);
-            moveWater(pos.above(), total - 8);
+
+            if (getWaterLevel(pos.relative(flow)) > -1) {
+                moveWater(pos.relative(flow), total - 8, flow);
+            } else if (flow != Direction.UP) {
+                moveWater(pos.above(), total - 8, Direction.UP);
+            }
+
         } else {
             setWater(pos, total);
         }
     }
 
+    public void addWater(BlockPos pos, int level) {
+        addWater(pos, level, Direction.UP);
+    }
 
-    public void moveWater(BlockPos center, int amount) {
+    public void moveWater(BlockPos center, int amount, Direction flow) {
         for (final var dir : Direction.Plane.HORIZONTAL) {
             var rPos = center.relative(dir);
             int rLevel = getWaterLevel(rPos);
@@ -99,21 +105,21 @@ public final class WaterManager extends SectionCache
 
             if (canFlow(center, dir) && amount >= (rLevel + 1)) {
                 amount -= 1;
-                addWater(rPos, 1);
+                addWater(rPos, 1, dir);
             }
         }
 
-        addWater(center, amount);
+        addWater(center, amount, flow);
     }
 
     public void setWater(BlockPos pos, int level) {
-        data.cachedWater.put(pos.asLong(), (byte) level);
-        data.queuedWater.put(pos.asLong(), (byte) level);
+        cachedWater.put(pos.asLong(), (byte) level);
+        queuedWater.put(pos.asLong(), (byte) level);
     }
 
-    private void setWaterLevel(BlockPos pos, int level) {
+    private boolean setWaterLevel(BlockPos pos, int level) {
         if (level < 0 || level > 8)
-            return;
+            return false;
 
         final var prev = getBlockState(pos);
         final var fluid = FluidUtils.getWater(level);
@@ -136,8 +142,10 @@ public final class WaterManager extends SectionCache
         }
 
         if (!fluid.isEmpty()) {
-            data.updateQueue.put(pos.asLong(), fluid);
+            updateQueue.put(pos.asLong(), fluid);
         }
+
+        return true;
     }
 
     private int getWaterLevelOf(BlockPos pos) {
@@ -166,11 +174,11 @@ public final class WaterManager extends SectionCache
     }
 
     public void beforeTick() {
-        assert data.cachedWater.isEmpty();
+        assert cachedWater.isEmpty();
     }
 
     public void afterTick() {
-        data.cachedWater.clear();
+        cachedWater.clear();
         updateNeighbors();
         updateFluids();
         clearCache();
@@ -180,43 +188,45 @@ public final class WaterManager extends SectionCache
         final var state = FluidUtils.getFluidState(this, neighbor);
 
         if (FluidUtils.isFiniteWater(state)) {
-            data.updateQueue.put(neighbor.asLong(), state);
+            updateQueue.put(neighbor.asLong(), state);
         }
     }
 
     private void updateNeighbors() {
-        for (final var entry : data.queuedWater.long2ByteEntrySet()) {
-            var pos = BlockPos.of(entry.getLongKey());
-            setWaterLevel(pos, entry.getByteValue());
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (final var entry : queuedWater.long2ByteEntrySet()) {
+            pos.set(entry.getLongKey());
 
-            update(pos.west());
-            update(pos.east());
-            update(pos.below());
-            update(pos.above());
-            update(pos.north());
-            update(pos.south());
+            if (setWaterLevel(pos, entry.getByteValue())) {
+                update(pos.west());
+                update(pos.east());
+                update(pos.below());
+                update(pos.above());
+                update(pos.north());
+                update(pos.south());
+            }
         }
     }
 
     private void updateFluids() {
-        final Level world = data.world;
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (final var entry : updateQueue.long2ObjectEntrySet()) {
+            final var state = entry.getValue();
 
-        for (final var entry : data.updateQueue.long2ObjectEntrySet()) {
-            var pos = BlockPos.of(entry.getLongKey());
-            var state = entry.getValue();
+            pos.set(entry.getLongKey());
             world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
         }
     }
 
     private void clearCache() {
         releaseSections();
-        data.cachedHeight.clear();
-        data.queuedWater.clear();
-        data.updateQueue.clear();
+        queuedWater.clear();
+        updateQueue.clear();
+        cachedFlowState.clear();
     }
 
     public void unload() {
-        data.cachedWater.clear();
+        cachedWater.clear();
         clearCache();
     }
 }

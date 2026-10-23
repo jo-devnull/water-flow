@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.core.feature;
 
-import github.jodevnull.waterflow.core.water.WaterManager;
-import github.jodevnull.waterflow.core.utils.PathfinderBFS;
+import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -28,8 +28,7 @@ public final class PuddleFeature
     private static WaterManager system;
 
     public static void execute(WaterManager sys, BlockPos center, int level) {
-        system = sys;
-        pos = center;
+        system = sys; pos = center;
 
         if (level == 1 && sys.isFull(pos.below())) {
             int x = pos.getX();
@@ -100,6 +99,7 @@ public final class PuddleFeature
         if (minDistance <= 4) {
             return move(direction);
         }
+
         return false;
     }
 
@@ -114,14 +114,14 @@ public final class PuddleFeature
     }
 
     // its actual test rect but ssssh...
+    private static final BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
     private static void testLine(int x, int z, int toX, int toZ) {
-        BlockPos testPos;
 
         for (int iX = x; iX <= toX; iX++) {
             for (int iZ = z; iZ <= toZ; iZ++) {
                 int relX = iX-xX;
                 int relZ = iZ-zZ;
-                testPos = new BlockPos(iX, pos.getY() - 1, iZ);
+                testPos.set(iX, pos.getY()-1, iZ);
                 int uLevel = system.getWaterLevel(new BlockPos(iX, pos.getY(), iZ));
                 boolean canFlow = system.canFlow(testPos.above(), Direction.DOWN);
 

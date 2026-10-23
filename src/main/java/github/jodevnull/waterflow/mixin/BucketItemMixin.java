@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BucketItem;

@@ -3,14 +3,12 @@ package github.jodevnull.waterflow.mixin.fluid;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.KelpPlantBlock;
-import net.minecraft.world.level.block.TallSeagrassBlock;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.WaterFluid;
@@ -24,9 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Fluid.class)
 public abstract class FluidMixin
 {
-    @Shadow
-    public abstract int getAmount(FluidState pState);
-
     @Inject(method = "isRandomlyTicking", at=@At("HEAD"), cancellable = true)
     private void isRandomlyTicking(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof WaterFluid) {
@@ -34,7 +29,7 @@ public abstract class FluidMixin
         }
     }
 
-    @Inject(method = "randomTick", at=@At("HEAD"))
+    // @Inject(method = "randomTick", at=@At("HEAD"))
     private void onWaterEvaporate(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
         if (!Config.waterEvaporation() && !Config.isEnabled(pLevel) || pLevel.isClientSide()) {
             return;

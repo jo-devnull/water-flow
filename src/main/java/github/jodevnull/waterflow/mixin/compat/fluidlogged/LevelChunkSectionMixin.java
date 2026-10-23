@@ -3,8 +3,6 @@ package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 import com.bawnorton.mixinsquared.TargetHandler;
 import de.leximon.fluidlogged.Fluidlogged;
 import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
-import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;

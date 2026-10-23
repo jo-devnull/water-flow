@@ -2,7 +2,7 @@ package github.jodevnull.waterflow.mixin;
 
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.core.BlockPos;

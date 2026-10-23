@@ -1,8 +1,8 @@
 package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.ext.IFlowHandler;
-import github.jodevnull.waterflow.core.water.WaterSystem;
+import github.jodevnull.waterflow.core.flow.IFlowHandler;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,7 +31,7 @@ public abstract class BlockItemMixin
         final Level level = context.getLevel();
         final BlockPos pos = context.getClickedPos();
         final FluidState fluidState = FluidUtils.getFluidState(level, pos);
-        final int blockHeight = ((IFlowHandler) blockState.getBlock()).wf$height(blockState);
+        final int blockHeight = ((IFlowHandler) blockState.getBlock()).wf_height(blockState);
 
         if (FluidUtils.isNaturalWater(fluidState))
             return;

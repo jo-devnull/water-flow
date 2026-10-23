@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.utils;
+package github.jodevnull.waterflow.utils;
 
 public final class Utils
 {

@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.mixin.ext.flow;
 
-import github.jodevnull.waterflow.core.ext.IFlowHandler;
+import github.jodevnull.waterflow.core.flow.FlowHandler;
+import github.jodevnull.waterflow.core.flow.IFlowHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +19,7 @@ public class SlabBlockMixin implements IFlowHandler
     public static EnumProperty<SlabType> TYPE;
 
     @Override
-    public int wf$height(BlockState state) {
+    public int wf_height(BlockState state) {
         return switch (state.getValue(TYPE)) {
             case TOP    -> 0;
             case BOTTOM -> 5;
@@ -27,24 +28,23 @@ public class SlabBlockMixin implements IFlowHandler
     }
 
     @Override
-    public boolean wf$blockFlowIn(BlockState state, Direction dir) {
-        if (state.getValue(TYPE) == SlabType.BOTTOM) {
-            return dir == Direction.DOWN || dir == Direction.UP;
-        }
+    public byte wf_getFlowIn(BlockState state) {
+        byte result = (byte) 0;
 
-        return false;
-    }
-
-    @Override
-    public boolean wf$blockFlowOut(BlockState state, Direction dir) {
         if (state.getValue(TYPE) == SlabType.DOUBLE) {
-            return true;
+            return FlowHandler.none();
         }
 
         if (state.getValue(TYPE) == SlabType.TOP) {
-            return dir == Direction.DOWN || dir == Direction.UP;
+            // Block the flow with those directions
+            result |= FlowHandler.get(Direction.DOWN);
         }
 
-        return false;
+        return result;
+    }
+
+    @Override
+    public byte wf_getFlowOut(BlockState state) {
+        return FlowHandler.all();
     }
 }

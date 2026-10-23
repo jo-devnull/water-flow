@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.water;
+package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
@@ -21,37 +21,6 @@ import java.util.Optional;
 public final class WaterSystem
 {
     private static final Map<ResourceKey<Level>, WaterManager> SYSTEM = new HashMap<>();
-
-    public static Optional<WaterManager> of(Level world) {
-        if (!world.isClientSide() && Config.isEnabled(world)) {
-            return Optional.of(get((ServerLevel) world));
-        }
-
-        return Optional.empty();
-    }
-
-    public static boolean isLoaded(ServerLevel world) {
-        return SYSTEM.containsKey(world.dimension());
-    }
-
-    public static WaterManager get(ServerLevel world) {
-        return SYSTEM.computeIfAbsent(world.dimension(), k -> new WaterManager(world));
-    }
-
-    public static void onUnload(ServerLevel level) {
-        if (isLoaded(level)) {
-            SYSTEM.get(level.dimension()).unload();
-            SYSTEM.remove(level.dimension());
-        }
-    }
-
-    public static void onUnload() {
-        for (final var entry : SYSTEM.entrySet()) {
-            entry.getValue().unload();
-        }
-
-        SYSTEM.clear();
-    }
 
     public static boolean run(Level level, BlockPos pos) {
         if (FluidUtils.needsWaterSource(level, pos)) {
@@ -100,43 +69,27 @@ public final class WaterSystem
             water.addWater(pos.below(), level);
         }
 
-        else if (FluidUtils.canFlow(water, pos)) {
-            final int height = water.getBlockHeight(pos);
-
-            if (level <= height) {
-                displaceFromHeight(water, pos, level, height);
-            } else {
-                EqualizeFeature.execute(water, pos, level);
-            }
+        else {
+            EqualizeFeature.execute(water, pos, level);
         }
     }
 
-    public static void displaceFromHeight(WaterManager water, BlockPos cPos, int cLevel, int cHeight) {
-        for (final var dir : Direction.Plane.HORIZONTAL) {
-            var rPos = cPos.relative(dir);
-            int rLevel = water.getWaterLevel(rPos);
-            int rHeight = water.getBlockHeight(rPos);
+    public static void spread(WaterManager water, BlockPos pos, int amount, Direction dir) {
+        water.setWater(pos, 0);
 
-            if (rLevel <= -1)
-                continue;
-
-            if (cLevel <= 0)
-                break;
-
-            if ((cHeight + cLevel) > (rLevel + rHeight + 1)) {
-                cLevel -= 1;
-
-                water.setWater(cPos, cLevel);
-                water.setWater(rPos, rLevel+1);
-            }
+        if (water.getWaterLevel(pos.relative(dir)) > -1) {
+            water.addWater(pos.relative(dir), amount, dir);
+        } else {
+            water.addWater(pos.above(), amount, dir);
         }
+    }
+
+    public static void spread(Level level, BlockPos pos, int amount, Direction dir) {
+        of(level).ifPresent(manager -> spread(manager, pos, amount, dir));
     }
 
     public static void spread(Level level, BlockPos pos, int amount) {
-        of(level).ifPresent(manager -> {
-            manager.setWater(pos, 0);
-            manager.addWater(pos.above(), amount);
-        });
+        of(level).ifPresent(manager -> spread(manager, pos, amount, Direction.UP));
     }
 
     public static void waterEvaporationEffect(ServerLevel world, BlockPos pos) {
@@ -150,5 +103,36 @@ public final class WaterSystem
             0.8f + world.random.nextFloat() * 0.2f,
             0.9f + world.random.nextFloat() * 0.2f
         );
+    }
+
+    public static Optional<WaterManager> of(Level world) {
+        if (!world.isClientSide() && Config.isEnabled(world)) {
+            return Optional.of(get((ServerLevel) world));
+        }
+
+        return Optional.empty();
+    }
+
+    public static boolean isLoaded(ServerLevel world) {
+        return SYSTEM.containsKey(world.dimension());
+    }
+
+    public static WaterManager get(ServerLevel world) {
+        return SYSTEM.computeIfAbsent(world.dimension(), k -> new WaterManager(world));
+    }
+
+    public static void onUnload(ServerLevel level) {
+        if (isLoaded(level)) {
+            SYSTEM.get(level.dimension()).unload();
+            SYSTEM.remove(level.dimension());
+        }
+    }
+
+    public static void onUnload() {
+        for (final var entry : SYSTEM.entrySet()) {
+            entry.getValue().unload();
+        }
+
+        SYSTEM.clear();
     }
 }

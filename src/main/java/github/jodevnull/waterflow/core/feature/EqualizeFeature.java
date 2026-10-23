@@ -1,9 +1,7 @@
 package github.jodevnull.waterflow.core.feature;
 
-import github.jodevnull.waterflow.core.water.WaterManager;
-import github.jodevnull.waterflow.core.utils.FloodFill;
+import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 
 import java.util.Arrays;
 
@@ -32,7 +30,7 @@ public final class EqualizeFeature
             }
         }
 
-        FloodFill.flood(data, radius, radius);
+        flood(data, radius, radius);
 
         for (int i = 0; i < diameter - 1; i++) {
             for (int j = 0; j < diameter - 1; j++) {
@@ -47,6 +45,26 @@ public final class EqualizeFeature
             PuddleFeature.execute(system, center, level);
         } else if (range > 1) {
             FlowFeature.execute(system, center, level);
+        }
+    }
+
+    public static void flood(int[][] data, int x, int y) {
+        dfsFill(data, x, y);
+    }
+
+    public static void dfsFill(int[][] data, int i, int j) {
+        if(i >= 0 && j >=0 && i < data.length && j < data[0].length && data[i][j]>= -1 && data[i][j] < 10){
+            if (data[i][j] >= 0) {
+                data[i][j]+=10;
+
+                dfsFill(data, i + 1, j);
+                dfsFill(data, i - 1, j);
+                dfsFill(data, i, j + 1);
+                dfsFill(data, i, j - 1);
+            }
+            else {
+                data[i][j] = -2;
+            }
         }
     }
 }

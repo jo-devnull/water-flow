@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.compat.create;
 
 import com.simibubi.create.content.decoration.copycat.CopycatPanelBlock;
-import github.jodevnull.waterflow.core.ext.IFlowHandler;
+import github.jodevnull.waterflow.core.flow.IFlowHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,29 +10,17 @@ import org.spongepowered.asm.mixin.Mixin;
 public class CopyCatPanelBlockMixin implements IFlowHandler
 {
     @Override
-    public int wf$height(BlockState state) {
+    public int wf_height(BlockState state) {
         return state.getValue(CopycatPanelBlock.FACING) == Direction.DOWN ? 2 : 0;
     }
 
     @Override
-    public boolean wf$blockFlowIn(BlockState state, Direction dir) {
-        final var facing = state.getValue(CopycatPanelBlock.FACING);
-
-        if (dir == Direction.DOWN) {
-            return true;
-        }
-
-        return facing == dir.getOpposite();
+    public byte wf_getFlowIn(BlockState state) {
+        return 0;
     }
 
     @Override
-    public boolean wf$blockFlowOut(BlockState state, Direction dir) {
-        final var facing = state.getValue(CopycatPanelBlock.FACING);
-
-        if (dir == Direction.DOWN) {
-            return true;
-        }
-
-        return facing == dir;
+    public byte wf_getFlowOut(BlockState state) {
+        return 0;
     }
 }

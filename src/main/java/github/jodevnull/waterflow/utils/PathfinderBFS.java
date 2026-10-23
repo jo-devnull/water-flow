@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.utils;
+package github.jodevnull.waterflow.utils;
 
 import java.util.LinkedList;
 import java.util.List;

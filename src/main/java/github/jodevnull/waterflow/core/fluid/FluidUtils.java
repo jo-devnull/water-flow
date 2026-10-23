@@ -1,13 +1,10 @@
 package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.core.water.WaterManager;
+import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.SeagrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -51,12 +48,8 @@ public final class FluidUtils
             return Fluids.EMPTY.defaultFluidState();
         }
 
-        if (state.is(Blocks.WATER)) {
+        if (state.getBlock() instanceof LiquidBlock) {
             return FluidProperty.getFluidState(state);
-        }
-
-        if (state.is(WaterFlow.NEEDS_WATER_SOURCE)) {
-            return state.getFluidState();
         }
 
         return blockGetter.getFluidState(pos);
@@ -76,16 +69,6 @@ public final class FluidUtils
 
     public static boolean isNaturalWater(BlockGetter blockGetter, BlockPos pos) {
         return isNaturalWater(getFluidState(blockGetter, pos));
-    }
-
-    public static boolean canFlow(WaterManager accessor, BlockPos pos) {
-        for (final var dir : LiquidBlock.POSSIBLE_FLOW_DIRECTIONS) {
-            if (accessor.canFlow(pos, dir) && accessor.isNotFull(pos.relative(dir))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public static boolean needsWaterSource(BlockGetter getter, BlockPos pos) {
