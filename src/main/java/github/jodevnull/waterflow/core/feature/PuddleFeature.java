@@ -115,6 +115,8 @@ public final class PuddleFeature
 
     // its actual test rect but ssssh...
     private static final BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
+    private static final BlockPos.MutableBlockPos testPos2 = new BlockPos.MutableBlockPos();
+
     private static void testLine(int x, int z, int toX, int toZ) {
 
         for (int iX = x; iX <= toX; iX++) {
@@ -122,7 +124,9 @@ public final class PuddleFeature
                 int relX = iX-xX;
                 int relZ = iZ-zZ;
                 testPos.set(iX, pos.getY()-1, iZ);
-                int uLevel = system.getWaterLevel(new BlockPos(iX, pos.getY(), iZ));
+                testPos2.set(iX, pos.getY(), iZ);
+
+                int uLevel = system.getWaterLevel(testPos2);
                 boolean canFlow = system.canFlow(testPos.above(), Direction.DOWN);
 
                 if (system.isNotFull(testPos) && canFlow && (uLevel == 0 || uLevel == 1)) {

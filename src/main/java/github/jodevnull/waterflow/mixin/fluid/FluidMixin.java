@@ -29,7 +29,7 @@ public abstract class FluidMixin
         }
     }
 
-    // @Inject(method = "randomTick", at=@At("HEAD"))
+    @Inject(method = "randomTick", at=@At("HEAD"))
     private void onWaterEvaporate(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
         if (!Config.waterEvaporation() && !Config.isEnabled(pLevel) || pLevel.isClientSide()) {
             return;

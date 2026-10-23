@@ -16,21 +16,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = LevelChunkSection.class, priority = 2000)
 public abstract class LevelChunkSectionMixin
 {
-    @Shadow
-    public abstract BlockState getBlockState(int pX, int pY, int pZ);
-
     @TargetHandler(name = "injectGetFluidState", mixin = "de.leximon.fluidlogged.mixin.classes.storing_and_access.LevelChunkSectionMixin")
     @Inject(method = "@MixinSquared:Handler", at=@At("HEAD"), cancellable = true)
     private void patchGetFluidState(int x, int y, int z, CallbackInfoReturnable<FluidState> cir, CallbackInfo ci) {
         final var extension = (LevelChunkSectionExtension) this;
-        final var blockState = getBlockState(x, y, z);
+        final var fluidState = extension.getFluidStates().get((short)(x << 8 | y << 4 | z));
 
-        if (Fluidlogged.isFluidloggable(blockState)) {
-            FluidState fluidState = extension.getFluidStates().get((short)(x << 8 | y << 4 | z));
-
-            if (fluidState != null) {
-                cir.setReturnValue(fluidState); ci.cancel();
-            }
+        if (!fluidState.isEmpty()) {
+            cir.setReturnValue(fluidState); ci.cancel();
         }
     }
 }

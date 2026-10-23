@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 
@@ -39,22 +40,24 @@ public final class WaterManager extends SectionCache
 
     // FIXME performance
     public short getFlowState(BlockPos pos) {
-        return cachedFlowState.computeIfAbsentNullable(pos.asLong(), lpos -> {
-            final var blockState = getBlockState(BlockPos.of(lpos));
-            final var state = FlowHandler.getFlowState(blockState);
-            return state == 0 ? null : state;
-        });
+        return cachedFlowState.computeIfAbsent(pos.asLong(), lpos ->
+            FlowHandler.getFlowState(getBlockState(BlockPos.of(lpos)))
+        );
+    }
+
+    public void cacheFlowState(BlockPos pos, BlockState state) {
+        cachedFlowState.putIfAbsent(pos.asLong(), FlowHandler.getFlowState(state));
     }
 
     // FIXME performance
     public boolean canFlow(BlockPos center, Direction dir) {
-        // if (FlowHandler.checkFlowOut(getFlowState(center), dir)) {
-        //     return false;
-        // }
-        //
-        // if (FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir)) {
-        //     return false;
-        // }
+        if (FlowHandler.checkFlowOut(getFlowState(center), dir)) {
+            return false;
+        }
+
+        if (FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir)) {
+            return false;
+        }
 
         return true;
     }
@@ -150,6 +153,7 @@ public final class WaterManager extends SectionCache
 
     private int getWaterLevelOf(BlockPos pos) {
         final var blockState = getBlockState(pos);
+        cacheFlowState(pos, blockState);
 
         if (blockState.isAir()) {
             return 0;
