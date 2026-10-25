@@ -3,6 +3,10 @@ package github.jodevnull.waterflow.core;
 import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
 import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
 import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -21,6 +25,8 @@ import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashSet;
+import java.util.Set;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault

@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -71,7 +71,8 @@ public final class FluidUtils
         return isNaturalWater(getFluidState(blockGetter, pos));
     }
 
-    public static boolean needsWaterSource(BlockGetter getter, BlockPos pos) {
-        return getter.getBlockState(pos).is(WaterFlow.NEEDS_WATER_SOURCE);
+    public static boolean shouldSkipVanillaBehavior(BlockGetter getter, BlockPos pos) {
+        final BlockState state = getter.getBlockState(pos);
+        return (state.getBlock() instanceof WaterChannelBlock) || state.is(WaterFlow.NEEDS_WATER_SOURCE);
     }
 }

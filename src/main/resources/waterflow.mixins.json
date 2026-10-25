@@ -32,7 +32,9 @@
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin"
   ],
-  "client": [],
+  "client": [
+    "client.FluidRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

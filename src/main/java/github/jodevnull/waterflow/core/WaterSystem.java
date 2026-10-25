@@ -23,7 +23,7 @@ public final class WaterSystem
     private static final Map<ResourceKey<Level>, WaterManager> SYSTEM = new HashMap<>();
 
     public static boolean run(Level level, BlockPos pos) {
-        if (FluidUtils.needsWaterSource(level, pos)) {
+        if (FluidUtils.shouldSkipVanillaBehavior(level, pos)) {
             return true;
         }
 

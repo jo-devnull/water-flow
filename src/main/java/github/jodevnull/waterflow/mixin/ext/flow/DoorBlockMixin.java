@@ -1,17 +1,17 @@
 package github.jodevnull.waterflow.mixin.ext.flow;
 
 import github.jodevnull.waterflow.core.flow.FlowHandler;
-import github.jodevnull.waterflow.core.flow.IFlowHandler;
+import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DoorBlock.class)
-public class DoorBlockMixin implements IFlowHandler
+public class DoorBlockMixin implements IWaterFlowWrapper
 {
     @Override
-    public int wf_height(BlockState state) {
-        return 0;
+    public float wf_fluidOffset(BlockState state) {
+        return 0.0f;
     }
 
     @Override
@@ -36,5 +36,10 @@ public class DoorBlockMixin implements IFlowHandler
         } else {
             return FlowHandler.get(facing.getOpposite());
         }
+    }
+
+    @Override
+    public int wf_getVolume(BlockState state) {
+        return 0;
     }
 }

@@ -1,0 +1,9 @@
+{
+  "block.waterflow.dirt_channel": "Dirt Channel",
+  "item.waterflow.dirt_channel": "Dirt Channel",
+
+  "block.waterflow.stone_channel": "Stone Channel",
+  "item.waterflow.stone_channel": "Stone Channel",
+
+  "ui.waterflow.dirt_channel.desc": "Makes water above flow in the direction its facing"
+}

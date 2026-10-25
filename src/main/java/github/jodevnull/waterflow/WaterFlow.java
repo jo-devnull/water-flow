@@ -26,7 +26,8 @@ public class WaterFlow
         final var modEventBus = context.getModEventBus();
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
-
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModPlayerEvents.register();
         ModServerEvents.register();
     }
