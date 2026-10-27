@@ -1,7 +1,9 @@
 package github.jodevnull.waterflow.core.flow;
 
+import github.jodevnull.waterflow.core.api.IWaterFlow;
 import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class FlowHandler
@@ -47,8 +49,12 @@ public final class FlowHandler
     }
 
     public static short getFlowState(BlockState state) {
-        final byte flowIn = ((IWaterFlowWrapper) state.getBlock()).wf_getFlowIn(state);
-        final byte flowOut = ((IWaterFlowWrapper) state.getBlock()).wf_getFlowOut(state);
+        if (state.isAir() || state.is(Blocks.WATER)) {
+            return pack(all(), all());
+        }
+
+        final byte flowIn = ((IWaterFlow) state.getBlock()).blockFlowIn(state);
+        final byte flowOut = ((IWaterFlow) state.getBlock()).blockFlowOut(state);
         return pack(flowIn, flowOut);
     }
 }

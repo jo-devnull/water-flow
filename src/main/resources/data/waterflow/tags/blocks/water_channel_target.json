@@ -1,0 +1,14 @@
+{
+  "values": [
+    "waterflow:dirt_channel",
+    "minecraft:dirt",
+    "minecraft:grass_block",
+
+    "waterflow:stone_channel",
+    "minecraft:stone",
+
+
+    "minecraft:cobblestone",
+    "minecraft:sand"
+  ]
+}

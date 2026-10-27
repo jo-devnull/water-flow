@@ -1,5 +1,6 @@
 package github.jodevnull.waterflow.core.feature;
 
+import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
@@ -42,7 +43,7 @@ public final class PuddleFeature
             for (int iX = 0; iX < PUDDLE_DIAMETER; iX++) {
                 for (int iZ = 0; iZ < PUDDLE_DIAMETER; iZ++) {
                     BlockPos internalPos = new BlockPos(iX + xX, y, iZ + zZ);
-                    bfsMatrix[iX][iZ] = system.getWaterLevel(internalPos) == 0 ? 9 : -1;
+                    bfsMatrix[iX][iZ] = system.isEmpty(internalPos) ? 9 : -1;
                 }
             }
 
@@ -103,10 +104,10 @@ public final class PuddleFeature
         return false;
     }
 
-    private static boolean move(Direction direction) {
-        if (system.canFlow(pos, direction)) {
+    private static boolean move(Direction dir) {
+        if (system.canFlow(pos, dir)) {
             system.setWater(pos, 0);
-            system.addWater(pos.relative(direction), 1);
+            system.addWater(pos.relative(dir), 1);
             return true;
         }
 
@@ -123,13 +124,14 @@ public final class PuddleFeature
             for (int iZ = z; iZ <= toZ; iZ++) {
                 int relX = iX-xX;
                 int relZ = iZ-zZ;
+
                 testPos.set(iX, pos.getY()-1, iZ);
                 testPos2.set(iX, pos.getY(), iZ);
-
                 int uLevel = system.getWaterLevel(testPos2);
-                boolean canFlow = system.canFlow(testPos.above(), Direction.DOWN);
+                boolean canFlow = system.isNotFull(testPos) && system.canFlow(testPos2, Direction.DOWN);
+                boolean isChannel = WaterChannelBlock.isChannel(system, testPos) && system.isEmpty(testPos2);
 
-                if (system.isNotFull(testPos) && canFlow && (uLevel == 0 || uLevel == 1)) {
+                if ((isChannel || canFlow) && (uLevel == 0 || uLevel == 1)) {
                     holes.add(new PathfinderBFS.Node(relX, relZ, 0));
                 }
             }

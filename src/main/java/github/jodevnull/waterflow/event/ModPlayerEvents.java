@@ -1,23 +1,21 @@
 package github.jodevnull.waterflow.event;
 
 import de.leximon.fluidlogged.Fluidlogged;
-import github.jodevnull.waterflow.core.flow.FlowHandler;
+import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.utils.Utils;
 import github.jodevnull.waterflow.core.WaterSystem;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Locale;
 
 @Mod.EventBusSubscriber
 public class ModPlayerEvents
@@ -25,54 +23,23 @@ public class ModPlayerEvents
     public static void register() {}
 
     @SubscribeEvent
-    public static void onShowDebugInfo(PlayerInteractEvent.RightClickBlock event) {
+    public static void onUsePickaxe(PlayerInteractEvent.RightClickBlock event) {
         final var level = event.getLevel();
         final var player = event.getEntity();
-        final var blockPos = event.getHitVec().getBlockPos();
-        final var hitDir = event.getHitVec().getDirection();
-        final var blockState = level.getBlockState(blockPos);
+        final var blockHit = event.getHitVec();
+        final var hand = event.getHand();
+        final var item = player.getItemInHand(hand);
 
-        if (level.isClientSide()) {
-            return;
-        }
+        if (item.is(ItemTags.PICKAXES)) {
+            final BlockState state = level.getBlockState(blockHit.getBlockPos());
+            final SoundEvent sound = state.getSoundType().getPlaceSound();
 
-        if (player.getItemInHand(event.getHand()).is(Items.BLAZE_ROD)) {
-            final var states = FlowHandler.getFlowState(blockState);
-            final var message = new StringBuilder();
-
-            message.append("# ");
-            for (final var dir : Direction.values()) {
-                message.append(dir.getName().toUpperCase(Locale.ROOT).charAt(0)).append(" ");
+            if (state.is(WaterFlow.WATER_CHANNEL_TARGET)) {
+                if (WaterChannelBlock.handleInteraction(level, player, hand, item, blockHit)) {
+                    player.swing(hand);
+                    level.playSound(null, blockHit.getBlockPos(), sound, SoundSource.BLOCKS);
+                }
             }
-
-            message.append("\n> ");
-            for (final var dir : Direction.values()) {
-                message.append(FlowHandler.checkFlowIn(states, dir) ? 1 : 0).append(" ");
-            }
-
-            message.append("\n< ");
-            for (final var dir : Direction.values()) {
-                message.append(FlowHandler.checkFlowOut(states, dir) ? 1 : 0).append(" ");
-            }
-
-            WaterSystem.of(level).ifPresent(manager -> {
-                final var dir = player.getDirection();
-
-                message
-                    .append("\n")
-                    .append("Can Flow = ")
-                    .append(manager.canFlow(blockPos.relative(hitDir), dir));
-            });
-
-            player.sendSystemMessage(Component.literal(message.toString()));
-        }
-
-        else if (player.getItemInHand(event.getHand()).is(Items.STICK)) {
-            WaterSystem.of(level).ifPresent(manager -> {
-                final var pos = blockPos.relative(hitDir);
-                final int waterLevel = manager.getWaterLevel(pos);
-                manager.setWater(pos, Utils.clamp(waterLevel + 1, 0, 8));
-            });
         }
     }
 

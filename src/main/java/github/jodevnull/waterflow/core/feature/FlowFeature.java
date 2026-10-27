@@ -34,7 +34,7 @@ public final class FlowFeature
             for (int i = 0; i < 4; i++) {
                 internalLevel = flow[i] ? levels[i] : -1;
                 if (internalLevel != -1) {
-                    if ((level >= (internalLevel + 1))) {
+                    if (level >= (internalLevel + 1)) {
                         internalLevel += 1;
                         levels[i] = internalLevel;
                         level -= 1;
@@ -48,9 +48,7 @@ public final class FlowFeature
         }
 
         for (int i = 0; i < 4; i++) {
-            if (flow[i]) {
-                system.setWater(blocks[i], levels[i]);
-            }
+            if (flow[i]) system.setWater(blocks[i], levels[i]);
         }
 
         if (originalLevel != level) {

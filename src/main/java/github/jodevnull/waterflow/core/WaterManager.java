@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.core;
 
 import de.leximon.fluidlogged.Fluidlogged;
+import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -34,6 +35,10 @@ public final class WaterManager extends SectionCache
         queuedWater.defaultReturnValue((byte) -1);
     }
 
+    public boolean isEmpty(BlockPos pos) {
+        return getWaterLevel(pos) == 0;
+    }
+
     public int getWaterLevel(BlockPos pos) {
         return cachedWater.computeIfAbsent(pos.asLong(), this::cacheWaterLevel);
     }
@@ -46,7 +51,11 @@ public final class WaterManager extends SectionCache
     }
 
     public void cacheFlowState(BlockPos pos, BlockState state) {
-        cachedFlowState.putIfAbsent(pos.asLong(), FlowHandler.getFlowState(state));
+        final long key = pos.asLong();
+
+        if (!cachedFlowState.containsKey(key)) {
+            cachedFlowState.put(key, FlowHandler.getFlowState(state));
+        }
     }
 
     // FIXME performance
@@ -55,11 +64,7 @@ public final class WaterManager extends SectionCache
             return false;
         }
 
-        if (FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir)) {
-            return false;
-        }
-
-        return true;
+        return !FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir);
     }
 
     public boolean isNotFull(BlockPos pos) {
@@ -124,12 +129,10 @@ public final class WaterManager extends SectionCache
         if (level < 0 || level > 8)
             return false;
 
-        final var prev = getBlockState(pos);
-        final var fluid = FluidUtils.getWater(level);
+        final BlockState prev = getBlockState(pos);
+        final FluidState fluid = FluidUtils.getWater(level);
 
         if (Fluidlogged.isFluidloggable(prev)) {
-            setFluidState(pos, fluid);
-
             /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
             if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
                 if (level == 8 && !prev.getValue(BlockStateProperties.WATERLOGGED)) {
@@ -138,6 +141,8 @@ public final class WaterManager extends SectionCache
                     setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, false));
                 }
             }
+
+            setFluidState(pos, fluid);
         }
 
         else if (prev.isAir() || prev.is(Blocks.WATER)) {

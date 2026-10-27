@@ -2,6 +2,7 @@ package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.feature.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,12 +44,17 @@ public final class WaterSystem
         }
 
         final int level = water.getWaterLevel(pos);
+        final BlockState below = water.getBlockState(pos.below());
 
         if (level <= 0) {
             return;
         }
 
-        else if (water.getBlockState(pos.below()).is(Blocks.LAVA)) {
+        else if (below.getBlock() instanceof WaterChannelBlock) {
+            WaterChannelBlock.flowWaterAbove(water, below, pos, level);
+        }
+
+        else if (below.is(Blocks.LAVA)) {
             water.setWater(pos, 0);
 
             if (level == 8) {
@@ -59,7 +67,7 @@ public final class WaterSystem
         // if below is naturally generated water, we merge it
         // Only if not a #needs_water_source block (like kelp)
         else if (FluidUtils.isNaturalWater(water, pos.below())) {
-            if (!water.getBlockState(pos.below()).is(WaterFlow.NEEDS_WATER_SOURCE)) {
+            if (!below.is(WaterFlow.NEEDS_WATER_SOURCE)) {
                 water.setWater(pos, 0);
             }
         }
