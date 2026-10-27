@@ -1,8 +1,6 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
-import com.mojang.patchy.BlockedServers;
-import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
-import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
+import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -11,7 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.WaterFluid;
@@ -40,7 +39,7 @@ public abstract class FluidMixin
         }
 
         final var water = WaterSystem.get((ServerLevel) pLevel);
-        final var state = FluidUtils.getFluidState(water, pPos);
+        final var fluid = FluidUtils.getFluidState(water, pPos);
 
         if (pLevel.isRaining()) {
             return;
@@ -51,26 +50,21 @@ public abstract class FluidMixin
         }
 
         if (FluidUtils.isFiniteWater(water, pPos)) {
-            if (water.isFull(pPos)) {
+            if (water.isFull(pPos) || fluid.isEmpty()) {
                 return;
             }
 
-            final int time = FluidProperty.timeof(state);
+            final int time = FluidProperty.timeof(fluid);
 
             if (time == 1) {
-                water.setWater(pPos, state.getAmount() - 1);
+                water.setWater(pPos, fluid.getAmount() - 1);
             } else if (time > 0) {
-                ((LevelExtension) pLevel).setFluid(pPos, state.setValue(TIME, time - 1),
-                    Block.UPDATE_IMMEDIATE | Block.UPDATE_CLIENTS
-                );
+                final BlockState blockState = pLevel.getBlockState(pPos);
 
-                if (pLevel instanceof ServerLevel level) {
-                    ((ServerChunkCacheExtension) level.getChunkSource()).fluidChanged(pPos);
-                    ((LevelExtension) level).sendFluidUpdated(pPos,
-                        Block.UPDATE_IMMEDIATE  |
-                        Block.UPDATE_CLIENTS    |
-                        Block.UPDATE_KNOWN_SHAPE
-                    );
+                if (blockState.is(Blocks.WATER)) {
+                    water.setBlockState(pPos, blockState.setValue(TIME, time - 1));
+                } else if (Compat.Fluidlogged.isFluidloggable(blockState)) {
+                    water.setFluidState(pPos, fluid.setValue(TIME, time - 1));
                 }
             }
         }
