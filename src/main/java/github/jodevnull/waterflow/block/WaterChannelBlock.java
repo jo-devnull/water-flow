@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.content.block;
+package github.jodevnull.waterflow.block;
 
 import github.jodevnull.waterflow.ModBlocks;
 import github.jodevnull.waterflow.core.WaterManager;

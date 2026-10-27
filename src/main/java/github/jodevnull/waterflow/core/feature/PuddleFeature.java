@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feature;
 
-import github.jodevnull.waterflow.content.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;

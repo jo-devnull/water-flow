@@ -2,7 +2,7 @@ package github.jodevnull.waterflow;
 
 import com.mojang.logging.LogUtils;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.content.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
 import github.jodevnull.waterflow.event.ModServerEvents;
 import net.minecraft.core.registries.Registries;

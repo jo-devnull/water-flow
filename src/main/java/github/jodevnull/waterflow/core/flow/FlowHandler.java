@@ -1,7 +1,6 @@
 package github.jodevnull.waterflow.core.flow;
 
 import github.jodevnull.waterflow.core.api.IWaterFlow;
-import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;

@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow;
 
-import github.jodevnull.waterflow.content.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.WaterChannelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.eventbus.api.IEventBus;

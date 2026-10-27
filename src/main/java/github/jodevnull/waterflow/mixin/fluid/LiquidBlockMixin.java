@@ -1,7 +1,5 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;

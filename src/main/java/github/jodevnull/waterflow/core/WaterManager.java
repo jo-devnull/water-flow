@@ -1,7 +1,6 @@
 package github.jodevnull.waterflow.core;
 
 import de.leximon.fluidlogged.Fluidlogged;
-import github.jodevnull.waterflow.content.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;

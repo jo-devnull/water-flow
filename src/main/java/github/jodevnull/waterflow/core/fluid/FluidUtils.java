@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.content.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.WaterChannelBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.LiquidBlock;
