@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin;
+package github.jodevnull.waterflow.mixin.block;
 
 import github.jodevnull.waterflow.compat.Compat;
 import net.minecraft.core.BlockPos;

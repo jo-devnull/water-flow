@@ -32,7 +32,7 @@ public class WaterFlowMixinPlugin implements IMixinConfigPlugin
             return isModLoaded("create");
         }
 
-        else if (mixinClassName.equals("github.jodevnull.waterflow.mixin.IForgeBlockMixin")) {
+        else if (mixinClassName.equals("github.jodevnull.waterflow.mixin.block.IForgeBlockMixin")) {
             return !isModLoaded("fluidlogged");
         }
 

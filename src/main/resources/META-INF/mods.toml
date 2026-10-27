@@ -22,3 +22,24 @@ description = '''${mod_description}'''
     versionRange = "${minecraft_version_range}"
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId = "fluidlogged"
+    mandatory = false
+    versionRange = "2.0.1-beta.2"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId = "create"
+    mandatory = false
+    versionRange = "6.0.8-289"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+    modId = "embeddium"
+    mandatory = false
+    versionRange = "0.3.31+mc1.20.1"
+    ordering = "NONE"
+    side = "CLIENT"

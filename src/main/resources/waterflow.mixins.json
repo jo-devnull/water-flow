@@ -6,8 +6,8 @@
   "refmap": "waterflow.refmap.json",
   "plugin": "github.jodevnull.waterflow.mixin.WaterFlowMixinPlugin",
   "mixins": [
-    "IForgeBlockMixin",
     "block.DoublePlantBlockMixin",
+    "block.IForgeBlockMixin",
     "block.PistonBaseBlockMixin",
     "block.SpongeBlockMixin",
     "block.flow_impl.BlockMixin",
@@ -30,6 +30,7 @@
     "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
+    "item.BlockItemMixin",
     "world.BoatMixin",
     "world.BucketItemMixin",
     "world.FallingBlockEntityMixin",
