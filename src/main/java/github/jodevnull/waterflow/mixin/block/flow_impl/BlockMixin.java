@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.ext.flow;
+package github.jodevnull.waterflow.mixin.block.flow_impl;
 
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
@@ -22,10 +22,5 @@ public class BlockMixin implements IWaterFlowWrapper
     @Override
     public byte wf_getFlowOut(BlockState state) {
         return FlowHandler.all();
-    }
-
-    @Override
-    public int wf_getVolume(BlockState state) {
-        return 0;
     }
 }

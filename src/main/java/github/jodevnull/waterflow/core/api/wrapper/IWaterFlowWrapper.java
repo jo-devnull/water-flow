@@ -11,12 +11,6 @@ public interface IWaterFlowWrapper extends IWaterFlow
     float wf_fluidOffset(BlockState state);
     byte wf_getFlowIn(BlockState state);
     byte wf_getFlowOut(BlockState state);
-    int wf_getVolume(BlockState state);
-
-    @Override
-    default int getVolume(BlockState state) {
-        return wf_getVolume(state);
-    }
 
     @Override
     default float fluidOffset(BlockState state) {

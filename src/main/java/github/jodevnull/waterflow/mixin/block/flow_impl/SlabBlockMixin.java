@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.ext.flow;
+package github.jodevnull.waterflow.mixin.block.flow_impl;
 
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
@@ -23,7 +23,7 @@ public class SlabBlockMixin implements IWaterFlowWrapper
         return switch (state.getValue(TYPE)) {
             case TOP    -> .00f;
             case BOTTOM -> .55f;
-            case DOUBLE -> .88f;
+            case DOUBLE -> .99f;
         };
     }
 
@@ -46,10 +46,5 @@ public class SlabBlockMixin implements IWaterFlowWrapper
     @Override
     public byte wf_getFlowOut(BlockState state) {
         return FlowHandler.all();
-    }
-
-    @Override
-    public int wf_getVolume(BlockState state) {
-        return 4;
     }
 }

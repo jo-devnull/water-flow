@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.ext.flow;
+package github.jodevnull.waterflow.mixin.block.flow_impl;
 
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
@@ -11,13 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 public class TrapDoorBlockMixin implements IWaterFlowWrapper
 {
     @Override
-    public int wf_getVolume(BlockState state) {
-        return state.getValue(TrapDoorBlock.OPEN) ? 0 : 2;
-    }
-
-    @Override
     public float wf_fluidOffset(BlockState state) {
-        return wf_getVolume(state) / 9.0f;
+        return state.getValue(TrapDoorBlock.OPEN) ? 0 : 0.2222f;
     }
 
     @Override

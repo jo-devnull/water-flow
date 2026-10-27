@@ -2,7 +2,6 @@ package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 
 import github.jodevnull.waterflow.core.api.IWaterFlow;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
 import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
@@ -32,14 +31,14 @@ public abstract class BlockItemMixin
         final Level level = context.getLevel();
         final BlockPos pos = context.getClickedPos();
         final FluidState fluidState = FluidUtils.getFluidState(level, pos);
-        final float blockVolume = ((IWaterFlow) blockState.getBlock()).getVolume(blockState);
+        final float offset = IWaterFlow.getFluidOffset(blockState);
 
         if (FluidUtils.isNaturalWater(fluidState))
             return;
 
         if (placeBlock(context, blockState)) {
             if (!fluidState.isEmpty()) {
-                if (Fluidlogged.isFluidloggable(blockState) && blockVolume == 0) {
+                if (Fluidlogged.isFluidloggable(blockState) && offset == 0) {
                     ((LevelExtension) level).setFluid(pos, fluidState, 131);
                 } else if (!level.isClientSide()) {
                     if (!blockState.is(Blocks.SPONGE)) {
