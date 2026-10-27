@@ -1,8 +1,8 @@
 package github.jodevnull.waterflow.event;
 
-import de.leximon.fluidlogged.Fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.particles.ParticleTypes;
@@ -49,7 +49,7 @@ public class ModPlayerEvents
         final var blockPos = event.getHitVec().getBlockPos();
 
         if (player.getItemInHand(event.getHand()).is(ItemTags.HOES)) {
-            final var pos = Fluidlogged.isFluidloggable(level.getBlockState(blockPos))
+            final var pos = Compat.Fluidlogged.isFluidloggable(level.getBlockState(blockPos))
                 ? blockPos : blockPos.relative(event.getHitVec().getDirection());
 
             final var dir = player.getDirection();

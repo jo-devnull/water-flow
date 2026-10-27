@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin;
+package github.jodevnull.waterflow.mixin.world;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;

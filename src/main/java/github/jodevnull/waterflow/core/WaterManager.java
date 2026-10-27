@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core;
 
-import de.leximon.fluidlogged.Fluidlogged;
+import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -59,11 +59,7 @@ public final class WaterManager extends SectionCache
 
     // FIXME performance
     public boolean canFlow(BlockPos center, Direction dir) {
-        if (FlowHandler.checkFlowOut(getFlowState(center), dir)) {
-            return false;
-        }
-
-        return !FlowHandler.checkFlowIn(getFlowState(center.relative(dir)), dir);
+        return Compat.Fluidlogged.canFlow(this, center, dir);
     }
 
     public boolean isNotFull(BlockPos pos) {
@@ -131,7 +127,7 @@ public final class WaterManager extends SectionCache
         final BlockState prev = getBlockState(pos);
         final FluidState fluid = FluidUtils.getWater(level);
 
-        if (Fluidlogged.isFluidloggable(prev)) {
+        if (Compat.Fluidlogged.isFluidloggable(prev)) {
             /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
             if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
                 if (level == 8 && !prev.getValue(BlockStateProperties.WATERLOGGED)) {
@@ -157,13 +153,16 @@ public final class WaterManager extends SectionCache
 
     private int getWaterLevelOf(BlockPos pos) {
         final var blockState = getBlockState(pos);
-        cacheFlowState(pos, blockState);
+
+        if (Compat.Fluidlogged.isLoaded()) {
+            cacheFlowState(pos, blockState);
+        }
 
         if (blockState.isAir()) {
             return 0;
         }
 
-        else if (Fluidlogged.isFluidloggable(blockState)) {
+        else if (Compat.Fluidlogged.isFluidloggable(blockState)) {
             final var fluidState = FluidUtils.getFluidState(this, pos);
             return fluidState.isEmpty() ? 0 : FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
         }

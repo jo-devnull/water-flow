@@ -2,6 +2,7 @@ package github.jodevnull.waterflow.core.fluid;
 
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
-import static github.jodevnull.waterflow.core.fluid.FluidProperty.MAX_TIME;
 import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
 public final class FluidUtils
@@ -33,9 +33,9 @@ public final class FluidUtils
 
     public static FluidState getWater(int level) {
         if (level == 8) {
-            return Fluids.WATER.getSource(false).setValue(TIME, MAX_TIME);
+            return Fluids.WATER.getSource(false).setValue(TIME, Config.getWaterEvapTime());
         } else if (level > 0) {
-            return Fluids.WATER.getFlowing(level, false).setValue(TIME, MAX_TIME);
+            return Fluids.WATER.getFlowing(level, false).setValue(TIME, Config.getWaterEvapTime());
         }
 
         return Fluids.EMPTY.defaultFluidState();

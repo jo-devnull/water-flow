@@ -1,6 +1,7 @@
-package github.jodevnull.waterflow.mixin;
+package github.jodevnull.waterflow.mixin.world;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterManager;
@@ -53,14 +54,14 @@ public abstract class ServerLevelMixin extends Level
     @Unique
     private int m_tickCounter = 0;
 
-    @Inject(method = "tickChunk", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;handlePrecipitation(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/biome/Biome$Precipitation;)V"))
-    private void ifc$spawnRainWater(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local(name="blockpos1") BlockPos blockpos) {
-        // if (!MercuryConfig.rainFlooding())
-        //     return;
+    @Inject(method = "tickChunk", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;handlePrecipitation(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/biome/Biome$Precipitation;)V"))
+    private void doRainFlooding(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local(name="blockpos1") BlockPos blockpos) {
+        if (!Config.rainFlooding())
+            return;
 
         m_tickCounter++;
 
-        if (m_tickCounter > 10 /*MercuryConfig.rainFloodingInterval()*/)
+        if (m_tickCounter > Config.rainFloodingInterval())
             m_tickCounter = 0;
         else return;
 
@@ -80,7 +81,7 @@ public abstract class ServerLevelMixin extends Level
             world.setBlockAndUpdate(blockpos, FluidUtils
                 .getWater(2)
                 .createLegacyBlock()
-                .setValue(FluidProperty.TIME, FluidProperty.MAX_TIME)
+                .setValue(FluidProperty.TIME, Config.getWaterEvapTime())
             );
         }
     }

@@ -4,14 +4,18 @@
   "package": "github.jodevnull.waterflow.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "waterflow.refmap.json",
+  "plugin": "github.jodevnull.waterflow.mixin.WaterFlowMixinPlugin",
   "mixins": [
-    "BoatMixin",
-    "BucketItemMixin",
-    "FallingBlockEntityMixin",
-    "ServerLevelMixin",
+    "IForgeBlockMixin",
     "block.DoublePlantBlockMixin",
     "block.PistonBaseBlockMixin",
     "block.SpongeBlockMixin",
+    "block.flow_impl.BlockMixin",
+    "block.flow_impl.DoorBlockMixin",
+    "block.flow_impl.PistonHeadBlockMixin",
+    "block.flow_impl.SlabBlockMixin",
+    "block.flow_impl.StairBlockMixin",
+    "block.flow_impl.TrapDoorBlockMixin",
     "compat.create.CopyCatPanelBlockMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
@@ -21,19 +25,18 @@
     "compat.fluidlogged.FluidloggedMixin",
     "compat.fluidlogged.InternalMixin",
     "compat.fluidlogged.LevelChunkSectionMixin",
-    "block.flow_impl.BlockMixin",
-    "block.flow_impl.DoorBlockMixin",
-    "block.flow_impl.PistonHeadBlockMixin",
-    "block.flow_impl.SlabBlockMixin",
-    "block.flow_impl.StairBlockMixin",
-    "block.flow_impl.TrapDoorBlockMixin",
+    "compat.fluidlogged.ServerLevelMixin",
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
     "fluid.LiquidBlockMixin",
-    "fluid.WaterFluidMixin"
+    "fluid.WaterFluidMixin",
+    "world.BoatMixin",
+    "world.BucketItemMixin",
+    "world.FallingBlockEntityMixin",
+    "world.ServerLevelMixin"
   ],
   "client": [
-    "client.FluidRendererMixin"
+    "compat.embeddium.FluidRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

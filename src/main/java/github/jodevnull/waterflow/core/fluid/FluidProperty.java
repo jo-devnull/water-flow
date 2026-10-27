@@ -8,7 +8,7 @@ import net.minecraft.world.level.material.FluidState;
 
 public final class FluidProperty
 {
-    public static final int MAX_TIME = 4;
+    public static final int MAX_TIME = 15;
     public static final IntegerProperty TIME = IntegerProperty.create("time", 0, MAX_TIME);
 
     public static int timeof(FluidState state) {

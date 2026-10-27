@@ -3,7 +3,7 @@ package github.jodevnull.waterflow.core;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
-import github.jodevnull.waterflow.core.feature.EqualizeFeature;
+import github.jodevnull.waterflow.core.feat.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

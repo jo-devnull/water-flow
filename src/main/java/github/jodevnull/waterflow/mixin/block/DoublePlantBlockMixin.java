@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.mixin.block;
 
-import de.leximon.fluidlogged.Fluidlogged;
+import github.jodevnull.waterflow.compat.Compat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoublePlantBlock;
@@ -14,6 +14,6 @@ public class DoublePlantBlockMixin
 {
     @Redirect(method = "preventCreativeDropFromBottomPart", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
     private static boolean onLevelSetWaterBlock(Level instance, BlockPos pPos, BlockState pNewState, int pFlags) {
-        return instance.setBlock(pPos, Fluidlogged.Internal.handleBlockRemoval(instance, pPos, pFlags, 512), pFlags);
+        return instance.setBlock(pPos, Compat.Fluidlogged.handleBlockRemoval(instance, pPos, pFlags, 512), pFlags);
     }
 }

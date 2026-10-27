@@ -1,5 +1,8 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
+import com.mojang.patchy.BlockedServers;
+import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
+import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -17,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
 @Mixin(Fluid.class)
 public abstract class FluidMixin
@@ -55,9 +60,18 @@ public abstract class FluidMixin
             if (time == 1) {
                 water.setWater(pPos, state.getAmount() - 1);
             } else if (time > 0) {
-                pLevel.setBlock(pPos, state.createLegacyBlock().setValue(FluidProperty.TIME, time - 1),
+                ((LevelExtension) pLevel).setFluid(pPos, state.setValue(TIME, time - 1),
                     Block.UPDATE_IMMEDIATE | Block.UPDATE_CLIENTS
                 );
+
+                if (pLevel instanceof ServerLevel level) {
+                    ((ServerChunkCacheExtension) level.getChunkSource()).fluidChanged(pPos);
+                    ((LevelExtension) level).sendFluidUpdated(pPos,
+                        Block.UPDATE_IMMEDIATE  |
+                        Block.UPDATE_CLIENTS    |
+                        Block.UPDATE_KNOWN_SHAPE
+                    );
+                }
             }
         }
     }

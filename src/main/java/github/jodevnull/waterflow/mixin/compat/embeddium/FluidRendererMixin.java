@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.client;
+package github.jodevnull.waterflow.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;

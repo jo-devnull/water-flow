@@ -1,8 +1,6 @@
 package github.jodevnull.waterflow.core;
 
-import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
-import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
-import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
+import github.jodevnull.waterflow.compat.Compat;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -77,7 +75,7 @@ public abstract class SectionCache implements BlockGetter
         if (pos.getY() < getMinBuildHeight())
             return Fluids.EMPTY.defaultFluidState();
 
-        return ((LevelChunkSectionExtension) getSection(pos)).getFluidStateExact(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
+        return Compat.Fluidlogged.getFluidState(getSection(pos), pos);
     }
 
     public void setBlockState(BlockPos pos, BlockState newState) {
@@ -95,17 +93,11 @@ public abstract class SectionCache implements BlockGetter
     }
 
     public void setFluidState(BlockPos pos, FluidState newState) {
-        final var prev = ((LevelChunkSectionExtension) getSection(pos))
-            .setFluidState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, newState);
-
-        if (world instanceof ServerLevel level && prev != newState) {
-            ((ServerChunkCacheExtension) level.getChunkSource()).fluidChanged(pos);
-            ((LevelExtension) level).sendFluidUpdated(pos,
-                Block.UPDATE_IMMEDIATE  |
-                Block.UPDATE_CLIENTS    |
-                Block.UPDATE_KNOWN_SHAPE
-            );
-        }
+        Compat.Fluidlogged.setFluidState(world, getSection(pos), pos, newState,
+            Block.UPDATE_IMMEDIATE  |
+            Block.UPDATE_CLIENTS    |
+            Block.UPDATE_KNOWN_SHAPE
+        );
     }
 
     public void releaseSections() {

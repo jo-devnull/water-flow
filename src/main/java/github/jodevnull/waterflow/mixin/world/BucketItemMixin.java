@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin;
+package github.jodevnull.waterflow.mixin.world;
 
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterSystem;
@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static github.jodevnull.waterflow.core.fluid.FluidProperty.MAX_TIME;
 import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
 @Mixin(BucketItem.class)
@@ -33,6 +32,6 @@ public class BucketItemMixin
             }
         }
 
-        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 1 : MAX_TIME), pFlags);
+        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 1 : Config.getWaterEvapTime()), pFlags);
     }
 }

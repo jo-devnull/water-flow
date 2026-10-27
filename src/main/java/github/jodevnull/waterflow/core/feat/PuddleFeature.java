@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.core.feature;
+package github.jodevnull.waterflow.core.feat;
 
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.WaterManager;

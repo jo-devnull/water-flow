@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow;
 
 import com.mojang.logging.LogUtils;
+import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
@@ -29,6 +30,7 @@ public class WaterFlow
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
 
+        Compat.init();
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModPlayerEvents.register();

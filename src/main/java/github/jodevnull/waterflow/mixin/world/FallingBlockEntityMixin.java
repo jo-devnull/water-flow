@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin;
+package github.jodevnull.waterflow.mixin.world;
 
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
