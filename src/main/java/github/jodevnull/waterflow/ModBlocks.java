@@ -12,8 +12,10 @@ public final class ModBlocks
 {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, WaterFlow.MODID);
 
-    public static final RegistryObject<Block> DIRT_CHANNEL = channelBlock("dirt_channel", Blocks.DIRT);
-    public static final RegistryObject<Block> STONE_CHANNEL = channelBlock("stone_channel", Blocks.STONE);
+    public static final RegistryObject<Block> DIRT_CHANNEL     = channelBlock("dirt_channel", Blocks.DIRT);
+    public static final RegistryObject<Block> STONE_CHANNEL    = channelBlock("stone_channel", Blocks.STONE);
+    public static final RegistryObject<Block> SAND_CHANNEL     = channelBlock("sand_channel", Blocks.SAND);
+    public static final RegistryObject<Block> ANDESITE_CHANNEL = channelBlock("andesite_channel", Blocks.ANDESITE);
 
     private static RegistryObject<Block> channelBlock(String name, Block parent) {
         return BLOCKS.register(name, () -> new WaterChannelBlock(parent));

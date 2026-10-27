@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -45,11 +46,9 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
 {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
-    private final Block parent;
 
     public WaterChannelBlock(Block parent) {
-        super(BlockBehaviour.Properties.copy(parent).noOcclusion().lootFrom(() -> parent));
-        this.parent = parent;
+        super(BlockBehaviour.Properties.copy(parent).lootFrom(() -> parent));
         this.registerDefaultState(this.getStateDefinition().any()
             .setValue(FACING, Direction.NORTH)
         );
@@ -73,40 +72,15 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
         return (state.getBlock() instanceof WaterChannelBlock);// && state.getValue(TIME) == 0;
     }
 
+    //  TODO: reimplement this
     @Override
-    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-        if (!canSurvive(pState, pLevel, pPos)) {
-            turnToParent((null), pState, pLevel, pPos);
-        }
+    public boolean isRandomlyTicking(BlockState pState) {
+        return true;
     }
 
-    //  TODO: reimplement this
-    // @Override
-    // public boolean isRandomlyTicking(BlockState pState) {
-    //     return true;
-    // }
-
-    // @Override
-    // public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-    //     WaterSystem.of(pLevel).ifPresent(manager -> {
-    //         final var dir = pState.getValue(FACING);
-    //         final int level = manager.getWaterLevel(pPos.above());
-    //         final int nextLevel = manager.getWaterLevel(pPos.above().relative(dir));
-    //
-    //         if (level > 0 && nextLevel >= 0 && nextLevel < 8 && (level >= nextLevel)) {
-    //             manager.setWater(pPos.above(), level - 1);
-    //             manager.setWater(pPos.above().relative(dir), nextLevel + 1);
-    //         }
-    //     });
-    // }
-
     @Override
-    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
-        if (!pState.canSurvive(pLevel, pCurrentPos) || pFacing == Direction.UP) {
-            pLevel.scheduleTick(pCurrentPos, this, 1);
-        }
+    public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
 
-        return super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
     }
 
     @Override
@@ -134,21 +108,9 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
         return this.defaultBlockState().setValue(FACING, facing);
     }
 
-    private void turnToParent(@Nullable Entity pEntity, BlockState pState, Level pLevel, BlockPos pPos) {
-        BlockState blockstate = pushEntitiesUp(pState, parent.defaultBlockState(), pLevel, pPos);
-        pLevel.setBlockAndUpdate(pPos, blockstate);
-        pLevel.gameEvent(GameEvent.BLOCK_CHANGE, pPos, GameEvent.Context.of(pEntity, blockstate));
-    }
-
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
-    }
-
-    @Override
-    public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        final var blockState = pLevel.getBlockState(pPos.above());
-        return blockState.isAir() || !blockState.isSolid();
     }
 
     public static boolean handleInteraction(Level level, Player player, InteractionHand hand, ItemStack itemStack, BlockHitResult hit) {
@@ -178,22 +140,25 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
 
         public static void init() {
             // dirt
-            add(ModBlocks.DIRT_CHANNEL.get(),
+            add(ModBlocks.DIRT_CHANNEL,
                 Blocks.DIRT,
                 Blocks.GRASS_BLOCK
             );
 
             // stone
-            add(ModBlocks.STONE_CHANNEL.get(), Blocks.STONE);
+            add(ModBlocks.STONE_CHANNEL, Blocks.STONE);
+            add(ModBlocks.ANDESITE_CHANNEL, Blocks.ANDESITE);
 
+            add(ModBlocks.SAND_CHANNEL, Blocks.SAND);
             // TODO: implement other variants
         }
 
-        private static void add(Block channel, Block... inputs) {
-            map.put(channel, channel);
+        private static void add(Supplier<Block> channel, Block... inputs) {
+            final Block output = channel.get();
+            map.put(output, output);
 
             for (final Block block : inputs) {
-                map.put(block, channel);
+                map.put(block, output);
             }
         }
 
