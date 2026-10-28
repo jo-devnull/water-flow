@@ -3,6 +3,7 @@ package github.jodevnull.waterflow.event;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
+import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
@@ -47,7 +48,7 @@ public class ModServerEvents
 
             if (level instanceof ServerLevel world) {
                 if (fluid.is(FluidTags.LAVA)) {
-                    WaterSystem.waterEvaporationEffect(world, rPos);
+                    WaterEffects.fizz(world, rPos);
                     WaterSystem.of((Level) level).ifPresent(manager -> manager.setWater(rPos, 0));
                 }
 

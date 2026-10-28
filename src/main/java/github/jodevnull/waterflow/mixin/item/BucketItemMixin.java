@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.world;
+package github.jodevnull.waterflow.mixin.item;
 
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterSystem;
@@ -32,6 +32,6 @@ public class BucketItemMixin
             }
         }
 
-        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 1 : Config.getWaterEvapTime()), pFlags);
+        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 8 : Config.getWaterEvapTime()), pFlags);
     }
 }
