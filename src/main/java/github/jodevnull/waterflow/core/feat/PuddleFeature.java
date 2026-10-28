@@ -2,9 +2,14 @@ package github.jodevnull.waterflow.core.feat;
 
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.fluid.FluidProperty;
+import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +124,6 @@ public final class PuddleFeature
     private static final BlockPos.MutableBlockPos testPos2 = new BlockPos.MutableBlockPos();
 
     private static void testLine(int x, int z, int toX, int toZ) {
-
         for (int iX = x; iX <= toX; iX++) {
             for (int iZ = z; iZ <= toZ; iZ++) {
                 int relX = iX-xX;
@@ -128,13 +132,23 @@ public final class PuddleFeature
                 testPos.set(iX, pos.getY()-1, iZ);
                 testPos2.set(iX, pos.getY(), iZ);
                 int uLevel = system.getWaterLevel(testPos2);
-                boolean canFlow = system.isNotFull(testPos) && system.canFlow(testPos2, Direction.DOWN);
-                boolean isChannel = WaterChannelBlock.isChannel(system, testPos) && system.isEmpty(testPos2);
 
-                if ((isChannel || canFlow) && (uLevel == 0 || uLevel == 1)) {
+                if (isHole(testPos, testPos2) && (uLevel == 0 || uLevel == 1)) {
                     holes.add(new PathfinderBFS.Node(relX, relZ, 0));
                 }
             }
         }
+    }
+
+    private static boolean isHole(BlockPos pos, BlockPos above) {
+        if (system.isNotFull(pos) && system.canFlow(above, Direction.DOWN)) {
+            return true;
+        }
+
+        if (WaterChannelBlock.isChannel(system, pos) && system.isEmpty(above)) {
+            return true;
+        }
+
+        return FluidUtils.isNaturalWater(system, pos);
     }
 }

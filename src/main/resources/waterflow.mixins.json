@@ -28,11 +28,12 @@
     "compat.fluidlogged.ServerLevelMixin",
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
+    "fluid.LavaFluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
     "item.BlockItemMixin",
     "world.BoatMixin",
-    "world.BucketItemMixin",
+    "item.BucketItemMixin",
     "world.FallingBlockEntityMixin",
     "world.ServerLevelMixin"
   ],
