@@ -1,11 +1,8 @@
 package github.jodevnull.waterflow.block;
 
-import github.jodevnull.waterflow.ModBlocks;
-import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
@@ -23,86 +20,40 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.TierSortingRegistry;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class WaterChannelBlock extends HorizontalDirectionalBlock
+public class WaterChannelBlock extends HorizontalDirectionalBlock implements IWaterChannel
 {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
 
     public WaterChannelBlock(Block parent) {
-        super(BlockBehaviour.Properties.copy(parent).lootFrom(() -> parent));
+        super(BlockBehaviour.Properties.copy(parent));
         this.registerDefaultState(this.getStateDefinition().any()
             .setValue(FACING, Direction.NORTH)
         );
     }
 
-    public static void flowWaterAbove(WaterManager manager, BlockState state, BlockPos pos, int level) {
-        final var dir = state.getValue(FACING);
-        final int nextLevel = manager.getWaterLevel(pos.relative(dir));
+    public static boolean handleInteraction(Level level, Player player, ItemStack itemStack, BlockHitResult hit) {
+        final var blockState = level.getBlockState(hit.getBlockPos());
 
-        if (level <= 0)
-            return;
+        if (itemStack.getItem() instanceof PickaxeItem item) {
+            final Direction dir = blockState.getValue(FACING);
 
-        final BlockState nextState = manager.getBlockState(pos.relative(dir).below());
+            if (TierSortingRegistry.isCorrectTierForDrops(item.getTier(), blockState)) {
+                final BlockState rotated = blockState.setValue(FACING, player.isShiftKeyDown()
+                    ? player.getDirection()
+                    : dir.getClockWise()
+                );
 
-        if (nextState.getBlock() instanceof WaterChannelBlock) {
-            if (nextState.getValue(FACING) == dir.getOpposite()) {
-                return;
+                return level.setBlockAndUpdate(hit.getBlockPos(), rotated);
             }
-        }
-
-        if (level > 1 && level >= (nextLevel + 1) && (nextLevel >= 0 && nextLevel < 8)) {
-            manager.setWater(pos, level - 1);
-            manager.setWater(pos.relative(dir), nextLevel + 1);
-        }
-
-        else if (level == 1 && nextLevel == 0 && searchDownHillPath(manager, state, pos)) {
-            manager.setWater(pos, 0);
-            manager.setWater(pos.relative(dir), 1);
-        }
-    }
-
-    public static boolean searchDownHillPath(WaterManager manager, BlockState state, BlockPos pos) {
-        final BlockPos.MutableBlockPos above = pos.mutable();
-        final BlockPos.MutableBlockPos below = pos.mutable().move(Direction.DOWN);
-
-        int steps = 0;
-        Direction dir = state.getValue(FACING);
-
-        while (steps < 5) {
-            above.move(dir);
-            below.move(dir);
-            state = manager.getBlockState(below);
-
-            if (manager.canFlow(above, dir)) {
-                if (manager.isNotFull(below)) {
-                    return true;
-                } else if (state.getBlock() instanceof WaterChannelBlock) {
-                    dir = state.getValue(FACING);
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-
-            steps++;
         }
 
         return false;
-    }
-
-    public static boolean isChannel(BlockGetter getter, BlockPos pos) {
-        final BlockState state = getter.getBlockState(pos);
-        return (state.getBlock() instanceof WaterChannelBlock);// && state.getValue(TIME) == 0;
     }
 
     @Override
@@ -133,60 +84,5 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
-    }
-
-    public static boolean handleInteraction(Level level, Player player, InteractionHand hand, ItemStack itemStack, BlockHitResult hit) {
-        final var blockState = level.getBlockState(hit.getBlockPos());
-
-        if (hit.getDirection() != Direction.UP) {
-            return false;
-        }
-
-        if (itemStack.getItem() instanceof PickaxeItem item) {
-            final var output = (WaterChannelBlock) BlockMap.get(blockState.getBlock());
-
-            if (output != null) {
-                if (TierSortingRegistry.isCorrectTierForDrops(item.getTier(), blockState)) {
-                    final BlockPlaceContext context = new BlockPlaceContext(player, hand, itemStack, hit);
-                    level.setBlockAndUpdate(hit.getBlockPos(), output.getStateForPlacement(context));
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public static final class BlockMap {
-        private static final Map<Block, Block> map = new HashMap<>();
-
-        public static void init() {
-            // dirt
-            add(ModBlocks.DIRT_CHANNEL,
-                Blocks.DIRT,
-                Blocks.GRASS_BLOCK
-            );
-
-            // stone
-            add(ModBlocks.STONE_CHANNEL, Blocks.STONE);
-            add(ModBlocks.ANDESITE_CHANNEL, Blocks.ANDESITE);
-
-            add(ModBlocks.SAND_CHANNEL, Blocks.SAND);
-            // TODO: implement other variants
-        }
-
-        private static void add(Supplier<Block> channel, Block... inputs) {
-            final Block output = channel.get();
-            map.put(output, output);
-
-            for (final Block block : inputs) {
-                map.put(block, output);
-            }
-        }
-
-        @Nullable
-        public static Block get(Block block) {
-            return map.get(block);
-        }
     }
 }

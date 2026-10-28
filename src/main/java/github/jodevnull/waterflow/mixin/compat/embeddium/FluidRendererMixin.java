@@ -3,7 +3,7 @@ package github.jodevnull.waterflow.mixin.compat.embeddium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.core.api.IWaterFlow;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.FluidRenderer;
@@ -30,7 +30,7 @@ public class FluidRendererMixin
 
     @Redirect(method = "isFluidOccluded", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BlockAndTintGetter;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"))
     private FluidState checkChannelOcclusion(BlockAndTintGetter instance, BlockPos pos) {
-        if (WaterChannelBlock.isChannel(instance, pos)) {
+        if (IWaterChannel.isChannel(instance, pos)) {
             return instance.getFluidState(pos.above());
         }
 
@@ -43,7 +43,7 @@ public class FluidRendererMixin
 
         if (this.wf_offset < 0f) {
             this.wf_offset = offset;
-            this.wf_aboveChannel = WaterChannelBlock.isChannel(world, blockPos.below());
+            this.wf_aboveChannel = IWaterChannel.isChannel(world, blockPos.below());
             return height + offset;
         }
 
@@ -59,7 +59,7 @@ public class FluidRendererMixin
     @ModifyExpressionValue(method = "writeQuad", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/model/quad/ModelQuadView;getY(I)F"))
     private float setChannelOffset(float y) {
         if (this.wf_aboveChannel && y <= 0.001f) {
-            return y - 0.111f;
+            return y - 0.08888f;
         }
 
         return y;

@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public final class ModBlocks
 {
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, WaterFlow.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, WaterFlow.MODID);
 
     public static final RegistryObject<Block> DIRT_CHANNEL     = channelBlock("dirt_channel", Blocks.DIRT);
     public static final RegistryObject<Block> STONE_CHANNEL    = channelBlock("stone_channel", Blocks.STONE);

@@ -1,9 +1,18 @@
 {
+  "itemGroup.waterflow.main": "Water Flow",
+
   "block.waterflow.dirt_channel": "Dirt Channel",
   "item.waterflow.dirt_channel": "Dirt Channel",
 
   "block.waterflow.stone_channel": "Stone Channel",
   "item.waterflow.stone_channel": "Stone Channel",
 
-  "ui.waterflow.dirt_channel.desc": "Makes water above flow in the direction its facing"
+  "block.waterflow.sand_channel": "Sand Channel",
+  "item.waterflow.sand_channel": "Sand Channel",
+
+  "block.waterflow.andesite_channel": "Andesite Channel",
+  "item.waterflow.andesite_channel": "Andesite Channel",
+
+  "block.waterflow.copycat_channel": "Copycat Channel",
+  "item.waterflow.copycat_channel": "Copycat Channel"
 }

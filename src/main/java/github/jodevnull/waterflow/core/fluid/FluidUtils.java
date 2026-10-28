@@ -73,6 +73,6 @@ public final class FluidUtils
 
     public static boolean shouldSkipVanillaBehavior(BlockGetter getter, BlockPos pos) {
         final BlockState state = getter.getBlockState(pos);
-        return (state.getBlock() instanceof WaterChannelBlock) || state.is(WaterFlow.NEEDS_WATER_SOURCE);
+        return state.is(WaterFlow.NEEDS_WATER_SOURCE);
     }
 }

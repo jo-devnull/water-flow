@@ -3,7 +3,6 @@ package github.jodevnull.waterflow;
 import com.mojang.logging.LogUtils;
 import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
 import github.jodevnull.waterflow.event.ModServerEvents;
 import net.minecraft.core.registries.Registries;
@@ -23,7 +22,6 @@ public class WaterFlow
     public static final String MODID = "waterflow";
     public static final Logger logger = LogUtils.getLogger();
 
-    public static final TagKey<Block> WATER_CHANNEL_TARGET = tagBlock("water_channel_target");
     public static final TagKey<Block> NEEDS_WATER_SOURCE = tagBlock("needs_water_source");
     public static final TagKey<Item>  CAN_PUSH_WATER = tagItem("can_push_water");
 
@@ -38,15 +36,14 @@ public class WaterFlow
         Compat.init();
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
         ModPlayerEvents.register();
         ModServerEvents.register();
 
         modEventBus.addListener(this::onSetup);
     }
 
-    public void onSetup(FMLCommonSetupEvent event) {
-        WaterChannelBlock.BlockMap.init();
-    }
+    public void onSetup(FMLCommonSetupEvent event) {}
 
     public static TagKey<Block> tagBlock(String name) {
         return TagKey.create(Registries.BLOCK,

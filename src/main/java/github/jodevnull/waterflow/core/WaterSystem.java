@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.core.feat.EqualizeFeature;
@@ -13,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -49,7 +51,7 @@ public final class WaterSystem
         }
 
         else if (below.getBlock() instanceof WaterChannelBlock) {
-            WaterChannelBlock.flowWaterAbove(water, below, pos, level);
+            IWaterChannel.flowWaterAbove(water, below, pos, level);
         }
 
         else if (below.is(Blocks.LAVA)) {
@@ -68,6 +70,11 @@ public final class WaterSystem
             }
 
             WaterEffects.fizz((ServerLevel) water.world, pos);
+        }
+
+        else if (below.getOptionalValue(FarmBlock.MOISTURE).orElse(8) < 7) {
+            water.setWater(pos, level - 1);
+            water.world.setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
         }
 
         // if below is naturally generated water, we merge it

@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.WaterManager;
@@ -9,10 +10,8 @@ import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,8 +36,8 @@ public class ModPlayerEvents
             final BlockState state = level.getBlockState(blockHit.getBlockPos());
             final SoundEvent sound = state.getSoundType().getPlaceSound();
 
-            if (state.is(WaterFlow.WATER_CHANNEL_TARGET)) {
-                if (WaterChannelBlock.handleInteraction(level, player, hand, item, blockHit)) {
+            if (IWaterChannel.isChannel(state)) {
+                if (WaterChannelBlock.handleInteraction(level, player, item, blockHit)) {
                     player.swing(hand);
                     level.playSound(null, blockHit.getBlockPos(), sound, SoundSource.BLOCKS);
                 }

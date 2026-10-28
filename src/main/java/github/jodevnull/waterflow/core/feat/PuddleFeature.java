@@ -1,15 +1,11 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.core.WaterManager;
-import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +141,7 @@ public final class PuddleFeature
             return true;
         }
 
-        if (WaterChannelBlock.isChannel(system, pos) && system.isEmpty(above)) {
+        if (IWaterChannel.isChannel(system, pos) && system.isEmpty(above)) {
             return true;
         }
 

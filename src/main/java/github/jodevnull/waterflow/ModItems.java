@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public final class ModItems
 {
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, WaterFlow.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, WaterFlow.MODID);
 
     public static final RegistryObject<Item> DIRT_CHANNEL     = channel("dirt_channel", ModBlocks.DIRT_CHANNEL);
     public static final RegistryObject<Item> STONE_CHANNEL    = channel("stone_channel", ModBlocks.STONE_CHANNEL);

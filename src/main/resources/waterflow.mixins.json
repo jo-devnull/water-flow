@@ -7,6 +7,7 @@
   "plugin": "github.jodevnull.waterflow.mixin.WaterFlowMixinPlugin",
   "mixins": [
     "block.DoublePlantBlockMixin",
+    "block.FarmBlockMixin",
     "block.IForgeBlockMixin",
     "block.PistonBaseBlockMixin",
     "block.SpongeBlockMixin",
@@ -32,8 +33,8 @@
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
     "item.BlockItemMixin",
-    "world.BoatMixin",
     "item.BucketItemMixin",
+    "world.BoatMixin",
     "world.FallingBlockEntityMixin",
     "world.ServerLevelMixin"
   ],
