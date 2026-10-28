@@ -3,8 +3,12 @@ package github.jodevnull.waterflow.event;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.block.WaterChannelBlock;
 import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
+import github.jodevnull.waterflow.utils.WaterEffects;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -46,31 +50,46 @@ public class ModPlayerEvents
     public static void onPlayerPushWater(PlayerInteractEvent.RightClickBlock event) {
         final var level = event.getLevel();
         final var player = event.getEntity();
+        final var facing = player.getDirection();
         final var blockPos = event.getHitVec().getBlockPos();
 
-        if (player.getItemInHand(event.getHand()).is(ItemTags.HOES)) {
+        if (player.getItemInHand(event.getHand()).is(WaterFlow.CAN_PUSH_WATER)) {
             final var pos = Compat.Fluidlogged.isFluidloggable(level.getBlockState(blockPos))
                 ? blockPos : blockPos.relative(event.getHitVec().getDirection());
 
-            final var dir = player.getDirection();
+            final var dir = player.isSteppingCarefully() ? facing.getOpposite() : facing;
             final var fluidState = FluidUtils.getFluidState(level, pos);
 
             if (FluidUtils.isFiniteWater(fluidState)) {
-                WaterSystem.spread(level, pos, fluidState.getAmount(), dir);
-                player.swing(event.getHand());
+                WaterSystem.of(level).ifPresent(manager -> tryPushWater(manager, pos, dir, fluidState.getAmount()));
 
                 if (level instanceof ServerLevel world) {
-                    world.sendParticles(ParticleTypes.FALLING_WATER,
-                        pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                        4 + world.random.nextInt(4), world.random.nextFloat(), 0.5D, world.random.nextFloat(), 0.05D
-                    );
-
-                    world.playSound(null, pos, SoundEvents.AMBIENT_UNDERWATER_EXIT, SoundSource.PLAYERS,
-                        0.8f + world.random.nextFloat() * 0.2f,
-                        0.9f + world.random.nextFloat() * 0.2f
-                    );
+                    WaterEffects.pushWater(world, pos);
                 }
+
+                player.swing(event.getHand());
             }
         }
+    }
+
+    public static void tryPushWater(WaterManager manager, BlockPos pos, Direction dir, int amount) {
+        int nextLevel = -1, count = 0;
+
+        while (count < 4) {
+            nextLevel = manager.getWaterLevel(pos.relative(dir));
+
+            if (nextLevel > -1) {
+                break;
+            } else {
+                dir = dir.getClockWise(); count++;
+            }
+        }
+
+        if (nextLevel < 0) {
+            dir = Direction.UP;
+        }
+
+        manager.setWater(pos, 0);
+        manager.addWater(pos.relative(dir), amount, dir);
     }
 }
