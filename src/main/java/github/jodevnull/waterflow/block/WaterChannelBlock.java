@@ -63,6 +63,41 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
             manager.setWater(pos, level - 1);
             manager.setWater(pos.relative(dir), nextLevel + 1);
         }
+
+        else if (level == 1 && nextLevel == 0 && searchDownHillPath(manager, state, pos)) {
+            manager.setWater(pos, 0);
+            manager.setWater(pos.relative(dir), 1);
+        }
+    }
+
+    public static boolean searchDownHillPath(WaterManager manager, BlockState state, BlockPos pos) {
+        final BlockPos.MutableBlockPos above = pos.mutable();
+        final BlockPos.MutableBlockPos below = pos.mutable().move(Direction.DOWN);
+
+        int steps = 0;
+        Direction dir = state.getValue(FACING);
+
+        while (steps < 5) {
+            above.move(dir);
+            below.move(dir);
+            state = manager.getBlockState(below);
+
+            if (manager.canFlow(above, dir)) {
+                if (manager.isNotFull(below)) {
+                    return true;
+                } else if (state.getBlock() instanceof WaterChannelBlock) {
+                    dir = state.getValue(FACING);
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+
+            steps++;
+        }
+
+        return false;
     }
 
     public static boolean isChannel(BlockGetter getter, BlockPos pos) {
