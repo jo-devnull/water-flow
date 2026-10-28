@@ -27,6 +27,9 @@ public class WaterFlow
     public static final TagKey<Block> NEEDS_WATER_SOURCE = tagBlock("needs_water_source");
     public static final TagKey<Item>  CAN_PUSH_WATER = tagItem("can_push_water");
 
+    // TODO: implement cloth for absorving small amounts of water
+    // TODO: implement recipe for filling containers with water
+
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();
 

@@ -51,6 +51,14 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock
         if (level <= 0)
             return;
 
+        final BlockState nextState = manager.getBlockState(pos.relative(dir).below());
+
+        if (nextState.getBlock() instanceof WaterChannelBlock) {
+            if (nextState.getValue(FACING) == dir.getOpposite()) {
+                return;
+            }
+        }
+
         if (level > 1 && level >= (nextLevel + 1) && (nextLevel >= 0 && nextLevel < 8)) {
             manager.setWater(pos, level - 1);
             manager.setWater(pos.relative(dir), nextLevel + 1);
