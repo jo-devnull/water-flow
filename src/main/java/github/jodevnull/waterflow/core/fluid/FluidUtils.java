@@ -1,7 +1,6 @@
 package github.jodevnull.waterflow.core.fluid;
 
-import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.ModTags;
 import github.jodevnull.waterflow.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -73,6 +72,6 @@ public final class FluidUtils
 
     public static boolean shouldSkipVanillaBehavior(BlockGetter getter, BlockPos pos) {
         final BlockState state = getter.getBlockState(pos);
-        return state.is(WaterFlow.NEEDS_WATER_SOURCE);
+        return state.is(ModTags.Blocks.NEEDS_WATER_SOURCE);
     }
 }

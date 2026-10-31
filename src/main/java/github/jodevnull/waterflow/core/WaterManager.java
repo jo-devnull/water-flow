@@ -4,6 +4,7 @@ import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
+import github.jodevnull.waterflow.utils.Utils;
 import it.unimi.dsi.fastutil.longs.*;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -11,7 +12,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -120,58 +120,57 @@ public final class WaterManager extends SectionCache
         queuedWater.put(pos.asLong(), (byte) level);
     }
 
+    public void scheduleUpdate(BlockPos pos, FluidState fluid) {
+        if (fluid.isEmpty()) {
+            updateQueue.remove(pos.asLong());
+        } else {
+            updateQueue.put(pos.asLong(), fluid);
+        }
+    }
+
     private boolean setWaterLevel(BlockPos pos, int level) {
         if (level < 0 || level > 8)
             return false;
 
-        final BlockState prev = getBlockState(pos);
-        final FluidState fluid = FluidUtils.getWater(level);
+        BlockState state = getBlockState(pos);
 
-        if (Compat.Fluidlogged.isFluidloggable(prev)) {
-            /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
-            if (prev.hasProperty(BlockStateProperties.WATERLOGGED)) {
-                if (level == 8 && !prev.getValue(BlockStateProperties.WATERLOGGED)) {
-                    setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, true));
-                } else if (level < 8 && prev.getValue(BlockStateProperties.WATERLOGGED)) {
-                    setBlockState(pos, prev.setValue(BlockStateProperties.WATERLOGGED, false));
-                }
-            }
+        final var fluid = FluidUtils.getWater(Utils.clamp(level, 0, 8));
 
-            setFluidState(pos, fluid);
+        if (Compat.Fluidlogged.isFluidloggable(state)) {
+            Compat.Fluidlogged.setWater(this, state, pos, fluid);
         }
 
-        else if (prev.isAir() || prev.is(Blocks.WATER)) {
+        else if (state.isAir() || state.is(Blocks.WATER)) {
             setBlockState(pos, FluidProperty.getBlockState(fluid));
         }
 
-        if (!fluid.isEmpty()) {
-            updateQueue.put(pos.asLong(), fluid);
-        }
-
+        scheduleUpdate(pos, fluid);
         return true;
     }
 
     private int getWaterLevelOf(BlockPos pos) {
-        final var blockState = getBlockState(pos);
+        final var state = getBlockState(pos);
 
         if (Compat.Fluidlogged.isLoaded()) {
-            cacheFlowState(pos, blockState);
+            cacheFlowState(pos, state);
         }
 
-        if (blockState.isAir()) {
+        if (state.isAir()) {
             return 0;
-        }
-
-        else if (Compat.Fluidlogged.isFluidloggable(blockState)) {
-            final var fluidState = FluidUtils.getFluidState(this, pos);
-            return fluidState.isEmpty() ? 0 : FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
         }
 
         final var fluidState = FluidUtils.getFluidState(this, pos);
 
+        if (Compat.Fluidlogged.isFluidloggable(state)) {
+            return fluidState.isEmpty() ? 0 :
+                FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
+        }
+
         if (FluidUtils.isWater(fluidState)) {
             return FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
-        } else {
+        }
+
+        else {
             return -1;
         }
     }

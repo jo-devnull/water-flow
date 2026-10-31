@@ -1,9 +1,9 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.block.IWaterChannel;
+import github.jodevnull.waterflow.ModTags;
+import github.jodevnull.waterflow.block.IChannelBlock;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.block.WaterChannelBlock;
+import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.core.feat.EqualizeFeature;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
@@ -50,8 +50,8 @@ public final class WaterSystem
             return;
         }
 
-        else if (below.getBlock() instanceof WaterChannelBlock) {
-            IWaterChannel.flowWaterAbove(water, below, pos, level);
+        else if (below.getBlock() instanceof ChannelBlock) {
+            IChannelBlock.flowWaterAbove(water, below, pos, level);
         }
 
         else if (below.is(Blocks.LAVA)) {
@@ -80,7 +80,7 @@ public final class WaterSystem
         // if below is naturally generated water, we merge it
         // Only if not a #needs_water_source block (like kelp)
         else if (FluidUtils.isNaturalWater(water, pos.below())) {
-            if (!below.is(WaterFlow.NEEDS_WATER_SOURCE)) {
+            if (!below.is(ModTags.Blocks.NEEDS_WATER_SOURCE)) {
                 water.setWater(pos, 0);
             }
         }

@@ -1,15 +1,12 @@
 package github.jodevnull.waterflow;
 
 import com.mojang.logging.LogUtils;
+import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
 import github.jodevnull.waterflow.event.ModServerEvents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,9 +19,6 @@ public class WaterFlow
     public static final String MODID = "waterflow";
     public static final Logger logger = LogUtils.getLogger();
 
-    public static final TagKey<Block> NEEDS_WATER_SOURCE = tagBlock("needs_water_source");
-    public static final TagKey<Item>  CAN_PUSH_WATER = tagItem("can_push_water");
-
     // TODO: implement cloth for absorving small amounts of water
     // TODO: implement recipe for filling containers with water
 
@@ -34,8 +28,8 @@ public class WaterFlow
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
 
         Compat.init();
-        ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModPlayerEvents.register();
         ModServerEvents.register();
@@ -43,17 +37,11 @@ public class WaterFlow
         modEventBus.addListener(this::onSetup);
     }
 
-    public void onSetup(FMLCommonSetupEvent event) {}
-
-    public static TagKey<Block> tagBlock(String name) {
-        return TagKey.create(Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(MODID, name)
-        );
+    public void onSetup(FMLCommonSetupEvent event) {
+        ChannelBlock.BlockMap.init();
     }
 
-    public static TagKey<Item> tagItem(String name) {
-        return TagKey.create(Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath(MODID, name)
-        );
+    public static ResourceLocation res(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

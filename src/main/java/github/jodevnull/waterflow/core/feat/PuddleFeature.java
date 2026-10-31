@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.block.IWaterChannel;
+import github.jodevnull.waterflow.block.IChannelBlock;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
@@ -141,7 +141,7 @@ public final class PuddleFeature
             return true;
         }
 
-        if (IWaterChannel.isChannel(system, pos) && system.isEmpty(above)) {
+        if (IChannelBlock.isChannel(system, pos) && system.isEmpty(above)) {
             return true;
         }
 

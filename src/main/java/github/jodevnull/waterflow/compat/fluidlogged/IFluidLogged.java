@@ -11,8 +11,6 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.fml.ModList;
 
-import java.util.Optional;
-
 import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
 public interface IFluidLogged
@@ -28,6 +26,10 @@ public interface IFluidLogged
     default void setFluidState(Level level, LevelChunkSection section, BlockPos pos, FluidState fluidState, int flags) {}
 
     default void setFluid(Level level, BlockPos pos, FluidState fluidState, int flags, int maxUpdateDepth) {}
+
+    default boolean setWater(WaterManager manager, BlockState state, BlockPos pos, FluidState fluid) {
+        return false;
+    }
 
     default FluidState getFluidState(LevelChunkSection section, BlockPos pos) {
         return section.getFluidState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);

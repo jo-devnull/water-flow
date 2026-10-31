@@ -6,11 +6,13 @@ import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
 import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
+import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -60,5 +62,23 @@ public final class FluidLoggedImpl implements IFluidLogged
             ((ServerChunkCacheExtension) level.getChunkSource()).fluidChanged(pos);
             ((LevelExtension) level).sendFluidUpdated(pos, flags);
         }
+    }
+
+    @Override
+    public boolean setWater(WaterManager manager, BlockState state, BlockPos pos, FluidState fluid) {
+        final int level = fluid.getAmount();
+
+        /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
+        if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
+            if (level == 8 && !state.getValue(BlockStateProperties.WATERLOGGED)) {
+                manager.setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, true));
+            } else if (level < 8 && state.getValue(BlockStateProperties.WATERLOGGED)) {
+                manager.setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, false));
+            }
+        }
+
+        manager.setFluidState(pos, fluid);
+
+        return true;
     }
 }

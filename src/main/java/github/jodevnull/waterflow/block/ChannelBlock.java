@@ -1,59 +1,46 @@
 package github.jodevnull.waterflow.block;
 
+import github.jodevnull.waterflow.ModBlocks;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.TierSortingRegistry;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class WaterChannelBlock extends HorizontalDirectionalBlock implements IWaterChannel
+public class ChannelBlock extends HorizontalDirectionalBlock implements IChannelBlock
 {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
+    public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
 
-    public WaterChannelBlock(Block parent) {
+    private final Block parent;
+
+    public ChannelBlock(Block parent) {
         super(BlockBehaviour.Properties.copy(parent));
+        this.parent = parent;
         this.registerDefaultState(this.getStateDefinition().any()
             .setValue(FACING, Direction.NORTH)
         );
     }
 
-    public static boolean handleInteraction(Level level, Player player, ItemStack itemStack, BlockHitResult hit) {
-        final var blockState = level.getBlockState(hit.getBlockPos());
-
-        if (itemStack.getItem() instanceof PickaxeItem item) {
-            final Direction dir = blockState.getValue(FACING);
-
-            if (TierSortingRegistry.isCorrectTierForDrops(item.getTier(), blockState)) {
-                final BlockState rotated = blockState.setValue(FACING, player.isShiftKeyDown()
-                    ? player.getDirection()
-                    : dir.getClockWise()
-                );
-
-                return level.setBlockAndUpdate(hit.getBlockPos(), rotated);
-            }
-        }
-
-        return false;
+    public Block getParent() {
+        return this.parent;
     }
 
     @Override
@@ -71,7 +58,7 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock implements IWa
             for (final var dir : Direction.Plane.HORIZONTAL) {
                 neighborState = pContext.getLevel().getBlockState(pos.relative(dir));
 
-                if (neighborState.getBlock() instanceof WaterChannelBlock) {
+                if (neighborState.getBlock() instanceof ChannelBlock) {
                     facing = neighborState.getValue(FACING);
                     break;
                 }
@@ -84,5 +71,29 @@ public class WaterChannelBlock extends HorizontalDirectionalBlock implements IWa
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
+    }
+
+    public static final class BlockMap
+    {
+        private static final Map<Block, Supplier<ChannelBlock>> blockMap = new HashMap<>();
+
+        public static void init() {
+            blockMap.put(Blocks.SAND,       ModBlocks.SAND_CHANNEL);
+            blockMap.put(Blocks.DIRT,       ModBlocks.DIRT_CHANNEL);
+            blockMap.put(Blocks.DIRT_PATH,  ModBlocks.DIRT_CHANNEL);
+        }
+
+        @Nullable
+        public static BlockState get(BlockState input) {
+            Supplier<ChannelBlock> output;
+
+            if (input.getBlock() instanceof ChannelBlock block) {
+                output = blockMap.get(block.getParent());
+            } else {
+                output = blockMap.get(input.getBlock());
+            }
+
+            return output == null ? null : output.get().defaultBlockState();
+        }
     }
 }
