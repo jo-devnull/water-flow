@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:kelp",
+    "minecraft:kelp_plant",
+    "minecraft:tall_seagrass",
+    "minecraft:seagrass",
+    "minecraft:bubble_column",
+    {
+      "id": "#minecraft:underwater_bonemeals",
+      "required": false
+    }
+  ]
+}

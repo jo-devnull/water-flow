@@ -1,0 +1,7 @@
+{
+  "parent": "waterflow:block/water_channel",
+  "textures": {
+    "base": "minecraft:block/dirt",
+    "top": "minecraft:block/dirt"
+  }
+}

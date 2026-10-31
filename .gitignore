@@ -7,6 +7,8 @@
 # Gradle build folder
 build
 
+run-data/logs
+
 # IntelliJ
 out/
 .idea
