@@ -6,17 +6,25 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public final class Utils
 {
     public static <T> String nameof(RegistryObject<T> object) {
         assert object.getId() != null;
         return object.getId().getPath();
+    }
+
+    public static String blockName(Block block) {
+        // key should never be null
+        final var key = ForgeRegistries.BLOCKS.getKey(block);
+        return Objects.requireNonNull(key).getPath();
     }
 
     @Nullable

@@ -23,6 +23,10 @@ public class ModBlockTagProvider extends BlockTagsProvider
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        for (final var block : ModBlocks.CHANNELS.list()) {
+            this.tag(ModTags.Blocks.WATER_CHANNELS).add(block.get());
+        }
+
         this.tag(ModTags.Blocks.EARTHY_CHANNELS)
             .add(ModBlocks.DIRT_CHANNEL.get())
             .add(ModBlocks.SAND_CHANNEL.get());

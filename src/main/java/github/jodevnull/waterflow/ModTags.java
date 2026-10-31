@@ -9,6 +9,7 @@ public final class ModTags
 {
     public static final class Blocks
     {
+        public static final TagKey<Block> WATER_CHANNELS = Utils.tagBlock("water_channels");
         public static final TagKey<Block> NEEDS_WATER_SOURCE = Utils.tagBlock("needs_water_source");
         public static final TagKey<Block> EARTHY_CHANNELS = Utils.tagBlock("earthy_channels");
     }

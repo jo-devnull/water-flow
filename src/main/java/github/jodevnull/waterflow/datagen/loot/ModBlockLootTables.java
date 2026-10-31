@@ -24,10 +24,6 @@ public class ModBlockLootTables extends BlockLootSubProvider
         for (final var block : ModBlocks.CHANNELS.list()) {
             dropOther(block.get(), getDropFor(block));
         }
-
-        for (final var block : ModBlocks.WET_WOOL.list()) {
-            dropSelf(block.get());
-        }
     }
 
     @Override

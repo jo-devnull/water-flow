@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "waterflow:block/cobblestone_channel",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "waterflow:block/cobblestone_channel"
+    },
+    "facing=south": {
+      "model": "waterflow:block/cobblestone_channel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "waterflow:block/cobblestone_channel",
+      "y": 270
+    }
+  }
+}

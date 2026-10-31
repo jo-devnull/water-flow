@@ -16,7 +16,6 @@ public final class ModBlockStateProvider extends BlockStateProvider
     @Override
     protected void registerStatesAndModels() {
         registerChannels();
-        registerWetWool();
     }
 
     private void registerChannels() {
@@ -31,15 +30,6 @@ public final class ModBlockStateProvider extends BlockStateProvider
             );
 
             simpleBlockItem(block.get(), models().getBuilder(name));
-        }
-    }
-
-    private void registerWetWool() {
-        for (final var block : ModBlocks.WET_WOOL.list()) {
-            final var name = Utils.nameof(block);
-            final var texture = "block/wet_wool/" + name.replace("_wet_wool", "");
-
-            simpleBlockWithItem(block.get(), models().cubeAll(name, modLoc(texture)));
         }
     }
 }

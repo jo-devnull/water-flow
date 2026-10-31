@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "waterflow:block/cut_copper_channel",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "waterflow:block/cut_copper_channel"
+    },
+    "facing=south": {
+      "model": "waterflow:block/cut_copper_channel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "waterflow:block/cut_copper_channel",
+      "y": 270
+    }
+  }
+}

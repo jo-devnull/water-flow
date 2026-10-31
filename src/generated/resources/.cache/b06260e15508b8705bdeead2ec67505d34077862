@@ -1,3 +1,4 @@
-// 1.20.1	2026-10-30T11:05:51.2965859	Tags for minecraft:block mod id waterflow
+// 1.20.1	2026-10-31T09:37:22.0059333	Tags for minecraft:block mod id waterflow
 b66bdfd4b12cf23af1fe31afbe258874e4785fea data/waterflow/tags/blocks/earthy_channels.json
 b56211210395558c323e3eff73c384173718cb60 data/waterflow/tags/blocks/needs_water_source.json
+dba39227d611ec75f9af59eec39406fa2c032bb3 data/waterflow/tags/blocks/water_channels.json

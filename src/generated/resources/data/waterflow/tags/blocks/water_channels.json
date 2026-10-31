@@ -1,0 +1,13 @@
+{
+  "values": [
+    "waterflow:sand_channel",
+    "waterflow:dirt_channel",
+    "waterflow:stone_channel",
+    "waterflow:andesite_channel",
+    "waterflow:sandstone_channel",
+    "waterflow:cobblestone_channel",
+    "waterflow:smooth_stone_channel",
+    "waterflow:copper_block_channel",
+    "waterflow:cut_copper_channel"
+  ]
+}
