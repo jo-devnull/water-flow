@@ -1,12 +1,11 @@
-package github.jodevnull.waterflow.core.api;
+package github.jodevnull.waterflow.core.api.block;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 
-public interface IWaterFlow
+public interface IWaterFlowBlock
 {
-
     /**
      * Use this method to return a combination of directions that should block
      * the flow of water to inside of {@code this} block. For example, a trapdoor
@@ -41,6 +40,6 @@ public interface IWaterFlow
     float fluidOffset(BlockState state);
 
     static float getFluidOffset(BlockState state) {
-        return ((IWaterFlow) state.getBlock()).fluidOffset(state);
+        return ((IWaterFlowBlock) state.getBlock()).fluidOffset(state);
     }
 }

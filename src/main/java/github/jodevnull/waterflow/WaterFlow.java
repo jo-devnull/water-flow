@@ -21,6 +21,7 @@ public class WaterFlow
 
     // TODO: implement cloth for absorving small amounts of water
     // TODO: implement recipe for filling containers with water
+    // TODO: implement pipes and water channels
 
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();

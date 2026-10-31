@@ -1,14 +1,14 @@
 package github.jodevnull.waterflow.mixin.block.flow_impl;
 
+import github.jodevnull.waterflow.core.api.block.wrapper.IWaterFlowBlockWrapper;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
-import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(TrapDoorBlock.class)
-public class TrapDoorBlockMixin implements IWaterFlowWrapper
+public class TrapDoorBlockMixin implements IWaterFlowBlockWrapper
 {
     @Override
     public float wf_fluidOffset(BlockState state) {

@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import github.jodevnull.waterflow.block.IChannelBlock;
-import github.jodevnull.waterflow.core.api.IWaterFlow;
+import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.FluidRenderer;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
@@ -39,7 +39,7 @@ public class FluidRendererMixin
 
     @ModifyReturnValue(method = "fluidHeight", at=@At(value = "RETURN"))
     private float addFluidOffset(float height, @Local(argsOnly = true) BlockAndTintGetter world, @Local(argsOnly = true) BlockPos blockPos, @Local(name = "blockState") BlockState blockState) {
-        float offset = IWaterFlow.getFluidOffset(blockState);
+        float offset = IWaterFlowBlock.getFluidOffset(blockState);
 
         if (this.wf_offset < 0f) {
             this.wf_offset = offset;

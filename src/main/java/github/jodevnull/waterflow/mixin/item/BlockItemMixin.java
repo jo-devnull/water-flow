@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.item;
 
 import github.jodevnull.waterflow.core.WaterSystem;
-import github.jodevnull.waterflow.core.api.IWaterFlow;
+import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
@@ -26,7 +26,7 @@ public abstract class BlockItemMixin
         final Level level = context.getLevel();
         final BlockPos pos = context.getClickedPos();
         final FluidState fluidState = FluidUtils.getFluidState(level, pos);
-        final float offset = IWaterFlow.getFluidOffset(blockState);
+        final float offset = IWaterFlowBlock.getFluidOffset(blockState);
 
         if (placeBlock(context, blockState)) {
             if (FluidUtils.isNaturalWater(fluidState))

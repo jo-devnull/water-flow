@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.block.flow_impl;
 
 import github.jodevnull.waterflow.core.flow.FlowHandler;
-import github.jodevnull.waterflow.core.api.wrapper.IWaterFlowWrapper;
+import github.jodevnull.waterflow.core.api.block.wrapper.IWaterFlowBlockWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SlabBlock.class)
-public class SlabBlockMixin implements IWaterFlowWrapper
+public class SlabBlockMixin implements IWaterFlowBlockWrapper
 {
     @Shadow
     @Final

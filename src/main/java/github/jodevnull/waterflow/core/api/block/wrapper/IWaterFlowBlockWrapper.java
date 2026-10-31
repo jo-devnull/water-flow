@@ -1,12 +1,12 @@
-package github.jodevnull.waterflow.core.api.wrapper;
+package github.jodevnull.waterflow.core.api.block.wrapper;
 
-import github.jodevnull.waterflow.core.api.IWaterFlow;
+import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This should be only used to implement {@link IWaterFlow} for blocks using mixins.
+ * This should be only used to implement {@link IWaterFlowBlock} for blocks using mixins.
  */
-public interface IWaterFlowWrapper extends IWaterFlow
+public interface IWaterFlowBlockWrapper extends IWaterFlowBlock
 {
     float wf_fluidOffset(BlockState state);
     byte wf_getFlowIn(BlockState state);
