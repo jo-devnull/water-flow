@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public interface IChannelBlock
+public interface IWaterChannel
 {
     static Direction facing(BlockState state) {
         return state.getValue(HORIZONTAL_FACING);
@@ -16,11 +16,11 @@ public interface IChannelBlock
 
     static boolean isChannel(BlockGetter getter, BlockPos pos) {
         final BlockState state = getter.getBlockState(pos);
-        return (state.getBlock() instanceof IChannelBlock);// && state.getValue(TIME) == 0;
+        return (state.getBlock() instanceof IWaterChannel);
     }
 
     static boolean isChannel(BlockState state) {
-        return state.getBlock() instanceof IChannelBlock;
+        return state.getBlock() instanceof IWaterChannel;
     }
 
     static void flowWaterAbove(WaterManager manager, BlockState state, BlockPos pos, int level) {
@@ -64,7 +64,7 @@ public interface IChannelBlock
             if (manager.canFlow(above, dir)) {
                 if (manager.isNotFull(below)) {
                     return true;
-                } else if (state.getBlock() instanceof ChannelBlock) {
+                } else if (isChannel(state)) {
                     dir = state.getValue(HORIZONTAL_FACING);
                 } else {
                     break;

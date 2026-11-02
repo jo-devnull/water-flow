@@ -15,11 +15,11 @@ public final class FlowHandler
         }
     }
 
-    public static byte all() {
+    public static byte none() {
         return (byte) 0;
     }
 
-    public static byte none() {
+    public static byte all() {
         return (byte) (
             MASK[0] |
             MASK[1] |
@@ -28,6 +28,16 @@ public final class FlowHandler
             MASK[4] |
             MASK[5]
         );
+    }
+
+    public static byte allExcept(Direction... allowed) {
+        byte flags = all();
+
+        for (Direction dir : allowed) {
+            flags |= (byte) ~get(dir);
+        }
+
+        return flags;
     }
 
     public static byte get(Direction dir) {
@@ -49,7 +59,7 @@ public final class FlowHandler
 
     public static short getFlowState(BlockState state) {
         if (state.isAir() || state.is(Blocks.WATER)) {
-            return pack(all(), all());
+            return pack(none(), none());
         }
 
         final byte flowIn = ((IWaterFlowBlock) state.getBlock()).blockFlowIn(state);

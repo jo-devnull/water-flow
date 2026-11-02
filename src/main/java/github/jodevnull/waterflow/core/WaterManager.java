@@ -4,7 +4,6 @@ import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.utils.Utils;
 import it.unimi.dsi.fastutil.longs.*;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -134,7 +133,7 @@ public final class WaterManager extends SectionCache
 
         BlockState state = getBlockState(pos);
 
-        final var fluid = FluidUtils.getWater(Utils.clamp(level, 0, 8));
+        final var fluid = FluidUtils.getWater(level);
 
         if (Compat.Fluidlogged.isFluidloggable(state)) {
             Compat.Fluidlogged.setWater(this, state, pos, fluid);

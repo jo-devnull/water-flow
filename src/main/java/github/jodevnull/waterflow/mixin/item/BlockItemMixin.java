@@ -26,7 +26,6 @@ public abstract class BlockItemMixin
         final Level level = context.getLevel();
         final BlockPos pos = context.getClickedPos();
         final FluidState fluidState = FluidUtils.getFluidState(level, pos);
-        final float offset = IWaterFlowBlock.getFluidOffset(blockState);
 
         if (placeBlock(context, blockState)) {
             if (FluidUtils.isNaturalWater(fluidState))

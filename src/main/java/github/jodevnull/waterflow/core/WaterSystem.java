@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.ModTags;
-import github.jodevnull.waterflow.block.IChannelBlock;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.core.feat.EqualizeFeature;
@@ -51,7 +51,7 @@ public final class WaterSystem
         }
 
         else if (below.getBlock() instanceof ChannelBlock) {
-            IChannelBlock.flowWaterAbove(water, below, pos, level);
+            IWaterChannel.flowWaterAbove(water, below, pos, level);
         }
 
         else if (below.is(Blocks.LAVA)) {

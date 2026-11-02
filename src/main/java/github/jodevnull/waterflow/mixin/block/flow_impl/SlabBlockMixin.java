@@ -32,7 +32,7 @@ public class SlabBlockMixin implements IWaterFlowBlockWrapper
         byte result = (byte) 0;
 
         if (state.getValue(TYPE) == SlabType.DOUBLE) {
-            return FlowHandler.none();
+            return FlowHandler.all();
         }
 
         if (state.getValue(TYPE) == SlabType.TOP) {
@@ -45,6 +45,6 @@ public class SlabBlockMixin implements IWaterFlowBlockWrapper
 
     @Override
     public byte wf_getFlowOut(BlockState state) {
-        return FlowHandler.all();
+        return FlowHandler.none();
     }
 }

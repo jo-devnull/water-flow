@@ -1,6 +1,8 @@
 package github.jodevnull.waterflow.block;
 
 import github.jodevnull.waterflow.ModBlocks;
+import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
+import github.jodevnull.waterflow.core.flow.FlowHandler;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,9 +26,10 @@ import java.util.function.Supplier;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("deprecation")
-public class ChannelBlock extends HorizontalDirectionalBlock implements IChannelBlock
+public class ChannelBlock extends HorizontalDirectionalBlock implements IWaterChannel
 {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D);
 
     private final Block parent;

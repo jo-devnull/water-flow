@@ -3,7 +3,7 @@ package github.jodevnull.waterflow.mixin.compat.embeddium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import github.jodevnull.waterflow.block.IChannelBlock;
+import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.FluidRenderer;
@@ -26,11 +26,11 @@ public class FluidRendererMixin
     private float wf_offset = -1f;
 
     @Unique
-    private boolean wf_aboveChannel = false;
+    private boolean wf_isAboveChannel = false;
 
     @Redirect(method = "isFluidOccluded", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BlockAndTintGetter;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"))
     private FluidState checkChannelOcclusion(BlockAndTintGetter instance, BlockPos pos) {
-        if (IChannelBlock.isChannel(instance, pos)) {
+        if (IWaterChannel.isChannel(instance, pos)) {
             return instance.getFluidState(pos.above());
         }
 
@@ -43,7 +43,7 @@ public class FluidRendererMixin
 
         if (this.wf_offset < 0f) {
             this.wf_offset = offset;
-            this.wf_aboveChannel = IChannelBlock.isChannel(world, blockPos.below());
+            this.wf_isAboveChannel = IWaterChannel.isChannel(world, blockPos.below());
             return height + offset;
         }
 
@@ -53,12 +53,12 @@ public class FluidRendererMixin
     @Inject(method = "render", at=@At("TAIL"))
     private void resetFluidOffset(WorldSlice world, FluidState fluidState, BlockPos blockPos, BlockPos offset, ChunkBuildBuffers buffers, CallbackInfo ci) {
         this.wf_offset = -1f;
-        this.wf_aboveChannel = false;
+        this.wf_isAboveChannel = false;
     }
 
     @ModifyExpressionValue(method = "writeQuad", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/model/quad/ModelQuadView;getY(I)F"))
     private float setChannelOffset(float y) {
-        if (this.wf_aboveChannel && y <= 0.001f) {
+        if (this.wf_isAboveChannel && y <= 0.001f) {
             return y - 0.08888f;
         }
 

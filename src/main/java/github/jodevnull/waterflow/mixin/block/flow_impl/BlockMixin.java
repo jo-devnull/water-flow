@@ -16,11 +16,11 @@ public class BlockMixin implements IWaterFlowBlockWrapper
 
     @Override
     public byte wf_getFlowIn(BlockState state) {
-        return FlowHandler.all();
+        return FlowHandler.none();
     }
 
     @Override
     public byte wf_getFlowOut(BlockState state) {
-        return FlowHandler.all();
+        return FlowHandler.none();
     }
 }
