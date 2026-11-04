@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.datagen;
 
-import github.jodevnull.waterflow.ModBlocks;
+import github.jodevnull.waterflow.registry.ModBlocks;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.utils.Utils;
 import net.minecraft.data.PackOutput;

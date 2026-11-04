@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow;
+package github.jodevnull.waterflow.registry;
 
 import github.jodevnull.waterflow.utils.Utils;
 import net.minecraft.tags.TagKey;

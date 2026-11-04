@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.datagen.loot;
 
-import github.jodevnull.waterflow.ModBlocks;
-import github.jodevnull.waterflow.ModTags;
+import github.jodevnull.waterflow.registry.ModBlocks;
+import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.loot.BlockLootSubProvider;

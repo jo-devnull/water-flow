@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.fluid;
 
-import github.jodevnull.waterflow.ModTags;
+import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;

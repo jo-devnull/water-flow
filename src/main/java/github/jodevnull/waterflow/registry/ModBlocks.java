@@ -1,5 +1,6 @@
-package github.jodevnull.waterflow;
+package github.jodevnull.waterflow.registry;
 
+import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.utils.RegistryList;
 import github.jodevnull.waterflow.utils.Utils;

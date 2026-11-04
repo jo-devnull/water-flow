@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.ModTags;
+import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.ChannelBlock;
@@ -24,6 +24,14 @@ import java.util.Optional;
 public final class WaterSystem
 {
     private static final Map<ResourceKey<Level>, WaterManager> SYSTEM = new HashMap<>();
+
+    public static Optional<Integer> getWaterLevel(Level level, BlockPos pos) {
+        return WaterSystem.of(level).map(manager -> manager.getWaterLevel(pos));
+    }
+
+    public static void setWaterLevel(Level level, BlockPos pos, int amount) {
+        WaterSystem.of(level).ifPresent(manager -> manager.setWater(pos, amount));
+    }
 
     public static boolean run(Level level, BlockPos pos) {
         if (FluidUtils.shouldSkipVanillaBehavior(level, pos)) {

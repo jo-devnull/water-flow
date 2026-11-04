@@ -6,7 +6,7 @@ import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import github.jodevnull.waterflow.ModCreativeTabs;
+import github.jodevnull.waterflow.registry.ModCreativeTabs;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.compat.create.block.CopyCatChannelBlock;
 import github.jodevnull.waterflow.compat.create.block.CopyCatChannelModel;
