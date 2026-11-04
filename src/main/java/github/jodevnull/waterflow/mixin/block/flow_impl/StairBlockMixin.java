@@ -2,6 +2,7 @@ package github.jodevnull.waterflow.mixin.block.flow_impl;
 
 import github.jodevnull.waterflow.core.api.block.wrapper.IWaterFlowBlockWrapper;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,6 +22,9 @@ public class StairBlockMixin implements IWaterFlowBlockWrapper
 
     @Override
     public byte wf_getFlowOut(BlockState state) {
-        return FlowHandler.get(state.getValue(StairBlock.FACING));
+        return (byte) (
+            FlowHandler.get(state.getValue(StairBlock.FACING)) |
+            FlowHandler.get(Direction.DOWN)
+        );
     }
 }

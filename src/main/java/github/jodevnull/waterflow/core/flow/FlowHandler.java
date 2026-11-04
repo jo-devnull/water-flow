@@ -64,6 +64,7 @@ public final class FlowHandler
 
         final byte flowIn = ((IWaterFlowBlock) state.getBlock()).blockFlowIn(state);
         final byte flowOut = ((IWaterFlowBlock) state.getBlock()).blockFlowOut(state);
+
         return pack(flowIn, flowOut);
     }
 }
