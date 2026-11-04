@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.shorts.Short2ByteOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
+/// TODO: implement this shit
 public final class FlowMap
 {
     private final Short2ByteMap flowMap = new Short2ByteOpenHashMap();

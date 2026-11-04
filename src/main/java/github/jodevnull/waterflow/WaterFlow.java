@@ -24,8 +24,8 @@ public class WaterFlow
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     // TODO: implement cloth for absorving small amounts of water
-    // TODO: implement recipe for filling containers with water
-    // TODO: implement pipes and water channels
+    // DONE: implement recipe for filling containers with water
+    // TODO: implement pipes
     // TODO: fix BlockItem bug
 
     public WaterFlow(FMLJavaModLoadingContext context) {
