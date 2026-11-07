@@ -3,6 +3,7 @@ package github.jodevnull.waterflow.compat.fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

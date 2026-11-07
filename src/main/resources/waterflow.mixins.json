@@ -36,7 +36,10 @@
     "item.BucketItemMixin",
     "world.BoatMixin",
     "world.FallingBlockEntityMixin",
-    "world.ServerLevelMixin"
+    "world.ServerLevelMixin",
+    "world.flowmap.ChunkSerializerMixin",
+    "world.flowmap.LevelChunkMixin",
+    "world.flowmap.LevelChunkSectionMixin"
   ],
   "client": [
     "compat.embeddium.FluidRendererMixin"

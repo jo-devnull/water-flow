@@ -14,6 +14,7 @@ public final class EqualizeFeature
     private static final int radius = 2;
     private static final int diameter = (2 * radius) + 1;
     private static final int[][] data = new int[diameter][diameter];
+    private static final BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
 
     public static void execute(WaterManager system, BlockPos center, int level) {
         int minLevel = 99;
@@ -26,7 +27,7 @@ public final class EqualizeFeature
             for (int dz = -radius; dz <= radius; dz++) {
                 int i = dx + radius;
                 int j = dz + radius;
-                data[i][j] = system.getWaterLevel(center.offset(dx, 0, dz));
+                data[i][j] = system.getWaterLevel(blockPos.setWithOffset(center, dx, 0, dz));
             }
         }
 

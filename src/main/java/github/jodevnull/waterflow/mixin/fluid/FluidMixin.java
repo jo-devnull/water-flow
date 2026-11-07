@@ -33,7 +33,7 @@ public abstract class FluidMixin
     }
 
     @Inject(method = "randomTick", at=@At("HEAD"))
-    private void onWaterEvaporate(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
+    private void onRandomTick(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
         if (!Config.waterEvaporation() && !Config.isEnabled(pLevel) || pLevel.isClientSide()) {
             return;
         }
@@ -41,7 +41,12 @@ public abstract class FluidMixin
         final var water = WaterSystem.get((ServerLevel) pLevel);
         final var fluid = FluidUtils.getFluidState(water, pPos);
 
-        if (pLevel.isRaining()) {
+        if (pLevel.isRainingAt(pPos)) {
+            // increase water level during rain
+            if (FluidUtils.isFiniteWater(water, pPos)) {
+                water.addWater(pPos, 1);
+            }
+
             return;
         }
 

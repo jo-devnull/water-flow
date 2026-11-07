@@ -28,11 +28,20 @@ public final class PuddleFeature
     private static int zZ;
 
     private static WaterManager system;
+    private static boolean canMove = false;
 
     public static void execute(WaterManager sys, BlockPos center, int level) {
         system = sys; pos = center;
+        canMove = false;
 
         if (level == 1 && sys.isFull(pos.below())) {
+            Direction flow = system.getFlow(pos);
+
+            if (flow != Direction.DOWN) {
+                tryFlow(flow);
+                return;
+            }
+
             int x = pos.getX();
             int y = pos.getY();
             int z = pos.getZ();
@@ -70,6 +79,10 @@ public final class PuddleFeature
                 if (holeFound())
                     break;
             }
+
+            if (!canMove) {
+                system.setFlow(pos, Direction.UP);
+            }
         }
 
         system = null;
@@ -99,16 +112,34 @@ public final class PuddleFeature
         }
 
         if (minDistance <= 4) {
-            return move(direction);
+            return tryMove(direction);
         }
 
         return false;
     }
 
-    private static boolean move(Direction dir) {
+    private static void tryFlow(Direction dir) {
+        if (dir == Direction.UP) return;
+
         if (system.canFlow(pos, dir)) {
             system.setWater(pos, 0);
             system.addWater(pos.relative(dir), 1);
+        }
+    }
+
+    private static boolean tryMove(Direction dir) {
+        canMove = true;
+        BlockPos toPos = pos.relative(dir);
+
+        if (system.getFlow(toPos) == dir.getOpposite()) {
+            system.setFlow(toPos, null);
+        }
+
+        system.setFlow(pos, dir);
+
+        if (system.canFlow(pos, dir)) {
+            system.setWater(pos, 0);
+            system.addWater(toPos, 1);
             return true;
         }
 
@@ -141,9 +172,9 @@ public final class PuddleFeature
             return true;
         }
 
-        if (IWaterChannel.isChannel(system, pos) && system.isEmpty(above)) {
-            return true;
-        }
+        // if (IWaterChannel.isChannel(system, pos) && system.isEmpty(above)) {
+        //     return true;
+        // }
 
         return FluidUtils.isNaturalWater(system, pos);
     }

@@ -15,16 +15,17 @@ public final class FlowFeature
     static final int[] levels = new int[4];
     static final boolean[] flow = new boolean[4];
     static final BlockPos[] blocks = new BlockPos[4];
+    static int counter = 0;
 
     public static void execute(WaterManager system, BlockPos center, int level) {
         Arrays.fill(levels, 0);
 
-        int j = 0, originalLevel = level;
+        final int originalLevel = level;
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            flow[j] = system.canFlow(center, dir);
-            blocks[j] = center.relative(dir);
-            levels[j] = system.getWaterLevel(blocks[j]);
-            j++;
+            final int j = (counter++) % 4;
+            blocks [j] = center.relative(dir);
+            flow   [j] = system.canFlow(center, dir);
+            levels [j] = system.getWaterLevel(blocks[j]);
         }
 
         int count = 0;
@@ -54,5 +55,7 @@ public final class FlowFeature
         if (originalLevel != level) {
             system.setWater(center, level);
         }
+
+        system.flowMap.removeFlowAt(center);
     }
 }

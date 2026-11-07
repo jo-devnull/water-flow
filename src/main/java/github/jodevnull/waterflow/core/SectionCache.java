@@ -47,7 +47,7 @@ public abstract class SectionCache implements BlockGetter
         return null;
     }
 
-    public LevelChunkSection getSection(long lpos) {
+    public LevelChunkSection getSectionDirect(long lpos) {
         final var pos = SectionPos.of(lpos);
         final var index = world.getSectionIndexFromSectionY(pos.getY());
         final var section = world.getChunk(pos.center()).getSection(index);
@@ -59,7 +59,7 @@ public abstract class SectionCache implements BlockGetter
     }
 
     public LevelChunkSection getSection(BlockPos pos) {
-        return sections.computeIfAbsent(SectionPos.of(pos).asLong(), this::getSection);
+        return sections.computeIfAbsent(SectionPos.of(pos).asLong(), this::getSectionDirect);
     }
 
     @Override

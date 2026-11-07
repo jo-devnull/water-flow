@@ -37,6 +37,7 @@ public abstract class BlockItemMixin
                 }
             }
 
+            WaterSystem.of(level).ifPresent(manager -> manager.flowMap.updateNeighbors(pos));
             return true;
         }
 

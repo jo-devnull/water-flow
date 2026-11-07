@@ -2,6 +2,7 @@ package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
+import github.jodevnull.waterflow.core.flow.FlowMap;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import it.unimi.dsi.fastutil.longs.*;
@@ -13,7 +14,10 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashSet;
+import java.util.Set;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -25,16 +29,29 @@ public final class WaterManager extends SectionCache
         cachedWater = new Long2ByteOpenHashMap(),
         queuedWater = new Long2ByteOpenHashMap();
 
+    public final FlowMap flowMap;
     private final Long2ShortMap cachedFlowState = new Long2ShortOpenHashMap();
     private final Long2ObjectMap<FluidState> updateQueue = new Long2ObjectOpenHashMap<>();
 
     public WaterManager(Level world) {
-        super(world); this.world = world;
+        super(world);
+
+        this.world = world;
+        this.flowMap = new FlowMap(this);
+
         queuedWater.defaultReturnValue((byte) -1);
     }
 
     public boolean isEmpty(BlockPos pos) {
         return getWaterLevel(pos) == 0;
+    }
+
+    public Direction getFlow(BlockPos pos) {
+        return this.flowMap.getFlow(pos);
+    }
+
+    public Direction setFlow(BlockPos pos, @Nullable Direction flow) {
+        return this.flowMap.setFlow(pos, flow);
     }
 
     public int getWaterLevel(BlockPos pos) {
@@ -115,6 +132,12 @@ public final class WaterManager extends SectionCache
     }
 
     public void setWater(BlockPos pos, int level) {
+        int prev = getWaterLevel(pos);
+
+        if ((prev == 8 && level < 8) || (prev < 8 && level == 8)) {
+            flowMap.updateFlowAt(pos);
+        }
+
         cachedWater.put(pos.asLong(), (byte) level);
         queuedWater.put(pos.asLong(), (byte) level);
     }
@@ -132,7 +155,6 @@ public final class WaterManager extends SectionCache
             return false;
 
         BlockState state = getBlockState(pos);
-
         final var fluid = FluidUtils.getWater(level);
 
         if (Compat.Fluidlogged.isFluidloggable(state)) {
@@ -141,6 +163,10 @@ public final class WaterManager extends SectionCache
 
         else if (state.isAir() || state.is(Blocks.WATER)) {
             setBlockState(pos, FluidProperty.getBlockState(fluid));
+        }
+
+        if (level > 1) {
+            flowMap.removeFlowAt(pos);
         }
 
         scheduleUpdate(pos, fluid);
@@ -186,6 +212,7 @@ public final class WaterManager extends SectionCache
         cachedWater.clear();
         updateNeighbors();
         updateFluids();
+        flowMap.tick();
         clearCache();
     }
 
@@ -219,12 +246,16 @@ public final class WaterManager extends SectionCache
             final var state = entry.getValue();
 
             pos.set(entry.getLongKey());
-            world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
+
+            if (world.isLoaded(pos) && flowMap.getFlow(pos) != Direction.UP) {
+                world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
+            }
         }
     }
 
     private void clearCache() {
         releaseSections();
+        flowMap.clear();
         queuedWater.clear();
         updateQueue.clear();
         cachedFlowState.clear();
@@ -232,6 +263,7 @@ public final class WaterManager extends SectionCache
 
     public void unload() {
         cachedWater.clear();
+        flowMap.clear();
         clearCache();
     }
 }
