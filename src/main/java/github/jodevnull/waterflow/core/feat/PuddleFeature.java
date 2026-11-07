@@ -1,8 +1,6 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.core.WaterManager;
-import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapted from: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
- * Credits to Sir Washington on github
+ * Original code: https://github.com/badgermemelord/Dihydrogen-Monoxide-Reloaded/
  */
 public final class PuddleFeature
 {
@@ -129,26 +126,20 @@ public final class PuddleFeature
 
     private static boolean tryMove(Direction dir) {
         canMove = true;
-        BlockPos toPos = pos.relative(dir);
-
-        if (system.getFlow(toPos) == dir.getOpposite()) {
-            system.setFlow(toPos, null);
-        }
-
-        system.setFlow(pos, dir);
+        system.flowMap.removeFlowAt(pos);
+        system.flowMap.removeFlowAt(pos.relative(dir));
 
         if (system.canFlow(pos, dir)) {
             system.setWater(pos, 0);
-            system.addWater(toPos, 1);
+            system.addWater(pos.relative(dir), 1);
             return true;
         }
 
         return false;
     }
 
-    // its actual test rect but ssssh...
-    private static final BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
-    private static final BlockPos.MutableBlockPos testPos2 = new BlockPos.MutableBlockPos();
+    private static final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
+    private static final BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos();
 
     private static void testLine(int x, int z, int toX, int toZ) {
         for (int iX = x; iX <= toX; iX++) {
@@ -156,26 +147,15 @@ public final class PuddleFeature
                 int relX = iX-xX;
                 int relZ = iZ-zZ;
 
-                testPos.set(iX, pos.getY()-1, iZ);
-                testPos2.set(iX, pos.getY(), iZ);
-                int uLevel = system.getWaterLevel(testPos2);
+                below.set(iX, pos.getY()-1, iZ);
+                above.set(iX, pos.getY(), iZ);
 
-                if (isHole(testPos, testPos2) && (uLevel == 0 || uLevel == 1)) {
+                int uLevel = system.getWaterLevel(above);
+
+                if (system.isNotFull(below) && uLevel == 0) {
                     holes.add(new PathfinderBFS.Node(relX, relZ, 0));
                 }
             }
         }
-    }
-
-    private static boolean isHole(BlockPos pos, BlockPos above) {
-        if (system.isNotFull(pos) && system.canFlow(above, Direction.DOWN)) {
-            return true;
-        }
-
-        // if (IWaterChannel.isChannel(system, pos) && system.isEmpty(above)) {
-        //     return true;
-        // }
-
-        return FluidUtils.isNaturalWater(system, pos);
     }
 }

@@ -26,6 +26,6 @@ public class BucketItemMixin
     @TargetHandler(name = "injectPlaceFluid", mixin = "de.leximon.fluidlogged.mixin.classes.forge.world_interaction.removal_and_placement.BucketItemMixin")
     @Redirect(method = "@MixinSquared:Handler", at= @At(value = "INVOKE", ordinal=1, target = "Lde/leximon/fluidlogged/mixin/extensions/LevelExtension;setFluid(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/material/FluidState;I)Z"))
     private boolean injectFluid2(LevelExtension instance, BlockPos blockPos, FluidState fluidState, int flags) {
-        return instance.setFluid(blockPos, fluidState.trySetValue(FluidProperty.TIME, Config.getWaterEvapTime()), 131);
+        return instance.setFluid(blockPos, fluidState.trySetValue(FluidProperty.TIME, Config.getEvaporationTime()), 131);
     }
 }

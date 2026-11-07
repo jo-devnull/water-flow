@@ -21,7 +21,7 @@ public class LavaFluidMixin
 {
     @Inject(method = "randomTick", at = @At("HEAD"))
     private void onLavaRandomTick(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
-        if (!Config.lavaCooling() || pLevel.isClientSide() || !Config.isEnabled(pLevel)) {
+        if (!Config.lavaCooldownEnabled() || pLevel.isClientSide() || !Config.isEnabled(pLevel)) {
             return;
         }
 
@@ -36,7 +36,7 @@ public class LavaFluidMixin
             final var newState = lava.trySetValue(FluidProperty.TIME, time + 1);
             WaterSystem.of(pLevel).ifPresent(manager -> manager.setBlockState(pPos, newState));
         } else {
-            pLevel.setBlockAndUpdate(pPos, Config.lavaCoolingBlock());
+            pLevel.setBlockAndUpdate(pPos, Config.blockThatLavaCoolsInto());
             WaterEffects.fizz((ServerLevel) pLevel, pPos);
         }
     }

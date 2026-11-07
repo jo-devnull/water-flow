@@ -32,9 +32,9 @@ public final class FluidUtils
 
     public static FluidState getWater(int level) {
         if (level == 8) {
-            return Fluids.WATER.getSource(false).setValue(TIME, Config.getWaterEvapTime());
+            return Fluids.WATER.getSource(false).setValue(TIME, Config.getEvaporationTime());
         } else if (level > 0) {
-            return Fluids.WATER.getFlowing(level, false).setValue(TIME, Config.getWaterEvapTime());
+            return Fluids.WATER.getFlowing(level, false).setValue(TIME, Config.getEvaporationTime());
         }
 
         return Fluids.EMPTY.defaultFluidState();

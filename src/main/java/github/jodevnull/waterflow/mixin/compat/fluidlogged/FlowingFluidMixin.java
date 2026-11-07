@@ -17,6 +17,6 @@ public class FlowingFluidMixin
     @TargetHandler(name = "redirectTickSetBlock", mixin = "de.leximon.fluidlogged.mixin.classes.world_interaction.FlowingFluidMixin")
     @Redirect(method = "@MixinSquared:Handler", at = @At(value = "INVOKE", ordinal = 1, target = "Lde/leximon/fluidlogged/mixin/extensions/LevelExtension;setFluid(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/material/FluidState;I)Z"))
     private boolean redirectSetFluid(LevelExtension instance, BlockPos blockPos, FluidState fluidState, int flags) {
-        return instance.setFluid(blockPos, fluidState.trySetValue(FluidProperty.TIME, Config.getWaterEvapTime()), flags);
+        return instance.setFluid(blockPos, fluidState.trySetValue(FluidProperty.TIME, Config.getEvaporationTime()), flags);
     }
 }

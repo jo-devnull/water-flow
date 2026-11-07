@@ -2,8 +2,7 @@ package github.jodevnull.waterflow.mixin.world;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.fluid.FluidProperty;
-import github.jodevnull.waterflow.core.fluid.FluidUtils;
+import github.jodevnull.waterflow.core.feat.CommonFeatures;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
@@ -13,7 +12,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
@@ -56,33 +54,24 @@ public abstract class ServerLevelMixin extends Level
 
     @Inject(method = "tickChunk", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;handlePrecipitation(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/biome/Biome$Precipitation;)V"))
     private void doRainFlooding(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local(name="blockpos1") BlockPos blockpos) {
-        if (!Config.rainFlooding())
+        final ServerLevel world = (ServerLevel) (Object) this;
+
+        if (!Config.isEnabled(world))
             return;
+
+        if (!Config.rainWaterEnabled())
+            return;
+
+        final int interval = world.isThundering()
+            ? Config.rainWaterInterval()
+            : Config.rainFloodingInterval();
 
         m_tickCounter++;
 
-        if (m_tickCounter > Config.rainFloodingInterval())
+        if (m_tickCounter > interval)
             m_tickCounter = 0;
         else return;
 
-        if (!isRainingAt(blockpos)) {
-            return;
-        }
-
-        final var world = (ServerLevel) (Object) this;
-        final var state = getBlockState(blockpos);
-        final var below = getBlockState(blockpos.below());
-        final var fluid = FluidUtils.getFluidState(this, blockpos.below());
-
-        if (!fluid.isEmpty() || below.is(Blocks.SNOW))
-            return;
-
-        if (state.is(Blocks.AIR)) {
-            world.setBlockAndUpdate(blockpos, FluidUtils
-                .getWater(2)
-                .createLegacyBlock()
-                .setValue(FluidProperty.TIME, Config.getWaterEvapTime())
-            );
-        }
+        CommonFeatures.rainFlooding(WaterSystem.get(world), blockpos);
     }
 }

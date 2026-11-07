@@ -25,7 +25,7 @@ public class InternalMixin
     @ModifyReturnValue(method = "handleBlockRemoval", at = @At("RETURN"))
     private static BlockState handleBlockRemoval(BlockState original) {
         if (original.is(Blocks.WATER)) {
-            return original.trySetValue(FluidProperty.TIME, Config.getWaterEvapTime());
+            return original.trySetValue(FluidProperty.TIME, Config.getEvaporationTime());
         }
 
         return original;

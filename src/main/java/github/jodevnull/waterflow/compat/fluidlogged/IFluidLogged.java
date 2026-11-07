@@ -3,7 +3,6 @@ package github.jodevnull.waterflow.compat.fluidlogged;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterManager;
-import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -42,7 +41,7 @@ public interface IFluidLogged
 
     default BlockState handleBlockRemoval(Level instance, BlockPos blockPos, int flags, int maxUpdateDepth) {
         final var fluidState = instance.getFluidState(blockPos);
-        return fluidState.createLegacyBlock().trySetValue(TIME, Config.getWaterEvapTime());
+        return fluidState.createLegacyBlock().trySetValue(TIME, Config.getEvaporationTime());
     }
 
     static IFluidLogged loadClass(IFluidLogged result) {

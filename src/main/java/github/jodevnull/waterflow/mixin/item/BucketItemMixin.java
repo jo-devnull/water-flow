@@ -32,6 +32,6 @@ public class BucketItemMixin
             }
         }
 
-        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 8 : Config.getWaterEvapTime()), pFlags);
+        return level.setBlock(pPos, pNewState.trySetValue(TIME, pNewState.is(Blocks.LAVA) ? 8 : Config.getEvaporationTime()), pFlags);
     }
 }

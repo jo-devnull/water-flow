@@ -49,4 +49,15 @@ public final class Utils
     public static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
     }
+
+    // she lied to me
+    public static boolean isAllFalse(boolean[] values) {
+        for (final boolean value : values) {
+            if (value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
