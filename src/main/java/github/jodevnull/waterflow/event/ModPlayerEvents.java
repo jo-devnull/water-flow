@@ -9,9 +9,7 @@ import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -74,7 +72,7 @@ public class ModPlayerEvents
                 });
 
                 if (level instanceof ServerLevel world) {
-                    WaterEffects.pushWater(world, pos);
+                    WaterEffects.splash(world, pos);
                 }
 
                 player.swing(event.getHand());

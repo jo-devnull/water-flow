@@ -28,6 +28,7 @@ public class FallingBlockEntityMixin
         if (!FluidUtils.isFiniteWater(fluidState)) return;
 
         if (pLevel instanceof ServerLevel world) {
+            WaterSystem.setWaterLevel(pLevel, pPos, 0);
             WaterSystem.spread(world, pPos, fluidState.getAmount());
         }
     }

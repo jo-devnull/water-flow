@@ -26,7 +26,7 @@ public class WaterFlow
     // TODO: implement cloth for absorving small amounts of water
     // DONE: implement recipe for filling containers with water
     // TODO: implement pipes
-    // TODO: fix BlockItem bug
+    // DONE: fix BlockItem bug (finnaly fixed this shit)
 
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();

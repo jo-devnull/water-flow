@@ -5,6 +5,7 @@ import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import com.bawnorton.mixinsquared.TargetHandler;
 import de.leximon.fluidlogged.Fluidlogged;
@@ -32,13 +33,20 @@ public abstract class BlockItemMixin
         final BlockPos pos = context.getClickedPos();
         final FluidState fluidState = FluidUtils.getFluidState(level, pos);
         final float offset = IWaterFlowBlock.getFluidOffset(blockState);
+        final boolean fluidloggable = Fluidlogged.isFluidloggable(blockState);
 
         if (FluidUtils.isNaturalWater(fluidState))
             return;
 
+        final BlockState toReplace = level.getBlockState(pos);
+
+        if (!toReplace.isAir() && !(toReplace.getBlock() instanceof LiquidBlock)) {
+            level.destroyBlock(pos, true);
+        }
+
         if (placeBlock(context, blockState)) {
             if (!fluidState.isEmpty()) {
-                if (Fluidlogged.isFluidloggable(blockState) && offset == 0) {
+                if (fluidloggable && offset == 0) {
                     ((LevelExtension) level).setFluid(pos, fluidState, 131);
                 } else if (!level.isClientSide()) {
                     if (!blockState.is(Blocks.SPONGE)) {

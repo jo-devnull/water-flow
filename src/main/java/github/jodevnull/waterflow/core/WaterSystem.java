@@ -104,8 +104,6 @@ public final class WaterSystem
     }
 
     public static void spread(WaterManager water, BlockPos pos, int amount, Direction dir) {
-        water.setWater(pos, 0);
-
         if (water.getWaterLevel(pos.relative(dir)) > -1) {
             water.addWater(pos.relative(dir), amount, dir);
         } else {

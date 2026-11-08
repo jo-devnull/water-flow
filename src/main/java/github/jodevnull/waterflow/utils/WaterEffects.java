@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundSource;
 
 public final class WaterEffects
 {
-    public static void pushWater(ServerLevel world, BlockPos pos) {
+    public static void splash(ServerLevel world, BlockPos pos) {
         world.sendParticles(ParticleTypes.FALLING_WATER,
             pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
             4 + world.random.nextInt(4), world.random.nextFloat(), 0.5D, world.random.nextFloat(), 0.05D

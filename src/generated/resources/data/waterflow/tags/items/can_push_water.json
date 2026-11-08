@@ -1,8 +1,5 @@
 {
   "values": [
-    {
-      "id": "#minecraft:hoes",
-      "required": false
-    }
+    "minecraft:brush"
   ]
 }
