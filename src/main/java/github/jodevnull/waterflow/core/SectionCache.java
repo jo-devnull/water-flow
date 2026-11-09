@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -75,7 +75,7 @@ public abstract class SectionCache implements BlockGetter
         if (pos.getY() < getMinBuildHeight())
             return Fluids.EMPTY.defaultFluidState();
 
-        return Compat.Fluidlogged.getFluidState(getSection(pos), pos);
+        return ModCompat.Fluidlogged.getFluidState(getSection(pos), pos);
     }
 
     public void setBlockState(BlockPos pos, BlockState newState) {
@@ -93,7 +93,7 @@ public abstract class SectionCache implements BlockGetter
     }
 
     public void setFluidState(BlockPos pos, FluidState newState) {
-        Compat.Fluidlogged.setFluidState(world, getSection(pos), pos, newState,
+        ModCompat.Fluidlogged.setFluidState(world, getSection(pos), pos, newState,
             Block.UPDATE_IMMEDIATE  |
             Block.UPDATE_CLIENTS    |
             Block.UPDATE_KNOWN_SHAPE

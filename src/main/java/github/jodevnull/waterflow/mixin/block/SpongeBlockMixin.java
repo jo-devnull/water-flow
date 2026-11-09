@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.mixin.block;
 
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SpongeBlock;
@@ -15,7 +15,7 @@ public class SpongeBlockMixin
 {
     @Redirect(method = "lambda$removeWaterBreadthFirstSearch$1", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
     private static boolean removeFluidStates(Level instance, BlockPos pPos, BlockState pNewState, int pFlags) {
-        Compat.Fluidlogged.setFluid(instance, pPos, Fluids.EMPTY.defaultFluidState(), 3, 512);
+        ModCompat.Fluidlogged.setFluid(instance, pPos, Fluids.EMPTY.defaultFluidState(), 3, 512);
         return instance.setBlock(pPos, pNewState, pFlags);
     }
 }

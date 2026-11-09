@@ -20,6 +20,7 @@
     "compat.create.CopyCatPanelBlockMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
+    "compat.create.WaterWheelBlockEntityMixin",
     "compat.fluidlogged.BlockItemMixin",
     "compat.fluidlogged.BucketItemMixin",
     "compat.fluidlogged.FlowingFluidMixin",

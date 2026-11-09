@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
@@ -40,7 +40,7 @@ public final class CommonFeatures
 
                 if (blockState.is(Blocks.WATER)) {
                     water.setBlockState(pos, blockState.setValue(TIME, time - 1));
-                } else if (Compat.Fluidlogged.isFluidloggable(blockState)) {
+                } else if (ModCompat.Fluidlogged.isFluidloggable(blockState)) {
                     water.setFluidState(pos, fluid.setValue(TIME, time - 1));
                 }
             }

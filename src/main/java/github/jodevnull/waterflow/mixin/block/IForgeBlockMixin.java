@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.mixin.block;
 
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -24,6 +24,6 @@ public interface IForgeBlockMixin
     @Overwrite()
     default boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         self().playerWillDestroy(level, pos, state, player);
-        return level.setBlock(pos, Compat.Fluidlogged.handleBlockRemoval(level, pos, 11, 512), level.isClientSide ? 11 : 3);
+        return level.setBlock(pos, ModCompat.Fluidlogged.handleBlockRemoval(level, pos, 11, 512), level.isClientSide ? 11 : 3);
     }
 }

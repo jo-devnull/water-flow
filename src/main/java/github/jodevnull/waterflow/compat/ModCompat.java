@@ -1,27 +1,28 @@
 package github.jodevnull.waterflow.compat;
 
 import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.compat.create.CreateCompat;
+import github.jodevnull.waterflow.compat.fluidlogged.FluidLoggedCompat;
 import net.minecraftforge.fml.ModList;
 
-public interface ModCompat
+public final class ModCompat
 {
-    String location();
-    String modName();
+    public static CreateCompat Create = new CreateCompat() {};
+    public static FluidLoggedCompat Fluidlogged = new FluidLoggedCompat() {};
 
-    default boolean isLoaded() {
-        return false;
+    static void init() {
+        Create = tryLoadImpl("create", "github.jodevnull.waterflow.compat.create.CreateIpl", Create);
+        Fluidlogged = tryLoadImpl("fluidlogged", "github.jodevnull.waterflow.compat.fluidlogged.FluidloggedImpl", Fluidlogged);
     }
 
-    static <T extends ModCompat> T tryLoading(T compat) {
-        if (ModList.get().isLoaded(compat.modName())) {
+    private static <T> T tryLoadImpl(String modName, String className, T compat) {
+        if (ModList.get().isLoaded(modName)) {
             try {
-                compat = (T) Class.forName(compat.location()).newInstance();
+                compat = (T) Class.forName(className).newInstance();
             } catch (Exception e) {
-                WaterFlow.logger.error("Error loading {} compat class: {}", compat.modName(), e);
+                WaterFlow.logger.error("Error loading {} compat class: {}", modName, e);
             } finally {
-                if (compat.isLoaded()) {
-                    WaterFlow.logger.info("Loaded {} compat", compat.modName());
-                }
+                WaterFlow.logger.info("Loaded {} compat", modName);
             }
         }
 

@@ -1,6 +1,5 @@
 package github.jodevnull.waterflow.compat.fluidlogged;
 
-import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.core.BlockPos;
@@ -12,16 +11,10 @@ import net.minecraft.world.level.material.FluidState;
 
 import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
-public interface FluidLoggedCompat extends ModCompat
+public interface FluidLoggedCompat
 {
-    @Override
-    default String modName() {
-        return "fluidlogged";
-    }
-
-    @Override
-    default String location() {
-        return "github.jodevnull.waterflow.compat.fluidlogged.FluidLoggedImpl";
+    default boolean isLoaded() {
+        return false;
     }
 
     default boolean isFluidloggable(BlockState state) {

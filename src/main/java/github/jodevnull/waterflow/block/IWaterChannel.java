@@ -1,10 +1,13 @@
 package github.jodevnull.waterflow.block;
 
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
@@ -21,6 +24,15 @@ public interface IWaterChannel
 
     static boolean isChannel(BlockState state) {
         return state.getBlock() instanceof IWaterChannel;
+    }
+
+    static void flowNaturalWaterAbove(Level pLevel, BlockPos pos, BlockState state, FluidState fluid) {
+        final Direction dir = IWaterChannel.facing(state);
+        final BlockState next = pLevel.getBlockState(pos.relative(dir));
+
+        if (next.isAir() || ModCompat.Fluidlogged.isFluidloggable(next)) {
+            pLevel.setBlockAndUpdate(pos.relative(dir), fluid.createLegacyBlock());
+        }
     }
 
     static void flowWaterAbove(WaterManager manager, BlockState state, BlockPos pos, int level) {

@@ -1,8 +1,8 @@
 package github.jodevnull.waterflow.event;
 
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.block.ChannelBlock;
-import github.jodevnull.waterflow.compat.Compat;
 import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
@@ -59,7 +59,7 @@ public class ModPlayerEvents
         final var blockPos = event.getHitVec().getBlockPos();
 
         if (player.getItemInHand(event.getHand()).is(ModTags.Items.CAN_PUSH_WATER)) {
-            final var pos = Compat.Fluidlogged.isFluidloggable(level.getBlockState(blockPos))
+            final var pos = ModCompat.Fluidlogged.isFluidloggable(level.getBlockState(blockPos))
                 ? blockPos : blockPos.relative(event.getHitVec().getDirection());
 
             final var dir = player.isSteppingCarefully() ? facing.getOpposite() : facing;

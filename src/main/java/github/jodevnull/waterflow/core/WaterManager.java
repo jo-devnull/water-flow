@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.flow.FlowMap;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
@@ -16,8 +16,6 @@ import net.minecraft.world.level.material.FluidState;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashSet;
-import java.util.Set;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -75,7 +73,7 @@ public final class WaterManager extends SectionCache
 
     // FIXME performance
     public boolean canFlow(BlockPos center, Direction dir) {
-        return Compat.Fluidlogged.canFlow(this, center, dir);
+        return ModCompat.Fluidlogged.canFlow(this, center, dir);
     }
 
     public boolean isNotFull(BlockPos pos) {
@@ -157,8 +155,8 @@ public final class WaterManager extends SectionCache
         BlockState state = getBlockState(pos);
         final var fluid = FluidUtils.getWater(level);
 
-        if (Compat.Fluidlogged.isFluidloggable(state)) {
-            Compat.Fluidlogged.setWater(this, state, pos, fluid);
+        if (ModCompat.Fluidlogged.isFluidloggable(state)) {
+            ModCompat.Fluidlogged.setWater(this, state, pos, fluid);
         }
 
         else if (state.isAir() || state.is(Blocks.WATER)) {
@@ -176,7 +174,7 @@ public final class WaterManager extends SectionCache
     private int getWaterLevelOf(BlockPos pos) {
         final var state = getBlockState(pos);
 
-        if (Compat.Fluidlogged.isLoaded()) {
+        if (ModCompat.Fluidlogged.isLoaded()) {
             cacheFlowState(pos, state);
         }
 
@@ -186,7 +184,7 @@ public final class WaterManager extends SectionCache
 
         final var fluidState = FluidUtils.getFluidState(this, pos);
 
-        if (Compat.Fluidlogged.isFluidloggable(state)) {
+        if (ModCompat.Fluidlogged.isFluidloggable(state)) {
             return fluidState.isEmpty() ? 0 :
                 FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
         }
@@ -229,6 +227,10 @@ public final class WaterManager extends SectionCache
         for (final var entry : queuedWater.long2ByteEntrySet()) {
             pos.set(entry.getLongKey());
 
+            if (!world.isLoaded(pos)) {
+                continue;
+            }
+
             if (setWaterLevel(pos, entry.getByteValue())) {
                 update(pos.west());
                 update(pos.east());
@@ -247,9 +249,9 @@ public final class WaterManager extends SectionCache
 
             pos.set(entry.getLongKey());
 
-            if (world.isLoaded(pos) && flowMap.getFlow(pos) != Direction.UP) {
+            // if (flowMap.getFlow(pos) != Direction.UP) {
                 world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
-            }
+            // }
         }
     }
 

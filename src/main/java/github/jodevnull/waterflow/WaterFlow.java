@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
 import github.jodevnull.waterflow.block.ChannelBlock;
-import github.jodevnull.waterflow.compat.Compat;
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
 import github.jodevnull.waterflow.event.ModServerEvents;
@@ -44,7 +44,7 @@ public class WaterFlow
     }
 
     public void onSetup(FMLCommonSetupEvent event) {
-        Compat.init();
+        ModCompat.init();
         ChannelBlock.BlockMap.init();
     }
 
