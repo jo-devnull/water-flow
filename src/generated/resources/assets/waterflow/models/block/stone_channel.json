@@ -2,6 +2,6 @@
   "parent": "waterflow:block/water_channel",
   "textures": {
     "base": "minecraft:block/stone",
-    "top": "minecraft:block/stone"
+    "top": "waterflow:block/stone_channel_top"
   }
 }

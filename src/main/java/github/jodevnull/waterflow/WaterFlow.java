@@ -24,16 +24,14 @@ public class WaterFlow
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     // TODO: implement cloth for absorving small amounts of water
-    // DONE: implement recipe for filling containers with water
     // TODO: implement pipes
-    // DONE: fix BlockItem bug (finnaly fixed this shit)
+    // TODO: add support for create water wheels
 
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
 
-        Compat.init();
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
@@ -46,6 +44,7 @@ public class WaterFlow
     }
 
     public void onSetup(FMLCommonSetupEvent event) {
+        Compat.init();
         ChannelBlock.BlockMap.init();
     }
 

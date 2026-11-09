@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.compat.fluidlogged;
 
-import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.WaterManager;
 import net.minecraft.core.BlockPos;
@@ -9,14 +9,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.fml.ModList;
 
 import static github.jodevnull.waterflow.core.fluid.FluidProperty.TIME;
 
-public interface IFluidLogged
+public interface FluidLoggedCompat extends ModCompat
 {
-    default boolean isLoaded() {
-        return false;
+    @Override
+    default String modName() {
+        return "fluidlogged";
+    }
+
+    @Override
+    default String location() {
+        return "github.jodevnull.waterflow.compat.fluidlogged.FluidLoggedImpl";
     }
 
     default boolean isFluidloggable(BlockState state) {
@@ -42,23 +47,5 @@ public interface IFluidLogged
     default BlockState handleBlockRemoval(Level instance, BlockPos blockPos, int flags, int maxUpdateDepth) {
         final var fluidState = instance.getFluidState(blockPos);
         return fluidState.createLegacyBlock().trySetValue(TIME, Config.getEvaporationTime());
-    }
-
-    static IFluidLogged loadClass(IFluidLogged result) {
-        final String classPath = "github.jodevnull.waterflow.compat.fluidlogged.FluidLoggedImpl";
-
-        if (ModList.get().isLoaded("fluidlogged")) {
-            try {
-                result = (IFluidLogged) WaterFlow.class.getClassLoader().loadClass(classPath).getConstructor().newInstance();
-            } catch (Exception e) {
-                WaterFlow.logger.error("Error loading Fluidlogged compat class: {e}", e);
-            } finally {
-                if (result.isLoaded()) {
-                    WaterFlow.logger.info("Successfully loaded Fluidlogged compat class!");
-                }
-            }
-        }
-
-        return result;
     }
 }

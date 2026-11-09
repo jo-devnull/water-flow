@@ -1,10 +1,5 @@
-// 1.20.1	2026-10-31T09:37:22.0049321	Loot Tables
+// 1.20.1	2026-11-09T16:40:51.138608	Loot Tables
 91f1805f465f202a77139b089f5e6f56806acf6a data/waterflow/loot_tables/blocks/andesite_channel.json
-e5aacbe66b93fcd54f6161fef9227f2e0d0b9e6c data/waterflow/loot_tables/blocks/cobblestone_channel.json
-c6e3a1673d95edb5a33418241ccd07334138d315 data/waterflow/loot_tables/blocks/copper_block_channel.json
-a070f64ed69b95fe8cee34611241671c86aa0b83 data/waterflow/loot_tables/blocks/cut_copper_channel.json
 2be66998311b8cd400fcbf8830a0cd736d257059 data/waterflow/loot_tables/blocks/dirt_channel.json
-34c8fe962afe503be207885b440834ec1c8e155d data/waterflow/loot_tables/blocks/sandstone_channel.json
 efa4296acb6951f3763d456e835d1c90a53fad24 data/waterflow/loot_tables/blocks/sand_channel.json
-ea362b2327af60411317f4d230bb1940a5cf172e data/waterflow/loot_tables/blocks/smooth_stone_channel.json
 85318f3d3a2996fe1d2078d7effa21ff5a60f589 data/waterflow/loot_tables/blocks/stone_channel.json

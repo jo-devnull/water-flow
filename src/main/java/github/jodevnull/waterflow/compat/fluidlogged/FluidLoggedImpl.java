@@ -5,9 +5,7 @@ import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
 import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
 import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
 import github.jodevnull.waterflow.core.WaterManager;
-import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
-import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +16,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
-public final class FluidLoggedImpl implements IFluidLogged
+public final class FluidLoggedImpl implements FluidLoggedCompat
 {
     @Override
     public boolean isLoaded() {

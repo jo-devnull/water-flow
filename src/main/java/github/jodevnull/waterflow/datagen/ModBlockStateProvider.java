@@ -26,7 +26,7 @@ public final class ModBlockStateProvider extends BlockStateProvider
             horizontalBlock(block.get(), models()
                 .withExistingParent(name, modLoc("block/water_channel"))
                 .texture("base", mcLoc("block/" + texture))
-                .texture("top", mcLoc("block/" + texture))
+                .texture("top", modLoc("block/" + name + "_top"))
             );
 
             simpleBlockItem(block.get(), models().getBuilder(name));

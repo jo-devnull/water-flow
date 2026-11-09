@@ -28,11 +28,6 @@ public final class ModBlocks
 
         addChannelBlock(Blocks.STONE);
         addChannelBlock(Blocks.ANDESITE);
-        addChannelBlock(Blocks.SANDSTONE);
-        addChannelBlock(Blocks.COBBLESTONE);
-        addChannelBlock(Blocks.SMOOTH_STONE);
-        addChannelBlock(Blocks.COPPER_BLOCK);
-        addChannelBlock(Blocks.CUT_COPPER);
     }
 
     private static RegistryObject<ChannelBlock> addChannelBlock(Block parent) {
