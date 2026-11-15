@@ -4,7 +4,7 @@ import de.leximon.fluidlogged.Fluidlogged;
 import de.leximon.fluidlogged.mixin.extensions.LevelChunkSectionExtension;
 import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
 import de.leximon.fluidlogged.mixin.extensions.ServerChunkCacheExtension;
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +29,7 @@ public final class FluidLoggedImpl implements FluidLoggedCompat
     }
 
     @Override
-    public boolean canFlow(WaterManager manager, BlockPos center, Direction dir) {
+    public boolean canFlow(WaterSystem manager, BlockPos center, Direction dir) {
         if (FlowHandler.checkFlowOut(manager.getFlowState(center), dir)) {
             return false;
         }
@@ -64,19 +64,19 @@ public final class FluidLoggedImpl implements FluidLoggedCompat
     }
 
     @Override
-    public boolean setWater(WaterManager manager, BlockState state, BlockPos pos, FluidState fluid) {
+    public boolean setWater(WaterSystem system, BlockState state, BlockPos pos, FluidState fluid) {
         final int level = fluid.getAmount();
 
         /// FIXED?: some blocks may need to be waterlogged to work, but this breaks create
         if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
             if (level == 8 && !state.getValue(BlockStateProperties.WATERLOGGED)) {
-                manager.setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, true));
+                system.getSections().setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, true));
             } else if (level < 8 && state.getValue(BlockStateProperties.WATERLOGGED)) {
-                manager.setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, false));
+                system.getSections().setBlockState(pos, state.setValue(BlockStateProperties.WATERLOGGED, false));
             }
         }
 
-        manager.setFluidState(pos, fluid);
+        system.getSections().setFluidState(pos, fluid);
 
         return true;
     }

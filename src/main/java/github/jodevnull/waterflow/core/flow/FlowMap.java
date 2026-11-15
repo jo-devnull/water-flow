@@ -37,11 +37,12 @@ public final class FlowMap
     public byte cacheFlow(long packedPos) {
         final BlockPos pos = BlockPos.of(packedPos);
 
-        if (!sections.world.isLoaded(pos)) {
-            return (byte) 0;
-        }
 
         final var section = sections.getSection(pos);
+
+        if (section == null) {
+            return (byte) 0;
+        }
 
         if (section.hasOnlyAir())
             return (byte) 0;
@@ -53,21 +54,22 @@ public final class FlowMap
         return ((FM$LevelChunkSection) section).wf_getFlow(rx, ry, rz);
     }
 
-    public Direction setFlow(BlockPos pos, Direction flow) {
-        if (!this.sections.world.isLoaded(pos)) {
+    public void setFlow(BlockPos pos, Direction flow) {
+        final var section = sections.getSection(pos);
+
+        if (section == null) {
             cachedFlow.remove(pos.asLong());
             removeQueue.remove(pos.asLong());
-            return Direction.DOWN;
+            return;
         }
 
-        final var section = sections.getSection(pos);
 
         if (flow == null) {
             cachedFlow.remove(pos.asLong());
         }
 
         if (section.hasOnlyAir())
-            return Direction.DOWN;
+            return;
 
         int rx = pos.getX() & 15;
         int ry = pos.getY() & 15;
@@ -84,7 +86,6 @@ public final class FlowMap
             this.sections.world.getChunkAt(pos).setUnsaved(true);
         }
 
-        return Direction.from3DDataValue(prev);
     }
 
     public void removeFlowAt(BlockPos pos) {

@@ -1,8 +1,8 @@
 package github.jodevnull.waterflow.mixin.world;
 
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.core.BlockPos;
@@ -28,8 +28,8 @@ public class FallingBlockEntityMixin
         if (!FluidUtils.isFiniteWater(fluidState)) return;
 
         if (pLevel instanceof ServerLevel world) {
-            WaterSystem.setWaterLevel(pLevel, pPos, 0);
-            WaterSystem.spread(world, pPos, fluidState.getAmount());
+            IWaterSystem.setWaterLevel(world, pPos, 0);
+            IWaterSystem.spread(world, pPos, fluidState.getAmount());
         }
     }
 }

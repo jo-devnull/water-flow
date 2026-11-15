@@ -1,9 +1,9 @@
 package github.jodevnull.waterflow.mixin.item;
 
-import github.jodevnull.waterflow.core.WaterSystem;
-import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -33,11 +33,14 @@ public abstract class BlockItemMixin
 
             if (!fluidState.isEmpty()) {
                 if (!level.isClientSide() && !blockState.is(Blocks.SPONGE)) {
-                    WaterSystem.spread(level, pos, fluidState.getAmount());
+                    IWaterSystem.spread(((ServerLevel) level), pos, fluidState.getAmount());
                 }
             }
 
-            WaterSystem.of(level).ifPresent(manager -> manager.flowMap.updateFlowAt(pos));
+            if (level instanceof ServerLevel world) {
+                IWaterSystem.get(world).ifPresent(system -> system.getFlowMap().updateFlowAt(pos));
+            }
+
             return true;
         }
 

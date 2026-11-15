@@ -1,11 +1,10 @@
 package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.compat.ModCompat;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.block.ChannelBlock;
-import github.jodevnull.waterflow.core.WaterManager;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,9 +26,9 @@ public class ModPlayerEvents
             return;
         }
 
-        WaterSystem.of((ServerLevel) event.getLevel()).ifPresent(manager -> {
-            manager.flowMap.updateFlowAt(event.getPos());
-        });
+        IWaterSystem.get((ServerLevel) event.getLevel())
+            .map(IWaterSystem::getFlowMap)
+            .ifPresent(flowMap -> flowMap.updateFlowAt(event.getPos()));
     }
 
     @SubscribeEvent
@@ -66,12 +65,12 @@ public class ModPlayerEvents
             final var fluidState = FluidUtils.getFluidState(level, pos);
 
             if (FluidUtils.isFiniteWater(fluidState)) {
-                WaterSystem.of(level).ifPresent(manager -> {
-                    tryPushWater(manager, pos, dir, fluidState.getAmount());
-                    manager.flowMap.updateNeighbors(pos);
-                });
-
                 if (level instanceof ServerLevel world) {
+                    IWaterSystem.get(world).ifPresent(system -> {
+                        tryPushWater(system, pos, dir, fluidState.getAmount());
+                        system.getFlowMap().updateNeighbors(pos);
+                    });
+
                     WaterEffects.splash(world, pos);
                 }
 
@@ -80,7 +79,7 @@ public class ModPlayerEvents
         }
     }
 
-    public static void tryPushWater(WaterManager manager, BlockPos pos, Direction dir, int amount) {
+    public static void tryPushWater(IWaterSystem manager, BlockPos pos, Direction dir, int amount) {
         int nextLevel = -1, count = 0;
 
         while (count < 4) {

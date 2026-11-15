@@ -23,10 +23,6 @@ public class WaterFlow
     public static final Logger logger = LogUtils.getLogger();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    // TODO: implement cloth for absorving small amounts of water
-    // TODO: implement pipes
-    // TODO: add support for create water wheels
-
     public WaterFlow(FMLJavaModLoadingContext context) {
         final var modEventBus = context.getModEventBus();
 

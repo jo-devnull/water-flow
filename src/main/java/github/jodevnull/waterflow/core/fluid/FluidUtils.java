@@ -1,9 +1,11 @@
 package github.jodevnull.waterflow.core.fluid;
 
+import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.config.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -73,5 +75,30 @@ public final class FluidUtils
     public static boolean shouldSkipVanillaBehavior(BlockGetter getter, BlockPos pos) {
         final BlockState state = getter.getBlockState(pos);
         return state.is(ModTags.Blocks.NEEDS_WATER_SOURCE);
+    }
+
+    public static int getWaterLevelOf(BlockGetter world, BlockPos pos, BlockState state) {
+        if (state.is(Blocks.VOID_AIR)) {
+            return -1;
+        }
+
+        if (state.isAir() || Config.isWaterBreakable(state)) {
+            return 0;
+        }
+
+        final var fluidState = FluidUtils.getFluidState(world, pos);
+
+        if (ModCompat.Fluidlogged.isFluidloggable(state)) {
+            return fluidState.isEmpty() ? 0 :
+                FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
+        }
+
+        if (FluidUtils.isWater(fluidState)) {
+            return FluidProperty.timeof(fluidState) == 0 ? -1 : fluidState.getAmount();
+        }
+
+        else {
+            return -1;
+        }
     }
 }

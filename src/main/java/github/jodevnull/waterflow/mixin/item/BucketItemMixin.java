@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.item;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.WaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BucketItem;
@@ -22,7 +22,7 @@ public class BucketItemMixin
     private boolean setBlock(Level level, BlockPos pPos, BlockState pNewState, int pFlags) {
         if (pNewState.is(Blocks.WATER)) {
             if (!level.isClientSide() && Config.isEnabled(level)) {
-                final var system = WaterSystem.get((ServerLevel) level);
+                final var system = IWaterSystem.get((ServerLevel) level).orElseThrow();
                 final int water = system.getWaterLevel(pPos);
 
                 if (water > 0) {
