@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

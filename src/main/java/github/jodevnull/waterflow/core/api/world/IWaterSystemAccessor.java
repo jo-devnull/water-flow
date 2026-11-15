@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.api.world;
 
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 

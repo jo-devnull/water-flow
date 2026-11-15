@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.fluids.OpenEndedPipe;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

@@ -2,7 +2,7 @@ package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.utils.WaterEffects;

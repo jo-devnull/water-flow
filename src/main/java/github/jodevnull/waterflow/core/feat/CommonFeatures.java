@@ -2,7 +2,7 @@ package github.jodevnull.waterflow.core.feat;
 
 import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;

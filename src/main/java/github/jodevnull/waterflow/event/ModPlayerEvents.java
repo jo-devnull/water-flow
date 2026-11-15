@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.compat.ModCompat;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;

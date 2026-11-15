@@ -1,5 +1,6 @@
-package github.jodevnull.waterflow.core;
+package github.jodevnull.waterflow.core.api;
 
+import github.jodevnull.waterflow.core.SectionCache;
 import github.jodevnull.waterflow.core.api.world.IWaterSystemAccessor;
 import github.jodevnull.waterflow.core.flow.FlowMap;
 import net.minecraft.core.BlockPos;

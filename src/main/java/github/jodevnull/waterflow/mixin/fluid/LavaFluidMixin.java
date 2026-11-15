@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.core.BlockPos;

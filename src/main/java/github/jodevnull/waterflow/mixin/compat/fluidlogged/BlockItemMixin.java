@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.server.level.ServerLevel;

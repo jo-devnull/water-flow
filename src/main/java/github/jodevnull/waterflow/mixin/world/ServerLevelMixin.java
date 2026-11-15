@@ -2,7 +2,7 @@ package github.jodevnull.waterflow.mixin.world;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.core.api.world.IWaterSystemAccessor;
 import github.jodevnull.waterflow.core.feat.CommonFeatures;

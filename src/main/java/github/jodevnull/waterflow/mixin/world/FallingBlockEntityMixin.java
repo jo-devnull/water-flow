@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.mixin.world;
 
-import github.jodevnull.waterflow.core.IWaterSystem;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.world.entity.item.FallingBlockEntity;
