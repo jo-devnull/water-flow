@@ -63,10 +63,11 @@ public final class SectionCache implements BlockGetter
     @Nullable
     @ApiStatus.Internal
     public LevelChunkSection getSection(BlockPos pos) {
+        // Don't force load chunks
         if (world.isLoaded(pos)) {
             return sections.computeIfAbsent(SectionPos.of(pos).asLong(), this::getSectionDirect);
         }
-        // Don't force load chunks
+
         return null;
     }
 

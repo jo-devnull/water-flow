@@ -144,13 +144,13 @@ public final class WaterSystem implements IWaterSystem
         }
 
         final int level = getWaterLevel(pos);
-        final BlockState below = getWorld().getBlockState(pos.below());
+        final BlockState below = world.getBlockState(pos.below());
 
         if (level <= 0) {
             return;
         }
 
-        else if (below.getBlock() instanceof ChannelBlock) {
+        if (below.getBlock() instanceof ChannelBlock) {
             IWaterChannel.flowWaterAbove(this, below, pos, level);
         }
 
@@ -174,7 +174,7 @@ public final class WaterSystem implements IWaterSystem
 
         else if (below.getOptionalValue(FarmBlock.MOISTURE).orElse(8) < 7) {
             setWater(pos, level - 1);
-            getWorld().setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
+            world.setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
         }
 
         else if (FluidUtils.isNaturalWater(sections, pos.below())) {
@@ -277,7 +277,6 @@ public final class WaterSystem implements IWaterSystem
         scheduleUpdate(pos, fluid);
         return true;
     }
-
 
     private byte getWaterLevelOf(long lpos) {
         final var pos = BlockPos.of(lpos);
