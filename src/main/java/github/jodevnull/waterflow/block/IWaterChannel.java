@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.block;
 
 import github.jodevnull.waterflow.compat.ModCompat;
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -35,14 +35,14 @@ public interface IWaterChannel
         }
     }
 
-    static void flowWaterAbove(WaterManager manager, BlockState state, BlockPos pos, int level) {
+    static void flowWaterAbove(WaterSystem system, BlockState state, BlockPos pos, int level) {
         final var dir = state.getValue(HORIZONTAL_FACING);
-        final int nextLevel = manager.getWaterLevel(pos.relative(dir));
+        final int nextLevel = system.getWaterLevel(pos.relative(dir));
 
         if (level <= 0)
             return;
 
-        final BlockState nextState = manager.getBlockState(pos.relative(dir).below());
+        final BlockState nextState = system.getSections().getBlockState(pos.relative(dir).below());
 
         if (nextState.getBlock() instanceof ChannelBlock) {
             if (nextState.getValue(HORIZONTAL_FACING) == dir.getOpposite()) {
@@ -51,17 +51,17 @@ public interface IWaterChannel
         }
 
         if (level > 1 && level >= (nextLevel + 1) && (nextLevel >= 0 && nextLevel < 8)) {
-            manager.setWater(pos, level - 1);
-            manager.setWater(pos.relative(dir), nextLevel + 1);
+            system.setWater(pos, level - 1);
+            system.setWater(pos.relative(dir), nextLevel + 1);
         }
 
-        else if (level == 1 && nextLevel == 0 && searchDownHillPath(manager, state, pos)) {
-            manager.setWater(pos, 0);
-            manager.setWater(pos.relative(dir), 1);
+        else if (level == 1 && nextLevel == 0 && searchDownHillPath(system, state, pos)) {
+            system.setWater(pos, 0);
+            system.setWater(pos.relative(dir), 1);
         }
     }
 
-    static boolean searchDownHillPath(WaterManager manager, BlockState state, BlockPos pos) {
+    static boolean searchDownHillPath(WaterSystem system, BlockState state, BlockPos pos) {
         final BlockPos.MutableBlockPos above = pos.mutable();
         final BlockPos.MutableBlockPos below = pos.mutable().move(Direction.DOWN);
 
@@ -71,10 +71,10 @@ public interface IWaterChannel
         while (steps < 3) {
             above.move(dir);
             below.move(dir);
-            state = manager.getBlockState(below);
+            state = system.getSections().getBlockState(below);
 
-            if (manager.canFlow(above, dir)) {
-                if (manager.isNotFull(below)) {
+            if (system.canFlow(above, dir)) {
+                if (system.isNotFull(below)) {
                     return true;
                 } else if (isChannel(state)) {
                     dir = state.getValue(HORIZONTAL_FACING);

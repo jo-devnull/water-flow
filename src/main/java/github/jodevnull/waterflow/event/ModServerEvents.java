@@ -2,13 +2,12 @@ package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
@@ -32,13 +31,15 @@ public class ModServerEvents
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
-        WaterSystem.onUnload();
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            IWaterSystem.get(level).ifPresent(IWaterSystem::unload);
+        }
     }
 
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel world) {
-            WaterSystem.onUnload(world);
+            IWaterSystem.get(world).ifPresent(IWaterSystem::unload);
         }
     }
 
@@ -58,7 +59,7 @@ public class ModServerEvents
             if (level instanceof ServerLevel world) {
                 if (fluid.is(FluidTags.LAVA)) {
                     WaterEffects.fizz(world, rPos);
-                    WaterSystem.of((Level) level).ifPresent(manager -> manager.setWater(rPos, 0));
+                    IWaterSystem.get(world).ifPresent(manager -> manager.setWater(rPos, 0));
                 }
 
                 if (rFluid.getAmount() <= 4) {

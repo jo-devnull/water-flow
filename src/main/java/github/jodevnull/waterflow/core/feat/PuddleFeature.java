@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,10 +24,10 @@ public final class PuddleFeature
     private static int xX;
     private static int zZ;
 
-    private static WaterManager system;
+    private static WaterSystem system;
     private static boolean canMove = false;
 
-    public static void execute(WaterManager sys, BlockPos center, int level) {
+    public static void execute(WaterSystem sys, BlockPos center, int level) {
         system = sys; pos = center;
         canMove = false;
 

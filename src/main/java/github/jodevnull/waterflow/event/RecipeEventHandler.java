@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.event;
 
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.registry.ModRecipeTypes;
-import github.jodevnull.waterflow.core.WaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -47,12 +47,12 @@ public final class RecipeEventHandler
 
         final var recipe = recipeOpt.get();
         final int minWaterRequired = recipe.getAmount();
-        final int waterLevel = WaterSystem.getWaterLevel(level, pos).orElse(-1);
+        final int waterLevel = IWaterSystem.getWaterLevel(level, pos).orElse(-1);
 
         if (waterLevel < minWaterRequired)
             return false;
 
-        WaterSystem.setWaterLevel(level, pos, waterLevel - minWaterRequired);
+        IWaterSystem.setWaterLevel(level, pos, waterLevel - minWaterRequired);
         player.getItemInHand(hand).shrink(1);
         player.getInventory().add(recipe.getOutput().copy());
 

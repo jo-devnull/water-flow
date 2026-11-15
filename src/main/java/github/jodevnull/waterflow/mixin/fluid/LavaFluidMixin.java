@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.WaterSystem;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ public class LavaFluidMixin
 
         if (time < FluidProperty.MAX_TIME) {
             final var newState = lava.trySetValue(FluidProperty.TIME, time + 1);
-            WaterSystem.of(pLevel).ifPresent(manager -> manager.setBlockState(pPos, newState));
+            IWaterSystem.get((ServerLevel) pLevel).ifPresent(system -> system.getSections().setBlockState(pPos, newState));
         } else {
             pLevel.setBlockAndUpdate(pPos, Config.blockThatLavaCoolsInto());
             WaterEffects.fizz((ServerLevel) pLevel, pPos);

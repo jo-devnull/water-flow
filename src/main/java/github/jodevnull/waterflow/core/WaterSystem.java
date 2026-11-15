@@ -1,153 +1,341 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.registry.ModTags;
-import github.jodevnull.waterflow.block.IWaterChannel;
-import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.block.ChannelBlock;
+import github.jodevnull.waterflow.block.IWaterChannel;
+import github.jodevnull.waterflow.compat.ModCompat;
+import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.feat.EqualizeFeature;
+import github.jodevnull.waterflow.core.flow.FlowHandler;
+import github.jodevnull.waterflow.core.flow.FlowMap;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
+import github.jodevnull.waterflow.registry.ModTags;
 import github.jodevnull.waterflow.utils.WaterEffects;
+import it.unimi.dsi.fastutil.longs.*;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-public final class WaterSystem
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
+public final class WaterSystem implements IWaterSystem
 {
-    private static final Map<ResourceKey<Level>, WaterManager> SYSTEM = new HashMap<>();
+    public final ServerLevel world;
+    public final FlowMap flowMap;
+    public final SectionCache sections;
 
-    public static Optional<Integer> getWaterLevel(Level level, BlockPos pos) {
-        return WaterSystem.of(level).map(manager -> manager.getWaterLevel(pos));
+    private final Long2ByteMap cachedWater = new Long2ByteOpenHashMap();
+    private final Long2ByteMap queuedWater = new Long2ByteOpenHashMap();
+    private final Long2ShortMap cachedFlowState = new Long2ShortOpenHashMap();
+    private final Long2ObjectMap<FluidState> updateQueue = new Long2ObjectOpenHashMap<>();
+
+    public WaterSystem(ServerLevel world) {
+        this.world = world;
+        this.sections = new SectionCache(world);
+        this.flowMap = new FlowMap(this.sections);
+        queuedWater.defaultReturnValue((byte) -1);
     }
 
-    public static void setWaterLevel(Level level, BlockPos pos, int amount) {
-        WaterSystem.of(level).ifPresent(manager -> manager.setWater(pos, amount));
+    @Override
+    public ServerLevel getWorld() {
+        return world;
     }
 
-    public static boolean run(Level level, BlockPos pos) {
-        if (FluidUtils.shouldSkipVanillaBehavior(level, pos)) {
-            return true;
-        }
-
-        if (Config.isEnabled(level) && !level.isClientSide()) {
-            run(get((ServerLevel) level), pos);
-            return true;
-        }
-
-        return false;
+    @Override
+    public SectionCache getSections() {
+        return sections;
     }
 
-    public static void run(WaterManager water, BlockPos pos) {
-        if (!water.world.isLoaded(pos)) {
+    @Override
+    public FlowMap getFlowMap() {
+        return flowMap;
+    }
+
+    @Override
+    public boolean isEmpty(BlockPos pos) {
+        return getWaterLevel(pos) == 0;
+    }
+
+    @Override
+    public Direction getFlow(BlockPos pos) {
+        return this.flowMap.getFlow(pos);
+    }
+
+    @Override
+    public void setFlow(BlockPos pos, @Nullable Direction flow) {
+        this.flowMap.setFlow(pos, flow);
+    }
+
+    @Override
+    public int getWaterLevel(BlockPos pos) {
+        return cachedWater.computeIfAbsent(pos.asLong(), this::getWaterLevelOf);
+    }
+
+    @Override
+    public short getFlowState(BlockPos pos) {
+        return cachedFlowState.computeIfAbsent(pos.asLong(), lpos ->
+            FlowHandler.getFlowState(sections.getBlockState(BlockPos.of(lpos)))
+        );
+    }
+
+    @Override
+    public boolean canFlow(BlockPos center, Direction dir) {
+        return ModCompat.Fluidlogged.canFlow(this, center, dir);
+    }
+
+    @Override
+    public boolean isNotFull(BlockPos pos) {
+        final int level = getWaterLevel(pos);
+        return level >= 0 && level < 8;
+    }
+
+    @Override
+    public boolean isFull(BlockPos pos) {
+        return !isNotFull(pos);
+    }
+
+    @Override
+    public void addWater(BlockPos pos, int level, Direction flow) {
+        final int existingWater = getWaterLevel(pos);
+
+        if (existingWater == -1) {
             return;
         }
 
-        if (pos.getY() == water.getMinBuildHeight() + 1) {
-            water.setWater(pos, 0); return;
+        int total = existingWater + level;
+
+        if (total > 8) {
+            setWater(pos, 8);
+
+            if (getWaterLevel(pos.relative(flow)) > -1) {
+                moveWater(pos.relative(flow), total - 8, flow);
+            } else if (flow != Direction.UP) {
+                moveWater(pos.above(), total - 8, Direction.UP);
+            }
+
+        } else {
+            setWater(pos, total);
+        }
+    }
+
+    @Override
+    public void setWater(BlockPos pos, int level) {
+        int prev = getWaterLevel(pos);
+
+        if ((prev == 8 && level < 8) || (prev < 8 && level == 8)) {
+            flowMap.updateFlowAt(pos);
         }
 
-        final int level = water.getWaterLevel(pos);
-        final BlockState below = water.getBlockState(pos.below());
+        cachedWater.put(pos.asLong(), (byte) level);
+        queuedWater.put(pos.asLong(), (byte) level);
+    }
+
+    @Override
+    public void tickWater(BlockPos pos) {
+        if (pos.getY() == world.getMinBuildHeight() + 1) {
+            setWater(pos, 0); return;
+        }
+
+        final int level = getWaterLevel(pos);
+        final BlockState below = getWorld().getBlockState(pos.below());
 
         if (level <= 0) {
             return;
         }
 
         else if (below.getBlock() instanceof ChannelBlock) {
-            IWaterChannel.flowWaterAbove(water, below, pos, level);
+            IWaterChannel.flowWaterAbove(this, below, pos, level);
         }
 
         else if (below.is(Blocks.LAVA)) {
-            water.setWater(pos, 0);
+            setWater(pos, 0);
 
             if (level == 8) {
-                water.world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
+                world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
             } else {
-                 final int time = FluidProperty.timeof(below);
+                final int time = FluidProperty.timeof(below);
 
-                 if (time < FluidProperty.MAX_TIME) {
-                     water.setBlockState(pos.below(), below.trySetValue(FluidProperty.TIME, time+1));
-                 } else {
-                     water.world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
-                 }
+                if (time < FluidProperty.MAX_TIME) {
+                    sections.setBlockState(pos.below(), below.trySetValue(FluidProperty.TIME, time+1));
+                } else {
+                    world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
+                }
             }
 
-            WaterEffects.fizz((ServerLevel) water.world, pos);
+            WaterEffects.fizz(world, pos);
         }
 
         else if (below.getOptionalValue(FarmBlock.MOISTURE).orElse(8) < 7) {
-            water.setWater(pos, level - 1);
-            water.world.setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
+            setWater(pos, level - 1);
+            getWorld().setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
         }
 
-        // if below is naturally generated water, we merge it
-        // Only if not a #needs_water_source block (like kelp)
-        else if (FluidUtils.isNaturalWater(water, pos.below())) {
+        else if (FluidUtils.isNaturalWater(sections, pos.below())) {
             if (!below.is(ModTags.Blocks.NEEDS_WATER_SOURCE)) {
-                water.setWater(pos, 0);
+                setWater(pos, 0);
             }
         }
 
-        // TODO: fix this
-        else if (water.isNotFull(pos.below()) && water.canFlow(pos, Direction.DOWN)) {
-            water.setWater(pos, 0);
-            water.addWater(pos.below(), level, Direction.DOWN);
+        else if (isNotFull(pos.below()) && canFlow(pos, Direction.DOWN)) {
+            setWater(pos, 0);
+            addWater(pos.below(), level, Direction.DOWN);
         }
 
         else {
-            EqualizeFeature.execute(water, pos, level);
+            EqualizeFeature.execute(this, pos, level);
         }
     }
 
-    public static void spread(WaterManager water, BlockPos pos, int amount, Direction dir) {
-        if (water.getWaterLevel(pos.relative(dir)) > -1) {
-            water.addWater(pos.relative(dir), amount, dir);
+    @Override
+    public void beforeTick() {
+        assert cachedWater.isEmpty();
+    }
+
+    @Override
+    public void afterTick() {
+        cachedWater.clear();
+        updateNeighbors();
+        updateFluids();
+        flowMap.tick();
+        clear();
+    }
+
+    @Override
+    public void clear() {
+        sections.release();
+        flowMap.clear();
+        queuedWater.clear();
+        updateQueue.clear();
+        cachedFlowState.clear();
+    }
+
+    @Override
+    public void unload() {
+        cachedWater.clear();
+        clear();
+    }
+
+    public void cacheFlowState(BlockPos pos, BlockState state) {
+        final long key = pos.asLong();
+
+        if (!cachedFlowState.containsKey(key)) {
+            cachedFlowState.put(key, FlowHandler.getFlowState(state));
+        }
+    }
+
+    public void moveWater(BlockPos center, int amount, Direction flow) {
+        for (final var dir : Direction.Plane.HORIZONTAL) {
+            var rPos = center.relative(dir);
+            int rLevel = getWaterLevel(rPos);
+
+            if (rLevel < 0)
+                continue;
+
+            if (canFlow(center, dir) && amount >= (rLevel + 1)) {
+                amount -= 1;
+                addWater(rPos, 1, dir);
+            }
+        }
+
+        addWater(center, amount, flow);
+    }
+
+    private boolean setWaterLevel(BlockPos pos, int level) {
+        if (level < 0 || level > 8)
+            return false;
+
+        BlockState state = sections.getBlockState(pos);
+        final var fluid = FluidUtils.getWater(level);
+
+        if (ModCompat.Fluidlogged.isFluidloggable(state)) {
+            ModCompat.Fluidlogged.setWater(this, state, pos, fluid);
+        }
+
+        else if (level > 0 && Config.isWaterBreakable(state)) {
+            if (!state.is(Blocks.SNOW)) {
+                world.destroyBlock(pos, true);
+            }
+
+            sections.setBlockState(pos, FluidProperty.getBlockState(fluid));
+        }
+
+        else if (state.isAir() || state.is(Blocks.WATER)) {
+            sections.setBlockState(pos, FluidProperty.getBlockState(fluid));
+        }
+
+        if (level > 1) {
+            flowMap.removeFlowAt(pos);
+        }
+
+        scheduleUpdate(pos, fluid);
+        return true;
+    }
+
+
+    private byte getWaterLevelOf(long lpos) {
+        final var pos = BlockPos.of(lpos);
+        final var state = sections.getBlockState(pos);
+
+        if (ModCompat.Fluidlogged.isLoaded()) {
+            cacheFlowState(pos, state);
+        }
+
+        return (byte) FluidUtils.getWaterLevelOf(sections, pos, state);
+    }
+
+    public void update(BlockPos neighbor) {
+        final var state = FluidUtils.getFluidState(sections, neighbor);
+
+        if (FluidUtils.isFiniteWater(state)) {
+            updateQueue.put(neighbor.asLong(), state);
+        }
+    }
+
+    private void updateNeighbors() {
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (final var entry : queuedWater.long2ByteEntrySet()) {
+            pos.set(entry.getLongKey());
+
+            if (!world.isLoaded(pos)) {
+                continue;
+            }
+
+            if (setWaterLevel(pos, entry.getByteValue())) {
+                update(pos.west());
+                update(pos.east());
+                update(pos.below());
+                update(pos.above());
+                update(pos.north());
+                update(pos.south());
+            }
+        }
+    }
+
+    private void updateFluids() {
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (final var entry : updateQueue.long2ObjectEntrySet()) {
+            final var state = entry.getValue();
+
+            pos.set(entry.getLongKey());
+
+            if (world.isLoaded(pos)) {
+                world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
+            }
+        }
+    }
+
+    public void scheduleUpdate(BlockPos pos, FluidState fluid) {
+        if (fluid.isEmpty()) {
+            updateQueue.remove(pos.asLong());
         } else {
-            water.addWater(pos.above(), amount, dir);
+            updateQueue.put(pos.asLong(), fluid);
         }
-    }
-
-    public static void spread(Level level, BlockPos pos, int amount) {
-        of(level).ifPresent(manager -> spread(manager, pos, amount, Direction.UP));
-    }
-
-    public static Optional<WaterManager> of(Level world) {
-        if (!world.isClientSide() && Config.isEnabled(world)) {
-            return Optional.of(get((ServerLevel) world));
-        }
-
-        return Optional.empty();
-    }
-
-    public static boolean isLoaded(ServerLevel world) {
-        return SYSTEM.containsKey(world.dimension());
-    }
-
-    public static WaterManager get(ServerLevel world) {
-        return SYSTEM.computeIfAbsent(world.dimension(), k -> new WaterManager(world));
-    }
-
-    public static void onUnload(ServerLevel level) {
-        if (isLoaded(level)) {
-            SYSTEM.get(level.dimension()).unload();
-            SYSTEM.remove(level.dimension());
-        }
-    }
-
-    public static void onUnload() {
-        for (final var entry : SYSTEM.entrySet()) {
-            entry.getValue().unload();
-        }
-
-        SYSTEM.clear();
     }
 }

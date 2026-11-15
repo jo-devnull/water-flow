@@ -58,6 +58,10 @@ public final class FlowHandler
     }
 
     public static short getFlowState(BlockState state) {
+        if (state.is(Blocks.VOID_AIR)) {
+            return pack(all(), all());
+        }
+
         if (state.isAir() || state.is(Blocks.WATER)) {
             return pack(none(), none());
         }
@@ -67,6 +71,4 @@ public final class FlowHandler
 
         return pack(flowIn, flowOut);
     }
-
-    public static final short UNLOADED = pack(all(), all());
 }

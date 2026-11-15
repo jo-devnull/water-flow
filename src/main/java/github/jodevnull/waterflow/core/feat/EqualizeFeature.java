@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.core.feat;
 
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public final class EqualizeFeature
     private static final int[][] data = new int[diameter][diameter];
     private static final BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
 
-    public static void execute(WaterManager system, BlockPos center, int level) {
+    public static void execute(WaterSystem system, BlockPos center, int level) {
         int minLevel = 99;
 
         for (final int[] array : data) {

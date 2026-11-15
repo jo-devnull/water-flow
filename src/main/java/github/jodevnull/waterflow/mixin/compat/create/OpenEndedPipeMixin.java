@@ -5,8 +5,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.fluids.OpenEndedPipe;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -61,7 +61,7 @@ public abstract class OpenEndedPipeMixin
         if (world.isClientSide() || !Config.isEnabled(world) || !FluidHelper.isWater(stack.getFluid()))
             return world.setBlock(pPos, pNewState, pFlags);
 
-        final var water = WaterSystem.get((ServerLevel) world);
+        final var water = IWaterSystem.get((ServerLevel) world).orElseThrow();
         final int newLevel = Math.floorDiv(stack.getAmount(), 125);
 
         if (water.getWaterLevel(pPos) >= 0) {

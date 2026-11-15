@@ -4,7 +4,6 @@ import github.jodevnull.waterflow.core.flow.ext.FM$LevelChunkSection;
 import it.unimi.dsi.fastutil.shorts.Short2ByteMap;
 import it.unimi.dsi.fastutil.shorts.Short2ByteOpenHashMap;
 import net.minecraft.core.Registry;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +11,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LevelChunkSection.class)
 public class LevelChunkSectionMixin implements FM$LevelChunkSection

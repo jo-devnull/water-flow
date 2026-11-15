@@ -3,11 +3,12 @@ package github.jodevnull.waterflow.mixin.fluid;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,7 +40,10 @@ public abstract class FlowingFluidMixin extends Fluid
         final var fluidState = FluidUtils.getFluidState(pLevel, pos);
 
         if (FluidUtils.isFiniteWater(fluidState)) {
-            if (WaterSystem.run(pLevel, pos)) ci.cancel();
+            if (!pLevel.isClientSide() && Config.isEnabled(pLevel)) {
+                IWaterSystem.get(((ServerLevel) pLevel)).orElseThrow().tickWater(pos);
+                ci.cancel();
+            }
         } else if (FluidUtils.shouldSkipVanillaBehavior(pLevel, pos)) {
             ci.cancel();
         }

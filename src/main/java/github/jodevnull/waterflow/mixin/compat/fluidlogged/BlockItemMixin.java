@@ -1,8 +1,9 @@
 package github.jodevnull.waterflow.mixin.compat.fluidlogged;
 
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.api.block.IWaterFlowBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.core.WaterSystem;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -50,12 +51,15 @@ public abstract class BlockItemMixin
                     ((LevelExtension) level).setFluid(pos, fluidState, 131);
                 } else if (!level.isClientSide()) {
                     if (!blockState.is(Blocks.SPONGE)) {
-                        WaterSystem.spread(level, pos, fluidState.getAmount());
+                        IWaterSystem.spread((ServerLevel) level, pos, fluidState.getAmount());
                     }
                 }
             }
 
-            WaterSystem.of(level).ifPresent(manager -> manager.flowMap.updateFlowAt(pos));
+            if (level instanceof ServerLevel world) {
+                IWaterSystem.get(world).ifPresent(system -> system.getFlowMap().updateFlowAt(pos));
+            }
+
             cir.setReturnValue(true);
         }
 

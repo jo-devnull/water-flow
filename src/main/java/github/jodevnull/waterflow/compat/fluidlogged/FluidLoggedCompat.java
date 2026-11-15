@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.compat.fluidlogged;
 
 import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.core.WaterManager;
+import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -25,7 +25,7 @@ public interface FluidLoggedCompat
 
     default void setFluid(Level level, BlockPos pos, FluidState fluidState, int flags, int maxUpdateDepth) {}
 
-    default boolean setWater(WaterManager manager, BlockState state, BlockPos pos, FluidState fluid) {
+    default boolean setWater(WaterSystem manager, BlockState state, BlockPos pos, FluidState fluid) {
         return false;
     }
 
@@ -33,7 +33,7 @@ public interface FluidLoggedCompat
         return section.getFluidState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
     }
 
-    default boolean canFlow(WaterManager manager, BlockPos center, Direction dir) {
+    default boolean canFlow(WaterSystem manager, BlockPos center, Direction dir) {
         return true;
     }
 

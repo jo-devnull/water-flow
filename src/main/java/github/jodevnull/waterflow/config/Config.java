@@ -46,6 +46,7 @@ public final class Config
 
     static {
         mEnabledDimensions = Builder
+            .worldRestart()
             .comment("The mod will be enabled for these dimensions")
             .defineList("enabled_dimensions", Defaults.enabledDimensions, ConfigUtils::isResourceLocation);
 

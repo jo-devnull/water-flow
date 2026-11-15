@@ -1,8 +1,8 @@
 package github.jodevnull.waterflow.mixin.fluid;
 
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.feat.CommonFeatures;
-import github.jodevnull.waterflow.core.WaterSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -30,10 +30,10 @@ public abstract class FluidMixin
     private void onRandomTick(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom, CallbackInfo ci) {
         if (pLevel.isClientSide() || !Config.isEnabled(pLevel)) return;
 
-        final var manager = WaterSystem.get((ServerLevel) pLevel);
+        final var system = IWaterSystem.get((ServerLevel) pLevel).orElseThrow();
 
         if (Config.waterEvaporationEnabled()) {
-            CommonFeatures.waterEvaporation(manager, pPos);
+            CommonFeatures.waterEvaporation(system, pPos);
         }
     }
 }

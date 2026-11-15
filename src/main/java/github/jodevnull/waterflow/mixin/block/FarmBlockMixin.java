@@ -1,9 +1,9 @@
 package github.jodevnull.waterflow.mixin.block;
 
-import github.jodevnull.waterflow.core.WaterSystem;
+import github.jodevnull.waterflow.core.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,9 +22,7 @@ public class FarmBlockMixin
             final var fluidState = FluidUtils.getFluidState(pLevel, blockpos);
 
             if (FluidUtils.isFiniteWater(fluidState)) {
-                WaterSystem.of((Level) pLevel).ifPresent(manager -> {
-                    manager.setWater(blockpos, fluidState.getAmount() - 1);
-                });
+                IWaterSystem.get((ServerLevel) pLevel).ifPresent(manager -> manager.setWater(blockpos, fluidState.getAmount() - 1));
 
                 return true;
             }

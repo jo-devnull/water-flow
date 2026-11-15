@@ -16,13 +16,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class SectionCache implements BlockGetter
+public final class SectionCache implements BlockGetter
 {
     private final Long2ObjectMap<LevelChunkSection> sections = new Long2ObjectOpenHashMap<>();
 
@@ -47,7 +48,8 @@ public abstract class SectionCache implements BlockGetter
         return null;
     }
 
-    public LevelChunkSection getSectionDirect(long lpos) {
+    @ApiStatus.Internal
+    private LevelChunkSection getSectionDirect(long lpos) {
         final var pos = SectionPos.of(lpos);
         final var index = world.getSectionIndexFromSectionY(pos.getY());
         final var section = world.getChunk(pos.center()).getSection(index);
@@ -58,8 +60,14 @@ public abstract class SectionCache implements BlockGetter
         return section;
     }
 
+    @Nullable
+    @ApiStatus.Internal
     public LevelChunkSection getSection(BlockPos pos) {
-        return sections.computeIfAbsent(SectionPos.of(pos).asLong(), this::getSectionDirect);
+        if (world.isLoaded(pos)) {
+            return sections.computeIfAbsent(SectionPos.of(pos).asLong(), this::getSectionDirect);
+        }
+        // Don't force load chunks
+        return null;
     }
 
     @Override
@@ -67,11 +75,13 @@ public abstract class SectionCache implements BlockGetter
         if (pos.getY() < getMinBuildHeight())
             return Blocks.AIR.defaultBlockState();
 
-        if (!world.isLoaded(pos)) {
+        final LevelChunkSection section = getSection(pos);
+
+        if (section != null) {
+            return section.getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
+        } else {
             return Blocks.VOID_AIR.defaultBlockState();
         }
-
-        return getSection(pos).getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
     }
 
     @Override
@@ -79,23 +89,30 @@ public abstract class SectionCache implements BlockGetter
         if (pos.getY() < getMinBuildHeight() || !world.isLoaded(pos))
             return Fluids.EMPTY.defaultFluidState();
 
-        return ModCompat.Fluidlogged.getFluidState(getSection(pos), pos);
+        final LevelChunkSection section = getSection(pos);
+
+        if (section != null) {
+            return ModCompat.Fluidlogged.getFluidState(section, pos);
+        } else {
+            return Fluids.EMPTY.defaultFluidState();
+        }
     }
 
     public void setBlockState(BlockPos pos, BlockState newState) {
-        if (!world.isLoaded(pos)) {
+        final LevelChunkSection section = getSection(pos);
+
+        if (section == null) {
             return;
         }
 
-        final var prev = getSection(pos)
-            .setBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, newState, false);
+        final var prev = section.setBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, newState, false);
 
         if (world instanceof ServerLevel level && prev != newState) {
             level.getChunkSource().blockChanged(pos);
             level.sendBlockUpdated(pos, prev, newState,
                 Block.UPDATE_IMMEDIATE  |
-                Block.UPDATE_CLIENTS    |
-                Block.UPDATE_KNOWN_SHAPE
+                    Block.UPDATE_CLIENTS    |
+                    Block.UPDATE_KNOWN_SHAPE
             );
         }
     }
@@ -112,7 +129,7 @@ public abstract class SectionCache implements BlockGetter
         );
     }
 
-    public void releaseSections() {
+    public void release() {
         sections.forEach((pos, section) -> section.release());
         sections.clear();
     }
