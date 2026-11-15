@@ -1,5 +1,7 @@
 package github.jodevnull.waterflow.event;
 
+import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
 import github.jodevnull.waterflow.core.WaterSystem;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -20,6 +23,12 @@ import net.minecraftforge.fml.common.Mod;
 public class ModServerEvents
 {
     public static void register() {}
+
+    @SubscribeEvent
+    public static void onTagsReloaded(TagsUpdatedEvent event) {
+        WaterFlow.logger.info("Tags Updated. Reloading config...");
+        Config.reload();
+    }
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {

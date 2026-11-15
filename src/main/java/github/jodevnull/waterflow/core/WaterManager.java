@@ -1,6 +1,7 @@
 package github.jodevnull.waterflow.core;
 
 import github.jodevnull.waterflow.compat.ModCompat;
+import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.flow.FlowMap;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
@@ -58,6 +59,10 @@ public final class WaterManager extends SectionCache
 
     // FIXME performance
     public short getFlowState(BlockPos pos) {
+        if (!world.isLoaded(pos)) {
+            return FlowHandler.UNLOADED;
+        }
+
         return cachedFlowState.computeIfAbsent(pos.asLong(), lpos ->
             FlowHandler.getFlowState(getBlockState(BlockPos.of(lpos)))
         );
@@ -159,6 +164,14 @@ public final class WaterManager extends SectionCache
             ModCompat.Fluidlogged.setWater(this, state, pos, fluid);
         }
 
+        else if (level > 0 && Config.isWaterBreakable(state)) {
+            if (!state.is(Blocks.SNOW)) {
+                world.destroyBlock(pos, true);
+            }
+
+            setBlockState(pos, FluidProperty.getBlockState(fluid));
+        }
+
         else if (state.isAir() || state.is(Blocks.WATER)) {
             setBlockState(pos, FluidProperty.getBlockState(fluid));
         }
@@ -174,11 +187,15 @@ public final class WaterManager extends SectionCache
     private int getWaterLevelOf(BlockPos pos) {
         final var state = getBlockState(pos);
 
+        if (state.is(Blocks.VOID_AIR)) {
+            return -1;
+        }
+
         if (ModCompat.Fluidlogged.isLoaded()) {
             cacheFlowState(pos, state);
         }
 
-        if (state.isAir()) {
+        if (state.isAir() || Config.isWaterBreakable(state)) {
             return 0;
         }
 
@@ -249,9 +266,9 @@ public final class WaterManager extends SectionCache
 
             pos.set(entry.getLongKey());
 
-            // if (flowMap.getFlow(pos) != Direction.UP) {
+            if (world.isLoaded(pos)) {
                 world.scheduleTick(pos, state.getType(), state.getType().getTickDelay(world));
-            // }
+            }
         }
     }
 

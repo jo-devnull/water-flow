@@ -55,6 +55,7 @@ public abstract class BlockItemMixin
                 }
             }
 
+            WaterSystem.of(level).ifPresent(manager -> manager.flowMap.updateFlowAt(pos));
             cir.setReturnValue(true);
         }
 

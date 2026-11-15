@@ -10,9 +10,9 @@ public final class ModCompat
     public static CreateCompat Create = new CreateCompat() {};
     public static FluidLoggedCompat Fluidlogged = new FluidLoggedCompat() {};
 
-    static void init() {
-        Create = tryLoadImpl("create", "github.jodevnull.waterflow.compat.create.CreateIpl", Create);
-        Fluidlogged = tryLoadImpl("fluidlogged", "github.jodevnull.waterflow.compat.fluidlogged.FluidloggedImpl", Fluidlogged);
+    public static void init() {
+        Create = tryLoadImpl("create", "github.jodevnull.waterflow.compat.create.CreateImpl", Create);
+        Fluidlogged = tryLoadImpl("fluidlogged", "github.jodevnull.waterflow.compat.fluidlogged.FluidLoggedImpl", Fluidlogged);
     }
 
     private static <T> T tryLoadImpl(String modName, String className, T compat) {

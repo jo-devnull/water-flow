@@ -59,7 +59,7 @@ public final class CommonFeatures
             : Config.rainWaterIntensity();
 
         if (water.getWaterLevel(pos) > -1) {
-            water.addWater(pos, Utils.clamp(intensity, 0, 8));
+            water.addWater(pos, intensity);
         }
     }
 }

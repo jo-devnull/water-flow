@@ -67,18 +67,26 @@ public abstract class SectionCache implements BlockGetter
         if (pos.getY() < getMinBuildHeight())
             return Blocks.AIR.defaultBlockState();
 
+        if (!world.isLoaded(pos)) {
+            return Blocks.VOID_AIR.defaultBlockState();
+        }
+
         return getSection(pos).getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
     }
 
     @Override
     public FluidState getFluidState(BlockPos pos) {
-        if (pos.getY() < getMinBuildHeight())
+        if (pos.getY() < getMinBuildHeight() || !world.isLoaded(pos))
             return Fluids.EMPTY.defaultFluidState();
 
         return ModCompat.Fluidlogged.getFluidState(getSection(pos), pos);
     }
 
     public void setBlockState(BlockPos pos, BlockState newState) {
+        if (!world.isLoaded(pos)) {
+            return;
+        }
+
         final var prev = getSection(pos)
             .setBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, newState, false);
 
@@ -93,6 +101,10 @@ public abstract class SectionCache implements BlockGetter
     }
 
     public void setFluidState(BlockPos pos, FluidState newState) {
+        if (!world.isLoaded(pos)) {
+            return;
+        }
+
         ModCompat.Fluidlogged.setFluidState(world, getSection(pos), pos, newState,
             Block.UPDATE_IMMEDIATE  |
             Block.UPDATE_CLIENTS    |

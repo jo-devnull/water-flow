@@ -35,7 +35,13 @@ public final class FlowMap
     }
 
     public byte cacheFlow(long packedPos) {
-        final var section = sections.getSection(BlockPos.of(packedPos));
+        final BlockPos pos = BlockPos.of(packedPos);
+
+        if (!sections.world.isLoaded(pos)) {
+            return (byte) 0;
+        }
+
+        final var section = sections.getSection(pos);
 
         if (section.hasOnlyAir())
             return (byte) 0;
@@ -48,16 +54,16 @@ public final class FlowMap
     }
 
     public Direction setFlow(BlockPos pos, Direction flow) {
-        final var section = sections.getSection(pos);
-
-        if (flow == null) {
-            cachedFlow.remove(pos.asLong());
-        }
-
         if (!this.sections.world.isLoaded(pos)) {
             cachedFlow.remove(pos.asLong());
             removeQueue.remove(pos.asLong());
             return Direction.DOWN;
+        }
+
+        final var section = sections.getSection(pos);
+
+        if (flow == null) {
+            cachedFlow.remove(pos.asLong());
         }
 
         if (section.hasOnlyAir())

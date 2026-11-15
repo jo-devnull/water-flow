@@ -10,8 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public final class Config
 {
@@ -24,6 +26,8 @@ public final class Config
     // [water]
     private static final ForgeConfigSpec.BooleanValue mWaterEvaporation;
     private static final ForgeConfigSpec.IntValue mWaterEvaporationTime;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> mWaterBreakable;
+    private static final Set<Block> sWaterBreakable = new HashSet<>();
 
     // [lava]
     private static final ForgeConfigSpec.BooleanValue mLavaCooldown;
@@ -35,6 +39,10 @@ public final class Config
     private static final ForgeConfigSpec.IntValue mRainWaterIntensity;
     private static final ForgeConfigSpec.IntValue mHeavyRainWaterInterval;
     private static final ForgeConfigSpec.IntValue mHeavyRainWaterIntensity;
+
+    // [fluidlogged]
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> mAlwaysFlowThrough;
+    private static final Set<Block> sAlwaysFlowThroughBlocks = new HashSet<>();
 
     static {
         mEnabledDimensions = Builder
@@ -51,6 +59,10 @@ public final class Config
             .comment("a low value to make water evaporate faster.")
             .defineInRange("water_evaporation_time", 8, 1, 15);
 
+        mWaterBreakable = Builder
+            .comment("Defines which blocks water should break when in contact")
+            .defineList("water_breakable", Defaults.waterBreakable, ConfigUtils::isTagOrLocation);
+
         mLavaCooldown = Builder
             .comment("If true, lava placed by the player will eventually cooldown into a block.")
             .define("lava_cools_down", true);
@@ -59,15 +71,13 @@ public final class Config
             .comment(" The block that lava will turn into after cooling down.")
             .define("lava_cools_into", "minecraft:basalt");
 
-        Builder.push("rain");
-
         mRainWater = Builder
             .comment("If true, water will spawn during rain.")
             .define("rain_water", true);
 
         mRainWaterInterval = Builder
             .comment("The interval (in ticks) for spawning water during normal rain.")
-            .defineInRange("rain_water_interval", 15, 0, 100);
+            .defineInRange("rain_water_interval", 20, 0, 100);
 
         mRainWaterIntensity = Builder
             .comment("The amount of water to spawn during normal rain.")
@@ -75,11 +85,18 @@ public final class Config
 
         mHeavyRainWaterInterval = Builder
             .comment(" The interval (in ticks) to spawn water during heavy rain.")
-            .defineInRange("rain_flooding_interval", 12, 0, 100);
+            .defineInRange("rain_flooding_interval", 15, 0, 100);
 
         mHeavyRainWaterIntensity = Builder
             .comment("The amount of water to spawn during heavy rain.")
-            .defineInRange("rain_water_interval", 2, 1, 8);
+            .defineInRange("rain_water_interval", 1, 1, 8);
+
+        Builder.push("fluidlogged");
+
+        mAlwaysFlowThrough = Builder
+            .comment("Defines which blocks water will flow through it regardless of the state of the block.")
+            .comment("Only relevant if you have FluidLogged installed.")
+            .defineList("always_flow_through", Defaults.alwaysFlowThrough, ConfigUtils::isTagOrLocation);
 
         Builder.pop();
 
@@ -132,10 +149,24 @@ public final class Config
         return enabledInDimension(level.dimension());
     }
 
+    public static boolean alwaysFlowsThrough(BlockState state) {
+        return sAlwaysFlowThroughBlocks.contains(state.getBlock());
+    }
+
+    public static boolean isWaterBreakable(BlockState state) {
+        return sWaterBreakable.contains(state.getBlock());
+    }
+
     public static void reload() {
         final var key = ResourceLocation.parse(mLavaCooldownBlock.get());
         final var block = ForgeRegistries.BLOCKS.getValue(key);
         mLavaCoolsIntoBlock = Objects.requireNonNullElse(block, Blocks.BASALT);
+
+        sAlwaysFlowThroughBlocks.clear();
+        sAlwaysFlowThroughBlocks.addAll(ConfigUtils.readList(mAlwaysFlowThrough.get(), b -> false, true));
+
+        sWaterBreakable.clear();
+        sWaterBreakable.addAll(ConfigUtils.readList(mWaterBreakable.get(), b -> false, true));
     }
 
     public static final class Defaults
@@ -143,6 +174,15 @@ public final class Config
         public static final ImmutableList<String> enabledDimensions = ImmutableList.of(
             "minecraft:overworld",
             "minecraft:the_end"
+        );
+
+        public static final ImmutableList<String> alwaysFlowThrough = ImmutableList.of(
+            "minecraft:iron_trapdoor"
+        );
+
+        public static final ImmutableList<String> waterBreakable = ImmutableList.of(
+            "minecraft:snow",
+            "minecraft:snow_block"
         );
     }
 }

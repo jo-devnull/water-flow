@@ -67,4 +67,6 @@ public final class FlowHandler
 
         return pack(flowIn, flowOut);
     }
+
+    public static final short UNLOADED = pack(all(), all());
 }

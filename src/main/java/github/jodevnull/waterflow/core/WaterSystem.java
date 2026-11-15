@@ -47,6 +47,10 @@ public final class WaterSystem
     }
 
     public static void run(WaterManager water, BlockPos pos) {
+        if (!water.world.isLoaded(pos)) {
+            return;
+        }
+
         if (pos.getY() == water.getMinBuildHeight() + 1) {
             water.setWater(pos, 0); return;
         }
@@ -93,9 +97,10 @@ public final class WaterSystem
             }
         }
 
+        // TODO: fix this
         else if (water.isNotFull(pos.below()) && water.canFlow(pos, Direction.DOWN)) {
             water.setWater(pos, 0);
-            water.addWater(pos.below(), level);
+            water.addWater(pos.below(), level, Direction.DOWN);
         }
 
         else {
