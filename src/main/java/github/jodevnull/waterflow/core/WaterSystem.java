@@ -1,22 +1,19 @@
 package github.jodevnull.waterflow.core;
 
-import github.jodevnull.waterflow.block.ChannelBlock;
-import github.jodevnull.waterflow.block.IWaterChannel;
 import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
+import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.feat.EqualizeFeature;
 import github.jodevnull.waterflow.core.flow.FlowHandler;
 import github.jodevnull.waterflow.core.flow.FlowMap;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.registry.ModTags;
-import github.jodevnull.waterflow.utils.WaterEffects;
 import it.unimi.dsi.fastutil.longs.*;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 
@@ -35,6 +32,7 @@ public final class WaterSystem implements IWaterSystem
     private final Long2ByteMap queuedWater = new Long2ByteOpenHashMap();
     private final Long2ShortMap cachedFlowState = new Long2ShortOpenHashMap();
     private final Long2ObjectMap<FluidState> updateQueue = new Long2ObjectOpenHashMap<>();
+    private final WaterAction.Context context = new WaterAction.Context();
 
     public WaterSystem(ServerLevel world) {
         this.world = world;
@@ -144,53 +142,23 @@ public final class WaterSystem implements IWaterSystem
         }
 
         final int level = getWaterLevel(pos);
-        final BlockState below = world.getBlockState(pos.below());
 
         if (level <= 0) {
             return;
         }
 
-        if (below.getBlock() instanceof ChannelBlock) {
-            IWaterChannel.flowWaterAbove(this, below, pos, level);
-        }
+        context.setPos(pos);
+        context.setLevel(level);
+        context.setSystem(this);
+        context.setBelow(sections.getBlockState(pos.below()));
 
-        else if (below.is(Blocks.LAVA)) {
-            setWater(pos, 0);
-
-            if (level == 8) {
-                world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
-            } else {
-                final int time = FluidProperty.timeof(below);
-
-                if (time < FluidProperty.MAX_TIME) {
-                    sections.setBlockState(pos.below(), below.trySetValue(FluidProperty.TIME, time+1));
-                } else {
-                    world.setBlockAndUpdate(pos.below(), Blocks.OBSIDIAN.defaultBlockState());
-                }
-            }
-
-            WaterEffects.fizz(world, pos);
-        }
-
-        else if (below.getOptionalValue(FarmBlock.MOISTURE).orElse(8) < 7) {
-            setWater(pos, level - 1);
-            world.setBlock(pos.below(), below.trySetValue(FarmBlock.MOISTURE, 7), 2);
-        }
-
-        else if (FluidUtils.isNaturalWater(sections, pos.below())) {
-            if (!below.is(ModTags.Blocks.NEEDS_WATER_SOURCE)) {
-                setWater(pos, 0);
+        for (final WaterAction action : WaterAction.values()) {
+            if (action.dispatch(context)) {
+                return;
             }
         }
 
-        else if (isNotFull(pos.below()) && canFlow(pos, Direction.DOWN)) {
-            setWater(pos, 0);
-            addWater(pos.below(), level, Direction.DOWN);
-        }
-
-        else {
-            EqualizeFeature.execute(this, pos, level);
-        }
+        EqualizeFeature.execute(this, pos, level);
     }
 
     @Override
