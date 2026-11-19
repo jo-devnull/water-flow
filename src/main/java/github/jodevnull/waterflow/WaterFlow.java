@@ -3,12 +3,11 @@ package github.jodevnull.waterflow;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
-import github.jodevnull.waterflow.block.ChannelBlock;
-import github.jodevnull.waterflow.compat.ModCompat;
-import github.jodevnull.waterflow.config.Config;
-import github.jodevnull.waterflow.event.ModPlayerEvents;
-import github.jodevnull.waterflow.event.ModServerEvents;
-import github.jodevnull.waterflow.registry.*;
+import github.jodevnull.waterflow.content.block.ChannelBlock;
+import github.jodevnull.waterflow.foundation.compat.ModCompat;
+import github.jodevnull.waterflow.foundation.config.Config;
+import github.jodevnull.waterflow.content.event.ModPlayerEvents;
+import github.jodevnull.waterflow.content.event.ModServerEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -28,11 +27,11 @@ public class WaterFlow
 
         context.registerConfig(ModConfig.Type.COMMON, Config.Spec);
 
-        ModBlocks.register(modEventBus);
-        ModItems.register(modEventBus);
-        ModCreativeTabs.register(modEventBus);
-        ModRecipeTypes.register(modEventBus);
-        ModRecipeSerializers.register(modEventBus);
+        WFBlocks.register(modEventBus);
+        WFItems.register(modEventBus);
+        WFCreativeTabs.register(modEventBus);
+        WFRecipeTypes.register(modEventBus);
+        WFRecipeSerializers.register(modEventBus);
         ModPlayerEvents.register();
         ModServerEvents.register();
 

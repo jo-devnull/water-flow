@@ -1,0 +1,35 @@
+package github.jodevnull.waterflow.content.datagen;
+
+import github.jodevnull.waterflow.WFBlocks;
+import github.jodevnull.waterflow.WaterFlow;
+import github.jodevnull.waterflow.foundation.utils.Utils;
+import net.minecraft.data.PackOutput;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
+public final class ModBlockStateProvider extends BlockStateProvider
+{
+    public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
+        super(output, WaterFlow.MODID, exFileHelper);
+    }
+
+    @Override
+    protected void registerStatesAndModels() {
+        registerChannels();
+    }
+
+    private void registerChannels() {
+        for (final var block : WFBlocks.CHANNELS.list()) {
+            final var name = Utils.nameof(block);
+            final var texture = name.replace("_channel", "");
+
+            horizontalBlock(block.get(), models()
+                .withExistingParent(name, modLoc("block/water_channel"))
+                .texture("base", mcLoc("block/" + texture))
+                .texture("top", modLoc("block/" + name + "_top"))
+            );
+
+            simpleBlockItem(block.get(), models().getBuilder(name));
+        }
+    }
+}
