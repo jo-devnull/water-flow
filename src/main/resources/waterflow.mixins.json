@@ -1,10 +1,10 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "github.jodevnull.waterflow.mixin",
+  "package": "github.jodevnull.waterflow.foundation.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "waterflow.refmap.json",
-  "plugin": "github.jodevnull.waterflow.mixin.WaterFlowMixinPlugin",
+  "plugin": "github.jodevnull.waterflow.foundation.mixin.WaterFlowMixinPlugin",
   "mixins": [
     "block.DoublePlantBlockMixin",
     "block.FarmBlockMixin",
@@ -20,7 +20,6 @@
     "compat.create.CopyCatPanelBlockMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
-    "compat.create.WaterWheelBlockEntityMixin",
     "compat.fluidlogged.BlockItemMixin",
     "compat.fluidlogged.BucketItemMixin",
     "compat.fluidlogged.FlowingFluidMixin",
@@ -40,7 +39,8 @@
     "world.ServerLevelMixin",
     "world.flowmap.ChunkSerializerMixin",
     "world.flowmap.LevelChunkMixin",
-    "world.flowmap.LevelChunkSectionMixin"
+    "world.flowmap.LevelChunkSectionMixin",
+    "world.waterlog.LevelChunkSectionMixin"
   ],
   "client": [
     "compat.embeddium.FluidRendererMixin"

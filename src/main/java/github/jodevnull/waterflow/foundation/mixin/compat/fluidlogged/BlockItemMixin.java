@@ -1,0 +1,70 @@
+package github.jodevnull.waterflow.foundation.mixin.compat.fluidlogged;
+
+import github.jodevnull.waterflow.foundation.core.api.IWaterSystem;
+import github.jodevnull.waterflow.foundation.core.api.block.IWaterFlowBlock;
+import github.jodevnull.waterflow.foundation.core.fluid.FluidUtils;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import com.bawnorton.mixinsquared.TargetHandler;
+import de.leximon.fluidlogged.Fluidlogged;
+import de.leximon.fluidlogged.mixin.extensions.LevelExtension;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(value = BlockItem.class, priority = 2000)
+public abstract class BlockItemMixin
+{
+    @Shadow
+    protected abstract boolean placeBlock(BlockPlaceContext pContext, BlockState pState);
+
+    @TargetHandler(name = "redirectFluidPlacement", mixin = "de.leximon.fluidlogged.mixin.classes.world_interaction.removal_and_placement.BlockItemMixin")
+    @Inject(method = "@MixinSquared:Handler", at = @At("HEAD"), cancellable = true)
+    private void spreadWaterIfPossible(BlockItem instance, BlockPlaceContext context, BlockState blockState, CallbackInfoReturnable<Boolean> cir) {
+        final Level level = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final FluidState fluidState = FluidUtils.getFluidState(level, pos);
+        final float offset = IWaterFlowBlock.getFluidOffset(blockState);
+        final boolean fluidloggable = Fluidlogged.isFluidloggable(blockState);
+
+        if (FluidUtils.isNaturalWater(fluidState))
+            return;
+
+        final BlockState toReplace = level.getBlockState(pos);
+
+        if (!toReplace.isAir() && !(toReplace.getBlock() instanceof LiquidBlock)) {
+            level.destroyBlock(pos, true);
+        }
+
+        if (placeBlock(context, blockState)) {
+            if (!fluidState.isEmpty()) {
+                if (fluidloggable && offset == 0) {
+                    ((LevelExtension) level).setFluid(pos, fluidState, 131);
+                } else if (!level.isClientSide()) {
+                    if (!blockState.is(Blocks.SPONGE)) {
+                        IWaterSystem.spread((ServerLevel) level, pos, fluidState.getAmount());
+                    }
+                }
+            }
+
+            if (level instanceof ServerLevel world) {
+                IWaterSystem.get(world).ifPresent(system -> system.getFlowMap().updateFlowAt(pos));
+            }
+
+            cir.setReturnValue(true);
+        }
+
+        else {
+            cir.setReturnValue(false);
+        }
+    }
+}
