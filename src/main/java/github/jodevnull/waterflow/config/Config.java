@@ -41,6 +41,11 @@ public final class Config
     private static final ForgeConfigSpec.IntValue mHeavyRainWaterIntensity;
 
     // [fluidlogged]
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> mFluidloggables;
+    private static final Set<Block> sFluidloggables = new HashSet<>();
+
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> mFluidloggableBlacklist;
+
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> mAlwaysFlowThrough;
     private static final Set<Block> sAlwaysFlowThroughBlocks = new HashSet<>();
 
@@ -92,14 +97,17 @@ public final class Config
             .comment("The amount of water to spawn during heavy rain.")
             .defineInRange("rain_water_interval", 1, 1, 8);
 
-        Builder.push("fluidlogged");
+        mFluidloggables = Builder
+            .comment("Define which blocks that water (and other fluids) should flow through it.")
+            .defineList("fluidloggable_blocks", Defaults.fluidloggable, ConfigUtils::isTagOrLocation);
+
+        mFluidloggableBlacklist = Builder
+            .comment("Define which blocks that water (and other fluids) should NOT flow through it.")
+            .defineList("fluidloggable_blacklist", Defaults.empty, ConfigUtils::isTagOrLocation);
 
         mAlwaysFlowThrough = Builder
-            .comment("Defines which blocks water will flow through it regardless of the state of the block.")
-            .comment("Only relevant if you have FluidLogged installed.")
-            .defineList("always_flow_through", Defaults.alwaysFlowThrough, ConfigUtils::isTagOrLocation);
-
-        Builder.pop();
+            .comment("Defines which blocks water (and other fluids) should ALWAYS flow through it regardless of the state of the block.")
+            .defineList("fluidloggable_always", Defaults.alwaysFlowThrough, ConfigUtils::isTagOrLocation);
 
         Spec = Builder.build();
     }
@@ -158,9 +166,14 @@ public final class Config
         return sWaterBreakable.contains(state.getBlock());
     }
 
+    public static boolean isFluidloggable(BlockState state) {
+        return sFluidloggables.contains(state.getBlock());
+    }
+
     public static void reload() {
         final var key = ResourceLocation.parse(mLavaCooldownBlock.get());
         final var block = ForgeRegistries.BLOCKS.getValue(key);
+
         mLavaCoolsIntoBlock = Objects.requireNonNullElse(block, Blocks.BASALT);
 
         sAlwaysFlowThroughBlocks.clear();
@@ -168,10 +181,19 @@ public final class Config
 
         sWaterBreakable.clear();
         sWaterBreakable.addAll(ConfigUtils.readList(mWaterBreakable.get(), b -> false, true));
+
+        /* fluidloggables */ {
+            final Set<Block> blacklist = ConfigUtils.readList(mFluidloggableBlacklist.get(), b -> false, true);
+
+            sFluidloggables.clear();
+            sFluidloggables.addAll(ConfigUtils.readList(mFluidloggables.get(), blacklist::contains, true));
+        }
     }
 
     public static final class Defaults
     {
+        public static final ImmutableList<String> empty = ImmutableList.of();
+
         public static final ImmutableList<String> enabledDimensions = ImmutableList.of(
             "minecraft:overworld",
             "minecraft:the_end"
@@ -185,5 +207,7 @@ public final class Config
             "minecraft:snow",
             "minecraft:snow_block"
         );
+
+        public static final ImmutableList<String> fluidloggable = ImmutableList.of("#waterflow:fluidloggable");
     }
 }

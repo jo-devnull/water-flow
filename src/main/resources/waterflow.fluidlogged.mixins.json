@@ -1,0 +1,44 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "de.leximon.fluidlogged.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "waterflow.refmap.json",
+  "plugin": "de.leximon.fluidlogged.mixin.FluidloggedForgeMixinPlugin",
+  "mixins": [
+    "classes.forge.compat_rubidium.ChunkBuilderMeshingTaskMixin",
+    "classes.forge.compat_rubidium.ClonedChunkSectionMixin",
+    "classes.forge.compat_rubidium.FluidRendererMixin",
+    "classes.forge.compat_rubidium.WorldSliceMixin",
+    "classes.network.ChunkHolderMixin",
+    "classes.network.ServerChunkCacheMixin",
+    "classes.network.ServerLevelMixin",
+    "classes.storing_and_access.ChunkSerializerMixin",
+    "classes.storing_and_access.LevelChunkMixin",
+    "classes.storing_and_access.LevelChunkSectionMixin",
+    "classes.storing_and_access.LevelMixin",
+    "classes.world_interaction.BlockLightEngineMixin",
+    "classes.world_interaction.BlockStateBaseMixin",
+    "classes.world_interaction.FlowingFluidMixin",
+    "classes.world_interaction.LevelMixin",
+    "classes.world_interaction.removal_and_placement.BlockItemMixin",
+    "classes.world_interaction.removal_and_placement.SimpleWaterloggedBlockMixin",
+    "classes.world_interaction.removal_and_placement.extra.BedBlockMixin",
+    "classes.world_interaction.removal_and_placement.extra.DispenseItemBehaviorMixin",
+    "classes.world_interaction.removal_and_placement.extra.DoorBlockMixin",
+    "classes.world_interaction.removal_and_placement.extra.PistonBaseBlockMixin"
+  ],
+  "client": [
+    "classes.LiquidBlockRendererMixin",
+    "classes.RebuildTaskMixin",
+    "classes.RenderChunkMixin",
+    "classes.RenderChunkRegionMixin",
+    "classes.network.ClientLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

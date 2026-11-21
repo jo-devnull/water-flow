@@ -3,6 +3,7 @@ package github.jodevnull.waterflow;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
+import de.leximon.fluidlogged.Fluidlogged;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
@@ -36,6 +37,9 @@ public class WaterFlow
         ModServerEvents.register();
 
         modEventBus.addListener(this::onSetup);
+        modEventBus.addListener(Fluidlogged::loadComplete);
+
+        Fluidlogged.registerPackets();
     }
 
     public void onSetup(FMLCommonSetupEvent event) {
