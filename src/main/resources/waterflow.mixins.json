@@ -17,6 +17,7 @@
     "block.flow_impl.SlabBlockMixin",
     "block.flow_impl.StairBlockMixin",
     "block.flow_impl.TrapDoorBlockMixin",
+
     "compat.create.CopyCatPanelBlockMixin",
     "compat.create.FluidTankMixin",
     "compat.create.OpenEndedPipeMixin",
@@ -28,19 +29,23 @@
     "compat.fluidlogged.InternalMixin",
     "compat.fluidlogged.LevelChunkSectionMixin",
     "compat.fluidlogged.ServerLevelMixin",
+
     "fluid.FlowingFluidMixin",
     "fluid.FluidMixin",
     "fluid.LavaFluidMixin",
     "fluid.LiquidBlockMixin",
     "fluid.WaterFluidMixin",
+
     "item.BlockItemMixin",
     "item.BucketItemMixin",
+
     "world.BoatMixin",
     "world.FallingBlockEntityMixin",
     "world.ServerLevelMixin",
-    "world.flowmap.ChunkSerializerMixin",
-    "world.flowmap.LevelChunkMixin",
-    "world.flowmap.LevelChunkSectionMixin"
+
+    "ext.flowmap.ChunkSerializerMixin",
+    "ext.flowmap.LevelChunkMixin",
+    "ext.flowmap.LevelChunkSectionMixin"
   ],
   "client": [
     "compat.embeddium.FluidRendererMixin"

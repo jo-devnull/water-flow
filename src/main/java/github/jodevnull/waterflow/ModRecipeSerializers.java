@@ -1,6 +1,5 @@
-package github.jodevnull.waterflow.registry;
+package github.jodevnull.waterflow;
 
-import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.recipe.WaterInteractionRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;

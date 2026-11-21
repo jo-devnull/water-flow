@@ -1,6 +1,6 @@
-package github.jodevnull.waterflow.registry;
+package github.jodevnull.waterflow;
 
-import github.jodevnull.waterflow.utils.Utils;
+import github.jodevnull.waterflow.core.utils.Utils;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

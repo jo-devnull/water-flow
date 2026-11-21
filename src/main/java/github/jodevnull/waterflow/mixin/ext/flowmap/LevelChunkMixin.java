@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.mixin.world.flowmap;
+package github.jodevnull.waterflow.mixin.ext.flowmap;
 
 import github.jodevnull.waterflow.core.flow.ext.FM$LevelChunk;
 import github.jodevnull.waterflow.core.flow.ext.FM$LevelChunkSection;

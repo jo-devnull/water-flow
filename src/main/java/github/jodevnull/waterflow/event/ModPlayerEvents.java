@@ -2,10 +2,10 @@ package github.jodevnull.waterflow.event;
 
 import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.core.api.IWaterSystem;
-import github.jodevnull.waterflow.registry.ModTags;
+import github.jodevnull.waterflow.ModTags;
 import github.jodevnull.waterflow.block.ChannelBlock;
 import github.jodevnull.waterflow.core.fluid.FluidUtils;
-import github.jodevnull.waterflow.utils.WaterEffects;
+import github.jodevnull.waterflow.core.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

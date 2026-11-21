@@ -1,9 +1,9 @@
-package github.jodevnull.waterflow.mixin.world.flowmap;
+package github.jodevnull.waterflow.mixin.ext.flowmap;
 
 import com.mojang.serialization.Codec;
 import github.jodevnull.waterflow.WaterFlow;
 import github.jodevnull.waterflow.core.flow.ext.FM$LevelChunkSection;
-import github.jodevnull.waterflow.utils.PackedValue;
+import github.jodevnull.waterflow.core.utils.PackedValue;
 import it.unimi.dsi.fastutil.shorts.Short2ByteMap;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;

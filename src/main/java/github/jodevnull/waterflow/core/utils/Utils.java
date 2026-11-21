@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.utils;
+package github.jodevnull.waterflow.core.utils;
 
 import github.jodevnull.waterflow.WaterFlow;
 import net.minecraft.core.registries.Registries;

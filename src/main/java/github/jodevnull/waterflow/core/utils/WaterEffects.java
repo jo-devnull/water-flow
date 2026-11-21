@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.utils;
+package github.jodevnull.waterflow.core.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.utils;
+package github.jodevnull.waterflow.core.utils;
 
 public final class PackedValue
 {

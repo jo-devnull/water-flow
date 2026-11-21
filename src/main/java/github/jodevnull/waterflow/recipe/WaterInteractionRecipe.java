@@ -2,8 +2,8 @@ package github.jodevnull.waterflow.recipe;
 
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import github.jodevnull.waterflow.registry.ModRecipeSerializers;
-import github.jodevnull.waterflow.registry.ModRecipeTypes;
+import github.jodevnull.waterflow.ModRecipeSerializers;
+import github.jodevnull.waterflow.ModRecipeTypes;
 import github.jodevnull.waterflow.WaterFlow;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.NonNullList;

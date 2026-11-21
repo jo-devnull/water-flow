@@ -8,7 +8,6 @@ import github.jodevnull.waterflow.compat.ModCompat;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.event.ModPlayerEvents;
 import github.jodevnull.waterflow.event.ModServerEvents;
-import github.jodevnull.waterflow.registry.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;

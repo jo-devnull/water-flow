@@ -1,4 +1,4 @@
-package github.jodevnull.waterflow.utils;
+package github.jodevnull.waterflow.core.utils;
 
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;

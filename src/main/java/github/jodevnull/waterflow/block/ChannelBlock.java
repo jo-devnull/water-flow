@@ -1,6 +1,6 @@
 package github.jodevnull.waterflow.block;
 
-import github.jodevnull.waterflow.registry.ModBlocks;
+import github.jodevnull.waterflow.ModBlocks;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

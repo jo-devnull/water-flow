@@ -3,7 +3,7 @@ package github.jodevnull.waterflow.mixin.fluid;
 import github.jodevnull.waterflow.config.Config;
 import github.jodevnull.waterflow.core.api.IWaterSystem;
 import github.jodevnull.waterflow.core.fluid.FluidProperty;
-import github.jodevnull.waterflow.utils.WaterEffects;
+import github.jodevnull.waterflow.core.utils.WaterEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;

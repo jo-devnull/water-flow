@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.LiquidBlock;
 
 public final class FlowMap
 {
-    private final Long2ByteMap cachedFlow = new Long2ByteOpenHashMap();
     private final LongSet removeQueue = new LongOpenHashSet();
+    private final Long2ByteMap cachedFlow = new Long2ByteOpenHashMap();
     private final SectionCache sections;
 
     public FlowMap(SectionCache sections) {

@@ -1,8 +1,7 @@
-package github.jodevnull.waterflow.registry;
+package github.jodevnull.waterflow;
 
-import github.jodevnull.waterflow.WaterFlow;
-import github.jodevnull.waterflow.utils.RegistryList;
-import github.jodevnull.waterflow.utils.Utils;
+import github.jodevnull.waterflow.core.utils.RegistryList;
+import github.jodevnull.waterflow.core.utils.Utils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;

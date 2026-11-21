@@ -1,7 +1,7 @@
 package github.jodevnull.waterflow.core.feat;
 
 import github.jodevnull.waterflow.core.WaterSystem;
-import github.jodevnull.waterflow.utils.PathfinderBFS;
+import github.jodevnull.waterflow.core.utils.PathfinderBFS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
